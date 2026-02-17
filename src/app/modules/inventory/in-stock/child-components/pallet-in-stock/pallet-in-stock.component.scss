@@ -1,0 +1,28 @@
+.card-hover {
+    border: 2px solid white;
+}
+
+.card-default {
+    border: 2px solid #8fabc9;
+}
+
+.view-text-color {
+    color: #407EC9;
+}
+
+.w-33 {
+    width: 33% !important;
+}
+
+.desp-overflow {
+    white-space: nowrap;
+    max-width: 40%;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+    margin-left: 0.3rem;
+}
+
+.d-flex {
+    gap: unset;
+}

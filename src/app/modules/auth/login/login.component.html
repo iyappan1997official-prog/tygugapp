@@ -1,0 +1,66 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="column">
+      <img class="logo-map" src="../../../../assets/logos/world mapS.svg">
+      <img class="logo" src="../../../../assets/logos/LogoS.svg">
+    </div>
+    <div class="column1 bg-white flex-column">
+    <div class="login-wrapper">
+      <p class="firsttext mb-2">Welcome to QuiltTracker</p>
+      <p class="secondtext mb-4">Please log in to continue</p>
+      <form [formGroup]="loginForm" id="kt_login_signin_form" (ngSubmit)="submit()">
+          <mat-form-field appearance="outline">
+            <mat-label class="labelcolor">Username</mat-label>
+            <!-- <mat-icon matPrefix class="user-prefix">person</mat-icon> -->
+            <mat-icon matPrefix class="user-prefix"><img src="../../../../assets/logos/user-line.svg" alt=""></mat-icon>
+            <input matInput formControlName="emailId" required>
+
+            <mat-error>
+              <show-error requiredMsg="Email is required or has an invalid value. Please correct."
+                [formControlErr]="loginForm.controls.emailId"
+                patternMsg="Email is required or has an invalid value. Please correct.">
+              </show-error>
+            </mat-error>
+          </mat-form-field>
+
+        <div class="mt-8">
+          <mat-form-field appearance="outline" class="lastField">
+            <mat-label class="labelcolor">Password</mat-label>
+            <!-- <mat-icon matPrefix class="user-prefix">lock_outline</mat-icon> -->
+            <mat-icon matPrefix class="user-prefix"><img src="../../../../assets/logos/Lock.svg" alt=""></mat-icon>
+            <input matInput formControlName="password" [type]="passwordVisible?'text': 'password'" required>
+
+            <mat-icon matSuffix class="secondary-text cursor-pointer labelcolor"
+              (click)="passwordVisible=!passwordVisible" [title]="passwordVisible?'Hide Password':'Show Password'">
+              <!-- {{passwordVisible?"visibility":"visibility_off"}} -->
+              <img [src]="passwordVisible? '../../../../assets/logos/Eye.svg' : '../../../../assets/logos/Hide-eye.svg' " alt="eye">
+             
+            </mat-icon>
+
+            <mat-error>
+              <show-error requiredMsg="Please enter your valid password." [formControlErr]="loginForm.controls.password"
+                patternMsg="Please enter a valid password.">
+              </show-error>
+            </mat-error>
+          </mat-form-field>
+
+        </div>
+        <div class="d-flex justify-content-end w-87">
+        <!-- <div class="mt-8">
+          <mat-checkbox color="primary" class="custom-frame">Keep me logged in</mat-checkbox>
+        </div> -->
+        <div class="back-btn cursor fw-bold" routerLink="/auth/forgot-password">
+          Forgot Password
+        </div>
+      </div>
+        <div class="mt-6 text-right mt-3">
+          <button type="submit" id="kt_login_signin_submit"
+            class="btn btn-newPrimary font-weight-bolder font-size-h6 pt-3 pb-3 my-4 buttonclr w-87 fw-bold">
+            Login
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  </div>
+</div>

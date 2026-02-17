@@ -1,0 +1,181 @@
+<router-outlet></router-outlet>
+<div class="content-wrapper">
+  <mat-tab-group [selectedIndex]="tabIndex"
+    (selectedTabChange)="selectedTabChanged($event.index)" class="row">
+    <ng-container *ngFor="let t of tabs">
+      <mat-tab
+        label="Leased"
+        *ngIf="t=='leased'">
+        <ng-container
+          *ngIf="[this.roleEnum.masterAdmin, this.roleEnum.serviceManager].includes(loggedInUserRole);else fullTableView">
+          <leased
+            *ngIf="tab == 'leased'"
+            [inventoryForm]="inventoryForm"
+            [tabIndex]="tabIndex"
+            [totalCount]="totalCount"
+            [inventory]="inventories"
+            [allStatus]="allStatus"
+            [allLocations]="allLocations"
+            (applyFilters)="applyFilters()"
+            (resetFilters)="resetAllFilters()"
+            (refreshtable)="fetchTableData()"
+            [searchFilter]="searchFilter">
+          </leased>
+        </ng-container>
+        <ng-template #fullTableView>
+          <app-customer-inventory
+            *ngIf="tab == 'leased'"
+            [tab]="tab"></app-customer-inventory>
+        </ng-template>
+      </mat-tab>
+      <mat-tab
+        label="Purchased"
+        *ngIf="t=='purchased'">
+        <ng-container
+          *ngIf="[this.roleEnum.masterAdmin, this.roleEnum.serviceManager].includes(loggedInUserRole);else fullTableView">
+          <leased            
+            [inventoryForm]="inventoryForm"
+            [tabIndex]="tabIndex"
+            [totalCount]="totalCount"
+            [inventory]="inventories"
+            [allStatus]="allStatus"
+            [allLocations]="allLocations"
+            (applyFilters)="applyFilters()"
+            (resetFilters)="resetAllFilters()"
+            (refreshtable)="fetchTableData()"
+            [searchFilter]="searchFilter">
+          </leased>
+        </ng-container>
+        <ng-template #fullTableView>
+          <app-customer-inventory
+            *ngIf="tab == 'purchased'"
+            [tab]="tab"></app-customer-inventory>
+        </ng-template>
+      </mat-tab>
+      <mat-tab
+        label="Consignment"
+        *ngIf="t=='consignment'">
+        <leased
+          *ngIf="tab == 'consignment'"
+          [inventoryForm]="inventoryForm"
+          [tabIndex]="tabIndex"
+          [totalCount]="totalCount"
+          [inventory]="inventories"
+          [allStatus]="allStatus"
+          [allLocations]="allLocations"
+          (applyFilters)="applyFilters()"
+          (resetFilters)="resetAllFilters()"
+          (refreshtable)="fetchTableData()"
+          [searchFilter]="searchFilter">
+        </leased>
+      </mat-tab>
+      <mat-tab
+        label="In stock" *ngIf="t=='in-stock'">
+        <in-stock *ngIf="tab == 'in-stock'"></in-stock>
+      </mat-tab>
+      <mat-tab *ngIf="t=='pallet'" label="Pallets">
+        <pallet-table-view *ngIf="tab == 'pallet'"> </pallet-table-view>
+      </mat-tab>
+      <mat-tab
+        label="Create Pallet"
+        *ngIf="loggedInUserRole === this.roleEnum.masterAdmin && t == 'automate-pallet'">
+        <automate-pallet *ngIf="tab == 'automate-pallet'"></automate-pallet>
+      </mat-tab>
+      <mat-tab
+        label="Quilt Definition"
+        *ngIf="loggedInUserRole === this.roleEnum.masterAdmin && t == 'quilt-definition'">
+        <quilt-definition *ngIf="tab == 'quilt-definition'"></quilt-definition>
+      </mat-tab>
+      <mat-tab
+        label="Epicor"
+        *ngIf="loggedInUserRole === this.roleEnum.masterAdmin && t == 'epicor'">
+        <app-epicor *ngIf="tab == 'epicor'"></app-epicor>
+      </mat-tab>
+      <!-- <mat-tab *ngIf="t=='purchased'" label="Purchased">
+      <ng-container
+        *ngIf="
+          [
+            this.roleEnum.customerAdmin,
+            this.roleEnum.customerManager,
+            this.roleEnum.globalAdmin
+          ].includes(loggedInUserRole);
+          else fullTableView
+        ">
+        <app-customer-inventory
+          [tab]="tab"
+          *ngIf="tab == 'purchased'"></app-customer-inventory>
+      </ng-container>
+      <ng-template #fullTableView>
+        <leased
+          *ngIf="tab == 'purchased'"
+          [inventoryForm]="inventoryForm"
+          [tabIndex]="tabIndex"
+          [totalCount]="totalCount"
+          [inventory]="inventories"
+          [allStatus]="allStatus"
+          [allLocations]="allLocations"
+          (applyFilters)="applyFilters()"
+          (resetFilters)="resetAllFilters()"
+          (refreshtable)="fetchTableData()"
+          [searchFilter]="searchFilter">
+        </leased>
+      </ng-template>
+    </mat-tab> -->
+    </ng-container>
+
+    <!-- <mat-tab
+      label="Consignment"
+      *ngIf="
+        [this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(
+          loggedInUserRole
+        )
+      ">
+      <leased
+        *ngIf="tabIndex == 0"
+        [inventoryForm]="inventoryForm"
+        [tabIndex]="tabIndex"
+        [totalCount]="totalCount"
+        [inventory]="inventories"
+        [allStatus]="allStatus"
+        [allLocations]="allLocations"
+        (applyFilters)="applyFilters()"
+        (resetFilters)="resetAllFilters()"
+        (refreshtable)="fetchTableData()"
+        [searchFilter]="searchFilter">
+      </leased>
+    </mat-tab> -->
+
+    <!-- <mat-tab label="Purchased">
+      <leased *ngIf="tabIndex==1" [inventoryForm]="inventoryForm" [tabIndex]="tabIndex" [totalCount]="totalCount"
+        [inventory]="inventories" [allStatus]="allStatus" [showLoader]="showLoader" [allLocations]="allLocations"
+        (applyFilters)="applyFilters()" (resetFilters)="initForm(); applyFilters()" (refreshtable)="fetchTableData()">
+      </leased>
+    </mat-tab> -->
+
+    <!-- <mat-tab
+      [label]="
+        [this.roleEnum.masterAdmin, this.roleEnum.serviceManager].includes(
+          loggedInUserRole
+        ) ||
+        [this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(
+          loggedInUserRole
+        )
+          ? 'In stock'
+          : 'Pallets'
+      ">
+      <in-stock *ngIf="tabIndex == 2"></in-stock>
+    </mat-tab> -->
+
+    <!-- <ng-container
+      *ngIf="
+        [this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(
+          loggedInUserRole
+        )
+      ">
+      <mat-tab label="Pallets">
+        <pallet-table-view> </pallet-table-view>
+      </mat-tab>
+    </ng-container> -->
+
+  </mat-tab-group>
+</div>

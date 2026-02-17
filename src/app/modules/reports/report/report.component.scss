@@ -1,0 +1,15 @@
+.label-position {
+    transform: translateY(15px);
+    }
+    // :host ::ng-deep .mat-form-field-wrapper{
+    //     padding-bottom: 0;
+    // }
+    :host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+        padding-top: 1em;
+    }
+    
+    @media print{
+        .doNotPrint{display:none !important;}
+      }
+
+     

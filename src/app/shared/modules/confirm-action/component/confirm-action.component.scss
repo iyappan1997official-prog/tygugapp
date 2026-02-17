@@ -1,0 +1,21 @@
+// .font-22{
+//     font-size:22px;
+// }
+
+p {
+    font-size: 20px;
+}
+
+.line-ht-18 {
+    line-height: 1.8rem;
+}
+
+@media only screen and (max-width:1440px) {
+    .modal-content .bg-light .bg-modal h2 {
+        font-size: 20px !important;
+    }
+
+    p {
+        font-size: 18px !important;
+    }
+}

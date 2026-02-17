@@ -1,0 +1,65 @@
+.card-row {
+    margin-bottom: 1rem;
+
+    .card {
+        padding: 0.85rem 1rem;
+        border: 1px solid #8fabc9;
+        height: 100%;
+
+        &_head {
+            h3 {
+                font-size: 22px;
+                color: #515355;
+                font-weight: 500;
+                margin-bottom: 1rem !important;
+            }
+        }
+
+        &_body {
+            font-weight: 600;
+            text-align: center;
+
+            &-head {
+                font-size: 20px;
+                margin-bottom: .4rem;
+            }
+
+            &-text {
+                font-size: 18px;
+            }
+        }
+    }
+}
+
+.card {
+    table {
+        tr {
+            th {
+                padding-bottom: .4rem;
+            }
+
+            td {
+                padding: 0 !important;
+                font-weight: 600;
+
+                .viewbtn {
+                    color: #3d7cca;
+                    text-decoration: underline;
+                }
+            }
+
+            &:hover {
+                background-color: #fff;
+            }
+        }
+    }
+}
+
+.card-wrapper {
+    max-height: calc(100vh - 21.5rem);
+    overflow: hidden auto;
+}
+
+.view-text-color {
+    color: #407EC9;
+}

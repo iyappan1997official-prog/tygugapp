@@ -1,0 +1,70 @@
+.hint-text {
+    color: #000000d6;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.hint-text-icon {
+    background-color: #000000d6;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 8px;
+}
+
+.right-arrow {
+    border-radius: 50%;
+    color: white;
+    padding: 6px 8px;
+    background-color: #3D7CCA;
+}
+
+
+
+.receive-btn {
+    background-color: #34A019;
+    color: white;
+}
+
+.q-number {
+    background-color: #8FABC9;
+    color: white;
+    border-radius: 5px;
+    padding: 5px 15px
+}
+
+.quilt-position {
+    transform: translateY(-14px);
+}
+
+.quilt-dot-position {
+    transform: translateY(-22px);
+}
+
+.border-blue {
+    background: #F4F7FC;
+}
+
+.error {
+    text-align: left;
+    color: #f64e60;
+}
+
+@media only screen and (max-width: 1440px) {
+    img.cursor {
+        width: 30px;
+    }
+}
+
+.scannerSize {
+    height: 70%;
+    width: 50%;
+}
+
+:host ::ng-deep .mat-form-field-subscript-wrapper {
+    padding: 0 !important;
+
+    .hintMessage {
+        display: flex;
+        align-items: start;
+    }
+}

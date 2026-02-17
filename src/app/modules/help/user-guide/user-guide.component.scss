@@ -1,0 +1,44 @@
+.logo-pos{
+    position: relative;
+}
+
+.logo-pos-icon{
+    position:absolute;
+    top:37%;
+    left:4%;
+}
+
+.logo-pos-bg{
+    position:absolute;
+    top:20%;
+    left:1%;
+}
+
+.logo-pos-text{
+    position: absolute;
+    top:22%;
+    left:2.4%;
+    color:white;
+    z-index: 1;
+}
+
+.w-50{
+    width: 50%;
+}
+.max-w-14{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    // @media screen and (max-width: 1250px){
+    // max-width: 70%;
+    // }
+}
+.min-w-7{
+    min-width: 7rem;
+}
+.w-1rem{
+    width: 1.5rem;
+}
+.w-60{
+    width: 60px;
+}

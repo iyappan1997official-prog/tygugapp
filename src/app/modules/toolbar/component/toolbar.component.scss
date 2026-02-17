@@ -1,0 +1,130 @@
+$color: #407EC9;
+
+
+.textclr {
+  color: $color;
+  font-size: 30px !important;
+  font-weight: 400 !important;
+}
+
+.imgborder {
+  border-radius: 50%;
+  position: relative;
+  top: -0.5rem;
+  // margin-top:-10%;
+}
+
+.d-flex {
+  gap: 15px;
+}
+
+
+// @media only screen and (min-width:1920px){
+//   .imgborder{
+//     margin-top:-22%;
+//   }
+//   .small-display{
+//     display: block;
+//   }
+//   .large-display{
+//     display: none;
+//   }
+// }
+
+.font-20 {
+  font-size: 20px;
+}
+
+.font-14 {
+  font-size: 14px;
+}
+
+.flex-item {
+  margin: 10px;
+}
+
+.font-secondary {
+  font-size: 16px;
+}
+
+mat-form-field .mat-form-field-outline-start {
+  background-color: white !important;
+}
+
+mat-form-field .mat-form-field-outline-gap {
+  background-color: white !important;
+}
+
+mat-form-field .mat-form-field-outline-end {
+  background-color: white !important;
+}
+
+i {
+  color: $color;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.searchWrapper {
+  background: #FFFFFF;
+  box-shadow: -1px -1px 15px rgb(0 0 0 / 3%), 2px 2px 15px rgb(0 0 0 / 3%);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  width: 92%;
+  font-size: 18px;
+  padding: 0.78em .84em !important;
+
+  // position: relative;
+  // top: -0.5rem;
+  span {
+    margin-right: 0.45rem;
+
+    img {
+      width: 24px;
+    }
+  }
+
+  input {
+    color: #444444;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: none;
+    font-weight: 400;
+    box-shadow: none !important;
+  }
+
+  @media screen and (max-width: 1440px) {
+    padding: 0.56em .6em !important;
+    font-size: 16px;
+  }
+}
+
+@media only screen and (max-width: 1440px) {
+  .fs-16 {
+    font-size: 14px;
+  }
+
+  .mat-menu-item {
+    line-height: 30px !important;
+    height: 30px !important;
+
+    img {
+      width: 20px;
+    }
+  }
+}
+
+@media only screen and (min-width:960px) and (max-width:1400px) {
+  .m-left {
+    margin-left: 10%;
+  }
+}
+
+// @media only screen and (min-width: 1919px){
+//   .fw-500{
+//     font-weight: 500 !important;
+//   }
+// }

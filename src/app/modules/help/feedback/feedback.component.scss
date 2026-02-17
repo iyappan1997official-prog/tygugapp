@@ -1,0 +1,14 @@
+textarea {
+    resize: vertical;
+    border: none;
+    width: 100%;
+    outline: none;
+}
+
+:host ::ng-deep .mat-paginator {
+    transform: none;
+}
+
+.noborder ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+    color: #fff !important;
+}

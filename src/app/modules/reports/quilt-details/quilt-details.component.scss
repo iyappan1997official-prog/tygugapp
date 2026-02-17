@@ -1,0 +1,17 @@
+@media print {
+  .doNotPrint {
+    display: none !important;
+  }
+}
+
+.noFilterContentScroller {
+  max-height: calc(100vh - 6rem);
+}
+
+.mat-paginator {
+  transform: none;
+}
+
+:host ::ng-deep .mat-paginator-page-size .mat-select-trigger {
+  font-size: 16px;
+}

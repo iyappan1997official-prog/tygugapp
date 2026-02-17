@@ -1,0 +1,185 @@
+<div class="scroll noFilterContentScroller mt-3">
+    <div class="card px-3 py-4 table-responsive">
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+            <h2 class="mb-0 main-color font-w-600 fs-24">Quilt Definition</h2>
+            <div fxLayoutGap="20px">
+                <button class="btn btn-newPrimary"
+                    routerLink="/inventory/quilts-inventory/generate-serial-number">Generate
+                    Serial Number</button>
+                <button class="btn btn-newPrimary" (click)="openAddRowModal('definition','add')">Add Row</button>
+            </div>
+        </div>
+
+        <table class="table mt-3">
+            <thead>
+                <tr class="tablelight text-center">
+                  <th width="20%" (click)="sort('type',1)" class="cursor">
+                    <div class="list-type-header text-center">
+                      Type
+                      <i class="fa fa-sort ms-2" aria-hidden="true"></i>
+                    </div>
+                  </th>
+                    <th width="20%">
+                        Description
+                    </th>
+                    <th width="20%"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="items$ | async as data;">
+                    <ng-container *ngIf="data && data.length > 0; else noData">
+                        <tr class="text-center" *ngFor="let user of data">
+                            <td>{{user['type'] || '--'}}</td>
+                            <td>
+                                {{user['description'] || '--'}}
+                            </td>
+                            <td>
+                                <span class="me-5"><img src="../../../../assets/logos/EditP.svg" class="cursor"
+                                        (click)="openAddRowModal('definition','edit',user['id'])"></span>
+                                <!-- <i class="fa-solid fa-pen cursor"
+                                    (click)="openAddRowModal('definition','edit',user['id'])"></i> &nbsp; &nbsp;  -->
+                                <span>
+                                    <img src="../../../../assets/logos/DeleteP.svg" class="cursor lg-w-20"
+                                        (click)="openConfirmDeleteModal(user['id'],'definition')">
+                                </span>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <ng-template #noData>
+                        <tr *ngIf="!isLoading">
+                            <td colspan="9" class="bg-white">
+                                <div class="text-center">
+                                    <h3>No Quilt Definition found</h3>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+    <div class="mt-3 pt-4 pb-0">
+        <div fxLayout="row" class="" fxLayoutGap="15px" fxLayoutAlign="start start">
+            <div class="card table-responsive px-3 py-4" fxFlex="50%">
+                <div fxLayout="row" fxLayoutAlign="space-between center">
+                    <h2 class="mb-0 main-color font-w-600 fs-24">Quilt Construction</h2>
+                    <div>
+                        <button class="btn btn-newPrimary" (click)="openAddRowModal('construction','add')">Add
+                            Row</button>
+                    </div>
+                    <!-- <div>
+                    <p class="cursor" mat-button [matMenuTriggerFor]="menu1"><i class="fa-solid fa-ellipsis"></i>
+                    </p>
+                    <mat-menu #menu1="matMenu">
+                        <button mat-menu-item>Add Column</button>
+                         <button mat-menu-item>Delete Table</button>
+                    </mat-menu>
+                </div> -->
+                </div>
+                <table class="table mt-3">
+                    <thead>
+                        <tr class="tablelight text-center">
+                          <th style="width: 33.33%;" (click)="sort('type',2)" class="cursor">
+                            <div class="list-type-header text-center">
+                              Type
+                              <i class="fa fa-sort ms-2" aria-hidden="true"></i>
+                            </div>
+                          </th>
+                            <th width="33.33%">
+                                Construction
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="items$1 | async as data;">
+                            <ng-container *ngIf="data && data.length > 0; else noDataCons">
+                                <tr class="text-center" *ngFor="let user of data">
+                                    <td>{{user['type'] || '--'}}</td>
+                                    <td>
+                                        {{user['construction'] || '--'}}
+                                    </td>
+                                    <td>
+                                        <img class="cursor lg-w-20" src="../../../../assets/logos/EditP.svg"
+                                            (click)="openAddRowModal('construction','edit',user['id'])"> &nbsp;
+                                        &nbsp; <img src="../../../../assets/logos/DeleteP.svg" class="cursor lg-w-20"
+                                            (click)="openConfirmDeleteModal(user['id'],'construction')">
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <ng-template #noDataCons>
+                                <tr *ngIf="!isLoading">
+                                    <td colspan="9" class="bg-white">
+                                        <div class="text-center">
+                                            <h3>No Quilt Construction found</h3>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </ng-container>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card table-responsive px-3 py-4" fxFlex="50%">
+                <div fxLayout="row" fxLayoutAlign="space-between center">
+                    <h2 class="mb-0 main-color font-w-600 fs-24">Quilt Size</h2>
+                    <div>
+                        <button class="btn btn-newPrimary" (click)="openAddRowModal('size','add')">Add
+                            Row</button>
+                    </div>
+                    <!-- <div>
+                    <p class="cursor" mat-button [matMenuTriggerFor]="menu2"><i class="fa-solid fa-ellipsis"></i>
+                    </p>
+                    <mat-menu #menu2="matMenu">
+                        <button mat-menu-item>Add Column</button>
+                         <button mat-menu-item>Delete Table</button>
+                    </mat-menu>
+                </div> -->
+                </div>
+                <table class="table mt-3">
+                    <thead>
+                      <tr class="tablelight text-center">
+                        <th (click)="sort('type',3)" class="cursor">
+                          <div class="list-type-header text-center">
+                            Type
+                            <i class="fa fa-sort ms-2" aria-hidden="true"></i>
+                          </div>
+                        </th>
+                        <th>
+                          Size
+                        </th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="items$2 | async as data;">
+                            <ng-container *ngIf="data && data.length > 0; else noDataSize">
+                                <tr class="text-center" *ngFor="let user of data">
+                                    <td>{{user['type'] || '--'}}</td>
+                                    <td>
+                                        {{user['size'] || '--'}}
+                                    </td>
+                                    <td><img class="cursor lg-w-20" src="../../../../assets/logos/EditP.svg"
+                                            (click)="openAddRowModal('size','edit',user['id'])">
+                                        &nbsp; &nbsp;
+                                        <img src="../../../../assets/logos/DeleteP.svg" class="cursor lg-w-20"
+                                            (click)="openConfirmDeleteModal(user['id'],'size')">
+                                    </td>
+                                </tr>
+                            </ng-container>
+                            <ng-template #noDataSize>
+                                <tr *ngIf="!isLoading">
+                                    <td colspan="9" class="bg-white">
+                                        <div class="text-center">
+                                            <h3>No Quilt Size found</h3>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </ng-container>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

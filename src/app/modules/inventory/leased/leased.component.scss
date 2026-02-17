@@ -1,0 +1,120 @@
+mat-form-field {
+    mat-icon {
+        font-size: 27px;
+        // margin-right: 10px;
+    }
+}
+
+.mat-form-field-wrapper {
+    padding-bottom: 0;
+    margin: 0 !important;
+}
+
+.bg-color {
+    background-color: #8FABC9;
+}
+
+.tableInnerContentWrapper {
+    max-height: calc(100vh - 26rem);
+}
+
+.innerContentWrapper:has(.tableInnerContentWrapper) {
+    max-height: calc(100vh - 18.5rem);
+}
+
+.innerContentWrapper:has(.consignTableScroll) {
+    max-height: calc(100vh - 20rem);
+}
+
+// .half-width {
+//     width: 19%;
+// }
+
+.width-input {
+    width: 14.6rem !important;
+}
+
+.theight {
+    position: relative;
+    // height: 160px;
+    // overflow: hidden;
+}
+
+.tablehead {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.tabledes {
+    font-size: 16px;
+}
+
+.mat-form-field .mat-icon {
+    font-size: 27px;
+    margin-right: 0;
+}
+
+.bg-color {
+
+    .searchBox.input-pdt.mat-form-field-appearance-outline .mat-form-field-prefix,
+    .searchBox.input-pdt.mat-form-field-appearance-outline .mat-form-field-suffix {
+        top: 0.22em !important;
+    }
+
+    .mat-form-field-type-mat-select.searchBox.input-pdt.mat-form-field-appearance-outline .mat-form-field-prefix,
+    .mat-form-field-type-mat-select.searchBox.input-pdt.mat-form-field-appearance-outline .mat-form-field-suffix {
+        top: 0.35em !important;
+
+        @media screen and (max-width: 1440px) {
+            top: 0.45em !important;
+        }
+    }
+}
+
+// .tablehead {
+//     font-size: 14px !important;
+//   }
+
+//   .tabledes {
+//     font-weight: 600 !important;
+//     font-size: 16px !important ;
+//   }
+
+
+
+@media screen and (min-width:1280px) and (max-width:1336px) {
+    .example-full-width {
+        width: 20%;
+    }
+}
+
+
+@media only screen and (max-width:1279px) {
+    .half-width {
+        width: 50%;
+    }
+
+    .small-display {
+        display: none;
+    }
+}
+
+.res-card {
+    border: 1px solid #ffffff;
+    border-radius: 10px;
+}
+
+.mat-paginator {
+    transform: none;
+}
+
+.tag-style {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-55%);
+    padding: 0.5rem 0.8rem;
+    background: #4e9af6f5;
+    color: #fff;
+    border-radius: 8px;
+}

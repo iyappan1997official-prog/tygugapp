@@ -1,0 +1,29 @@
+.btn:disabled {
+    background: #3d7cca !important;
+    color: #fff !important;
+    border: 1px solid #3d7cca;
+}
+.filterClass {
+    background-color: #8FABC9;
+    border-radius: 6px;
+    padding: 9px;
+    color: #ffffff;
+  }
+  .head-position {
+    transform: translateY(1.4rem);
+}
+
+.head-dot-position {
+    transform: translateY(1.6rem);
+}
+.msg{
+    text-align: left;
+    font-size: 14px;
+    font-weight: 500;
+}
+.error {
+    color: #f64e60;
+}
+.success {
+    color: #08c145;
+}

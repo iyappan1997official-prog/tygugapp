@@ -1,0 +1,200 @@
+<div class="card mx-3 mt-4 px-4 py-4">
+  <div fxLayout="row" class="mx-3" fxLayout.lt-md="column" fxLayoutAlign="space-between start">
+    <div>
+      <h2 class="font-w-600 main-color fs-24">Receive Quilts</h2>
+    </div>
+    <div fxLayout="row">
+      <button *ngIf="!masterUsers" class="btn btn-newPrimary p-12 text-white receive-btn me-3" (click)="receivePallet()"
+        [disabled]="onlyQuiltAllowed === false">Receive and Create
+        pallet</button>
+      <button class="btn btn-newPrimary p-12 text-white receive-btn me-3" (click)="receiveQuilts()">Receive All</button>
+      <button class="btn p-12 btnborder" (click)="resetForm()"> Clear All</button>
+    </div>
+  </div>
+  <div class="px-3 mt-5">
+    <div fxFlex="50%" fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px" class="mx-3">
+      <div fxFlex fxLayout="column" [formGroup]="receiveQuiltsForm">
+        <div class="inline-block">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" ngClass="quilt-position"
+              class="font-w-600 fs-20">Quilt/Pallet No.</h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="quilt-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <input matInput [formControl]="detailsBySerialNumber">
+              <mat-hint align="start" class="hintMessage">
+                <img src="../../../../assets/logos/Info.svg">
+                <!-- <i class="fa-solid fa-info hint-text-icon"></i> -->
+                &nbsp; <span class="hint-text">To add multiple items at
+                  once, separate them by a comma. Must click blue button to add quilt(s) to shipping queue.</span>
+              </mat-hint>
+            </mat-form-field>
+            <!-- <p>{{ (action.data | async)?.['data'] }}</p> -->
+          </div>
+        </div>
+        <div class="d-inline-block">
+          <div fxLayout="row" class="mb-3">
+            <div fxFlex="35%"></div>
+            <div class="error" *ngIf="this.arrowErrorShow">
+              Please add atleast one Quilt.
+            </div>
+            <div class="error"
+              *ngIf="!this.arrowErrorShow && this.shipErrorShow && (!this.detailsBySerialNumber.value && !this.newPallets.length && !this.newQuilts.length)">
+              Please add at least one quilt number to queue by clicking the blue button with the arrow.
+            </div>
+            <div class="error" *ngIf="!this.arrowErrorShow && this.shipErrorShow && this.detailsBySerialNumber.value">
+              Please click blue button to add quilt(s) to shipping queue.
+            </div>
+          </div>
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="35%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position"></h3>
+            <div class="fs-16 fw-600" fxFlex="55%">
+              <!-- <div class="scannerSize">
+                <ngx-scanner-qrcode #action="scanner" (data)="output = $event" (error)="onError($event)">
+        </ngx-scanner-qrcode> 
+        </div> -->
+              <img class="cursor" src="../../../../assets/logos/Next.svg" (click)="getDetailsBySerialNumber()">
+              <!-- <i class="fa-solid fa-arrow-right cursor right-arrow"></i> -->
+              <span class="mx-2"> Or click here to scan QR </span>
+              <img class="cursor" (click)="openScannerModal()" src="../../../../assets/logos/QR.svg">
+              <!-- <button *ngIf="action.isStart" class="btn mx-2 mt-2"  [class.btn-newPrimary]="action.isStart"  (click)="handle(action, 'stop')">Stop</button> -->
+              <!-- <i
+              class="fa-solid fa-qrcode cursor"></i> -->
+            </div>
+          </div>
+        </div>
+        <ng-container *ngIf="[this.roleEnum.masterAdmin, this.roleEnum.warehouseUser].includes(loggedInUserRole)">
+          <div class="inline-block">
+            <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+              <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Customer Name
+              </h3>
+              <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+              <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+                <input matInput formControlName="customerName" readonly>
+                <!-- <mat-error>
+                <show-error [formControlErr]="receiveQuiltsForm.controls.customerName"
+                  requiredMsg="Customer Name is required."></show-error>
+              </mat-error> -->
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="inline-block">
+            <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+              <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Order No.</h3>
+              <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+              <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+                <input matInput formControlName="orderNumber" readonly>
+                <!-- <mat-error>
+                <show-error [formControlErr]="receiveQuiltsForm.controls.orderNumber"
+                  requiredMsg="Order Number is required."></show-error>
+              </mat-error> -->
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="inline-block">
+            <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+              <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Order Status
+              </h3>
+              <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+              <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+                <mat-select formControlName="orderStatusId" [disabled]="true">
+                  <mat-option *ngFor="let status of allStatus" [value]="status.id">
+                    {{status.name}}
+                  </mat-option>
+                </mat-select>
+
+                <!-- <mat-error>
+                <show-error [formControlErr]="receiveQuiltsForm.controls.statusId"
+                  requiredMsg="Order Status is required."></show-error>
+              </mat-error> -->
+              </mat-form-field>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start ">
+        <div class="card bg-light p-5">
+          For Quilts number
+        </div>
+      </div>-->
+    </div>
+    <div fxFlex>
+      <div class="d-block">
+        <ng-container *ngIf="newPallets.length || newQuilts.length; else invalidItem">
+          <mat-divider></mat-divider>
+          <!-- <div>
+                  <ng-container *ngFor="let serial of newQuilts; let i = index">
+                      <span class="num-cross text-center font-w-600 fs-16 my-3">{{serial['serialNumber']}}
+                          <img class="cursor mb-1" src="../../../../assets/logos/crossS.svg"
+                              (click)="removeSerialNumber(newQuilts, i)">
+                      </span> &nbsp;
+                  </ng-container>
+              </div> -->
+
+
+
+          <!-- <div  fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start"
+                style=" height:50%; flex-wrap: wrap;"> -->
+          <ng-container *ngFor="let serial of newQuilts; let i = index">
+            <div class="d-inline-flex justify-content-start" style="flex-wrap: wrap;">
+              <span class="q-number text-center m-2 text-white">{{serial['serialNumber']}}
+                <img class="cursor mb-1" src="../../../../assets/logos/crossS.svg"
+                  (click)="removeSerialNumber(newQuilts, i)">
+              </span> &nbsp;
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="newPallets.length">
+            <ng-container *ngFor="let pallet of newPallets; let indexParentArray = index">
+              <div class="border-blue" fxFlex fxLayout="column" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start"
+                style="border:1px solid #8FABC9; border-radius:8px; height:50%;">
+                <div class="p-3 pb-0 p-relative">
+                  <span class="font-w-600 fs-20">Pallet Number: {{pallet.serialNumber}}</span>
+                  <span class="pallet-cross cursor-point">
+                    <i class="fa-solid fa-xmark fs-20" (click)="removeSerialNumber(newPallets, indexParentArray)"></i>
+                  </span>
+                </div>
+                <ng-container *ngIf="pallet.quilts.length">
+                  <div class="row p-2">
+                    <div class="d-flex justify-content-start" style="flex-wrap: wrap;">
+                      <ng-container *ngFor="let serial of pallet.quilts; let i = index">
+                        <h3 class="q-number text-center m-2 text-white">{{serial['serialNumber']}}
+                          <!-- <img class="mb-1"
+                          src="../../../../assets/logos/crossS.svg"
+                          (click)="removeSerialNumber(pallet.quilts, i, indexParentArray)"> -->
+                        </h3>
+                      </ng-container>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+
+        <ng-template #invalidItem>
+          <ng-container *ngIf="invalidQuilt && newSerialNumber.length; else addQuiltMsg">
+            <ng-container *ngFor="let serial of newSerialNumber; let i = index">
+              <div class="d-inline-flex justify-content-start" style="flex-wrap: wrap;">
+                <span class="q-number text-center m-2 text-white">{{serial}}
+                  <img class="cursor mb-1" src="../../../../assets/logos/crossS.svg"
+                    (click)="removeSerialNumber(newSerialNumber, i)">
+                </span> &nbsp;
+              </div>
+            </ng-container>
+          </ng-container>
+
+          <ng-template #addQuiltMsg>
+            <div fxFlex>
+              <span class="error" *ngIf="receiveQuiltsForm.dirty">
+                <!-- Please add atleast one Quilt. -->
+              </span>
+            </div>
+          </ng-template>
+
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+</div>

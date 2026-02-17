@@ -1,0 +1,10 @@
+[
+  {
+    "relation": [ "delegate_permission/common.handle_all_urls" ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.QProductsAndServices.QuiltTracker",
+      "sha256_cert_fingerprints": [ "DA:28:86:47:64:ED:29:00:17:69:A5:2A:7A:E2:E7:BC:37:DB:5D:38:5D:27:27:22:75:CE:3A:2F:12:DF:6F:64" ]
+    }
+  }
+]

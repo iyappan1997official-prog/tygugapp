@@ -1,0 +1,21 @@
+.theight {
+  position: relative;
+  height: 168px;
+  overflow: hidden;
+}
+
+.mat-paginator {
+  transform: none;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+.dataSearch ::ng-deep .mat-form-field-infix {
+  width: 164px;
+
+  @media screen and (max-width: 1366px) {
+    width: 169px;
+  }
+}

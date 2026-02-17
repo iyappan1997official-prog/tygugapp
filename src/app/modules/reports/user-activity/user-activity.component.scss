@@ -1,0 +1,73 @@
+.mat-paginator {
+    transform: translateY(0);
+}
+
+.noBtn {
+    border: none;
+    background: none;
+}
+
+.tool {
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.tool .tooltiptext {
+    visibility: hidden;
+    min-width: 8rem;
+    width: 18rem;
+    background-color: #fff;
+    border: 1px solid #3d7cca;
+    color: #212529;
+    font-weight: 500;
+    font-size: 13px;
+    text-align: center;
+    border-radius: 6px;
+    padding: 6px 0 3px;
+    position: absolute;
+    z-index: 1;
+    bottom: 119%;
+    left: 50%;
+    transform: translate(-50%, -6%);
+    opacity: 0;
+    transition: opacity 0.3s;
+
+    p {
+        margin-bottom: 6px;
+    }
+
+    @media screen and (max-width:1440px) {
+        font-size: 12px;
+        width: 15rem;
+
+        p {
+            margin-bottom: 4px;
+        }
+    }
+}
+
+.tool .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -8px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: #3d7cca transparent transparent transparent;
+}
+
+.tool:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.scroller {
+    max-height: 160px;
+    overflow-y: auto;
+
+    @media screen and (max-width:1440px) {
+        max-height: 150px;
+    }
+}

@@ -1,0 +1,32 @@
+.cardwidth {
+    width: 80%;
+}
+
+.formwidth {
+    width: 100%;
+}
+
+.hint {
+    color: #8FABC9;
+}
+
+.hint-icon {
+    background-color: #8FABC9;
+    border-radius: 50%;
+    color: white;
+    padding: 3px 6px;
+}
+
+:host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 0.5em 0 0.6em 0;
+    font-size: 16px;
+}
+.q-number {
+    background-color: #8FABC9;
+    color: white;
+    border-radius: 5px;
+    padding: 5px 15px
+}
+img.cursor {
+    width: 2rem;
+}

@@ -1,0 +1,24 @@
+<div class="row bg-light" [formGroup]="quiltsMovementForm">
+    <div class="col-12 bg-modal text-center text-white py-2">
+        <h2>Filter by Location</h2>
+    </div>
+    <div class="searchWrapper mx-auto my-4" style="width:80%;">
+        <span><img src="../../../../../../assets/logos/SearchSvg.svg" alt="Search"></span>
+        <input placeholder="Search" formControlName="searchBy" class="w-100 form-control mx-auto">
+    </div>
+    <div class="py-2 px-5 main-color mx-2">
+        <section class="py-2" *ngFor="let location of allLocations">
+            <mat-checkbox color="primary" formControlName="checkbox" class="circle-checkbox" [checked]="!location.id" (click)="toggle(location.id, location.name)">{{location.name}}</mat-checkbox>
+          </section>
+          
+    </div>
+    <div class="col-2"></div>
+    <div class="col-4 text-center my-5">
+        <button class="btn p-12 btn-newPrimary" (click)="applyFilter()">Apply</button>
+    </div>
+
+    <div class="col-4 text-center my-5">
+        <button class="btn btnborder p-12 mb-xl-0 mb-3t" (click)="resetFunction()">Clear All</button>
+    </div>
+    <div class="col-2"></div>
+</div>

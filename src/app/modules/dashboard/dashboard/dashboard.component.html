@@ -1,0 +1,1485 @@
+<div class="pb-4 content-wrapper" fxLayout="column">
+  <div fxLayout="row" fxLayoutAlign="space-between center" class="mb-3 pos-stick" [formGroup]="quiltLookupForm"
+       *ngIf="quiltLookupForm">
+
+    <mat-tab-group [selectedIndex]="tabIndex" (selectedTabChange)="refreshData($event)" fxFlex
+                   *ngIf="![this.roleEnum.customerAdmin,this.roleEnum.customerManager, this.roleEnum.globalAdmin].includes(this.loggedInUserRole)">
+      <mat-tab [label]="[this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(this.loggedInUserRole) ? 'Consigned' : 'Leased'"></mat-tab>
+      <mat-tab label="Purchased"></mat-tab>
+      <!-- <mat-tab *ngIf="[this.roleEnum.masterAdmin, this.roleEnum.serviceManager].includes(this.loggedInUserRole)"
+      label="Consigned"></mat-tab> -->
+    </mat-tab-group>
+    <mat-tab-group [selectedIndex]="tabIndex" (selectedTabChange)="refreshData($event)" fxFlex
+                   *ngIf="[this.roleEnum.customerAdmin,this.roleEnum.customerManager,this.roleEnum.globalAdmin].includes(this.loggedInUserRole)">
+      <mat-tab *ngIf="[1,3].includes(this.customerTypeId)" label="Leased"></mat-tab>
+      <mat-tab *ngIf="[2,3].includes(this.customerTypeId)" label="Purchased"></mat-tab>
+    </mat-tab-group>
+
+    <!-- <div class="searchWrapper w-50">
+    <span><img src="../../../../assets/logos/search-icon.png" alt="Search"></span>
+    <input  placeholder="Search" class="w-100 form-control p-0">
+  </div> -->
+    <!-- Pallet Lookup Field -->
+    <mat-form-field appearance="outline" class="w-25 input-pdt fs-16 searchBox">
+      <mat-icon *ngIf="quiltLookupForm?.controls?.serialNumber?.value?.length > 0"
+                matSuffix class="sub-prefix cursor"
+                (click)="palletLookupSearch()">
+        search
+      </mat-icon>
+
+      <input matInput
+             placeholder="Pallet Lookup"
+             formControlName="serialNumber"
+             (keyup.enter)="palletLookupSearch()"/>
+    </mat-form-field>
+    <!-- QR Scan Click Text + Icon -->
+    <div class="scan-wrapper cursor" (click)="openScannerModalForPallet()">
+      <span class="scan-text">Or click here to scan QR</span>
+      <img src="../../../../assets/logos/QR.svg" class="scan-icon" />
+    </div>
+
+    <!-- Quilt Lookup Field -->
+    <mat-form-field appearance="outline" class="w-25 input-pdt fs-16 searchBox">
+      <mat-icon *ngIf="quiltLookupForm?.controls?.serialNumber?.value?.length > 0" matSuffix
+                class="sub-prefix cursor" (click)="quiltLookupSearch()">search</mat-icon>
+      <input matInput placeholder="Quilt Lookup" formControlName="serialNumber" trim
+             (keyup.enter)="quiltLookupSearch()">
+      <!-- <mat-icon *ngIf="quiltLookupForm?.controls?.serialNumber?.value?.length > 0" matSuffix
+      class="sub-prefix cursor" (click)="onSearchByValueChange()">search</mat-icon> -->
+    </mat-form-field>
+    <!-- <button class="btn" (click)="onSearchByValueChange()"></button> -->
+
+
+  </div>
+
+    <div class="mb-3 bg-grey" fxLayout="row" fxLayoutGap="10px" fxLayout.lt-lg="column"
+        *ngIf="![this.roleEnum.customerAdmin,this.roleEnum.customerManager].includes(this.loggedInUserRole)">
+
+        <!-- <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="15px" fxLayoutAlign="start">
+            <span class="mt-1" *ngIf="isSelected">
+                <p class="filterClass">{{companyName ? companyName :'' }}
+                    <img class="cursor" src="../../../../assets/logos/crossS.svg" (click)="removeSelected()"> -->
+        <!-- <i
+                        class="fa-solid fa-xmark text-white cursor" (click)="removeSelected()"></i> -->
+        <!-- </p>
+            </span>
+        </div> -->
+        <!-- <ng-container *ngIf="masterAdminRoles.includes(loggedInUserRole)">
+        <div fxLayout="column" style="max-width: 25%; padding-top: 20px ;">
+            <div fxFlex fxLayout="row wrap" fxLayout.lt-md="column" fxLayoutAlign="start" fxLayoutGap="10px" *ngIf="filteredCompany">
+                <ng-container *ngFor="let quilt of quiltMovData; let i= index">
+                    <p class="filterClass">{{quilt['customerName']}}
+                        <img class="cursor" src="../../../../assets/logos/crossS.svg"
+                            (click)="filterComapny(quiltMovData, i)">
+                    </p>
+                </ng-container>
+            </div>
+        </div>
+        </ng-container> -->
+        <!-- <ng-container
+            *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.serviceManager, this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(this.loggedInUserRole)">
+            <div fxLayout="column" class="scroll-bar" style="max-width: 55%; padding-top: 20px ; overflow-x: auto;">
+                <div fxLayout="row" fxLayoutAlign="start" fxLayoutGap="10px" *ngIf="filteredCompany">
+                    <ng-container *ngFor="let name of customerName; let i= index">
+                        <p class="filterClass num-cross">{{name}}
+                            <img class="cursor" src="../../../../assets/logos/crossS.svg"
+                                (click)="filterComapny(customerName, i)">
+                        </p>
+                    </ng-container>
+                </div>
+            </div>
+        </ng-container> -->
+
+
+        <!-- <ng-container *ngIf="companyAdminRoles.includes(loggedInUserRole)">
+            <div fxLayout="column" class="scroll-bar" style="max-width: 55%; padding-top: 20px ; overflow-x: auto;">
+                <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="start" fxLayoutGap="10px"
+                    *ngIf="filteredLocation">
+                    <ng-container *ngFor="let name of customerName; let i= index">
+                        <p class="filterClass num-cross">{{name}}
+                            <img class="cursor" src="../../../../assets/logos/crossS.svg"
+                                (click)="filterLocation(customerName, i)">
+                        </p>
+                    </ng-container>
+                </div>
+            </div>
+        </ng-container> -->
+
+        <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="end center">
+
+            <!-- <div [formGroup]="quiltActivityForm" *ngIf="!dateRange">
+                <mat-form-field class="font-w-600 input-pdt sm-date" fxFlex>
+                    <input matInput formControlName="startDate" [value]="startDat" style="text-align: center;">
+                </mat-form-field>
+                <span class="d-flex align-items-center fs-16 pl-3"><b> to </b></span>
+                <mat-form-field class="font-w-600 input-pdt sm-date" fxFlex>
+                    <input matInput formControlName="endDate" [value]="endDat" style="text-align: center;">
+                </mat-form-field>
+            </div> -->
+            <!-- <div [formGroup]="quiltActivityForm" *ngIf="!dateRangeCustom">
+
+                <mat-form-field appearance="outline" class="font-w-600 input-pdt sm-date filterPadding" fxFlex
+                    style="transform: translateY(4px);">
+                    <input matInput formControlName="startDate" [matDatepicker]="picker"
+                        (dateChange)="onStartingDateScheduledRange($event)">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <span class="d-flex align-items-center fs-16"><b>&nbsp; to &nbsp; </b></span>
+                <mat-form-field appearance="outline" class="font-w-600 input-pdt sm-date filterPadding" fxFlex
+                    style="transform: translateY(4px);">
+                    <input matInput formControlName="endDate" [matDatepicker]="picker1"
+                        (dateChange)="onEndingDateScheduledRange($event)">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+            </div> -->
+
+
+            <!-- <div class="text-center">
+                <span [formGroup]="rangeForm">
+                    <mat-form-field appearance="outline" class="selectHomeFilter input-pdt filterPadding"
+                        style="width:70%; transform: translateY(4px);">
+                        <mat-select formControlName="rangeOpt">
+                            <mat-option *ngFor="let date of dates" [value]="date.value"
+                                (click)="dateRangee(date.value)">
+                                {{date.viewValue}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </span>
+            </div> -->
+
+            <!-- <div [formGroup]="regionSelected" *ngIf="masterAdminRoles.includes(loggedInUserRole)">
+                <mat-form-field appearance="outline" class="selectHomeFilter input-pdt filterPadding"
+                    style="width:85%; transform: translateY(4px);">
+                    <mat-label class="labelcolor">Customer Regions</mat-label>
+                    <mat-select formControlName="customerRegion" (selectionChange)="regionChange($event.value)">
+                        <ng-container *ngIf="allCompanyRegions?.length">
+                            <mat-option [value]="0">All</mat-option>
+                            <mat-option *ngFor="let data of allCompanyRegions" [value]="data.id">
+                                {{data.region}}
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+            </div> -->
+
+            <!-- <div [formGroup]="consignDrop"
+                *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole)">
+                <mat-form-field appearance="outline" class="selectHomeFilter input-pdt filterPadding"
+                    style="width:85%; transform: translateY(4px);">
+                    <mat-label class="labelcolor">Consign Filter</mat-label>
+                    <mat-select formControlName="locationtyprid" (selectionChange)="consignFilter($event.value)">
+                        <mat-option [value]="0">All</mat-option>
+                        <mat-option [value]="2">Non Consigned</mat-option>
+                        <mat-option [value]="3">Consigned</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div> -->
+
+            <div
+                *ngIf="(masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.serviceManager, this.roleEnum.consignAdmin, this.roleEnum.globalAdmin].includes(this.loggedInUserRole))">
+
+                <mat-form-field appearance="outline" class="selectHomeFilter input-pdt filterPadding"
+                    style="width:85%; transform: translateY(4px);">
+                    <mat-label class="labelcolor">Customer</mat-label>
+                    <mat-select (selectionChange)="companyFilter($event.value)">
+                        <ng-container *ngIf="allCustomers?.length">
+                            <mat-option [value]="0">All</mat-option>
+                            <mat-option *ngFor="let data of allCustomers" [value]="data.id">
+                                {{data.name}}
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+
+                <!-- <button class="btn btn-newPrimary text-white font-weight-bolder p-12 btn-filter"
+                    (click)="openFilterModal()">
+                    <img class="mb-1" src="../../../../assets/logos/Filter.svg">
+                    Filter by
+                    customer
+                </button> -->
+            </div>
+            <!-- <div *ngIf="companyAdminRoles.includes(loggedInUserRole)">
+                <button class="btn btn-newPrimary text-white font-weight-bolder p-12 btn-filter"
+                    (click)="openFilterByLocationModal()">
+                    <img class="mb-1" src="../../../../assets/logos/Filter.svg">
+                    Filter by
+                    Location
+                </button>
+            </div> -->
+        </div>
+    </div>
+    <div class="mb-3 bg-grey" fxLayout="row" fxLayoutGap="10px" fxLayout.lt-lg="column"
+        *ngIf="[this.roleEnum.customerAdmin,this.roleEnum.customerManager].includes(this.loggedInUserRole) && this.tab == 'leased'">
+        <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="end center">
+            <div>
+                <mat-form-field appearance="outline" class="selectHomeFilter input-pdt filterPadding"
+                    style="width:85%; transform: translateY(4px);">
+                    <mat-label class="labelcolor">Order Name</mat-label>
+                    <mat-select (selectionChange)="orderNameFilter($event.value)">
+                        <ng-container *ngIf="allOrderNames?.length">
+                            <mat-option [value]="0">All</mat-option>
+                            <mat-option *ngFor="let data of allOrderNames" [value]="data.id">
+                                {{data.name}}
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+
+            </div>
+        </div>
+    </div>
+    <ng-container>
+        <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="20px" fxFlex>
+            <div fxLayout="column" fxLayout.lt-md="column" fxFlex fxFlex.gt-md="65%" fxLayoutGap="20px">
+                <div fxLayout="row" fxLayout.lt-md="column" fxFlex fxLayoutGap="20px" class="InventoryOverview">
+                    <!-- <ng-container *ngIf="!locationUserRoles.includes(loggedInUserRole)"> -->
+                    <div class="card cardborder dash-card px-2 py-0" fxFlex fxFlex.gt-sm="50%">
+                        <!-- <p class="text-center pt-4 font-w-600 fs-16">Total Quilts : {{quiltData.totalQuilts}}</p> -->
+                        <div class="card_head">
+                            <div class="chart_title">
+                                Inventory Overview
+                            </div>
+                            <div class="chart_options" *ngIf="this.inventoryOverviewFilters"
+                                [formGroup]="inventoryOverviewFilters">
+                                <mat-form-field appearance="outline" class="input-pdt"
+                                    *ngIf="![this.roleEnum.customerManager, this.roleEnum.consignManager].includes(loggedInUserRole)">
+
+                                    <mat-select formControlName="continentId">
+                                        <mat-option value="0" >
+                                          Global
+                                        </mat-option>
+                                        <mat-option *ngFor="let item of allCusRegionLocations" [value]="item.id">
+                                            {{ item.continentName }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <ng-container
+                                    *ngIf="this.inventoryOverviewFilters.controls?.continentId?.value > 0 && ![this.roleEnum.customerManager, this.roleEnum.consignManager].includes(loggedInUserRole)">
+                                    <mat-form-field appearance="outline" class="input-pdt">
+                                        <mat-select formControlName="locationId">
+                                            <!-- <mat-option value="0">
+                                                All
+                                            </mat-option> -->
+                                            <mat-option *ngIf="inventoryOverViewLocation?.length === 0" value="0">
+                                                No location
+                                            </mat-option>
+                                            <mat-option *ngIf="inventoryOverViewLocation?.length > 0" value="0">
+                                                All
+                                            </mat-option>
+                                            <mat-option *ngFor="let item of inventoryOverViewLocation"
+                                                [value]="item.id">
+                                                {{ item.locationName }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </ng-container>
+                                <mat-form-field appearance="outline" class="input-pdt">
+                                    <mat-select formControlName="quiltSize">
+                                        <mat-option value="0">
+                                            All Size
+                                        </mat-option>
+                                        <mat-option *ngFor="let type of allQuiltTypes" [value]="type.id">
+                                            {{ type.name }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div id="chart">
+                            <apx-chart [series]="inventoryOverViewSeriesAll" [chart]="chartOptions.chart"
+                                [labels]="inventoryOverViewLabelsAll" [fill]="chartOptions.fill"
+                                [dataLabels]="chartOptions.dataLabels" [title]="chartOptions.title"
+                                [plotOptions]="chartOptions.plotOptions" [theme]="chartOptions.theme"
+                                [responsive]="chartOptions.responsive" [legend]="chartOptions.legend" [noData]="{
+                            text:'No Data Available',
+                            align: 'center',
+                            verticalAlign: 'middle',
+                            offsetX : 0,
+                            offsetY:0,
+                            style: {
+                              fontSize:'20px',
+                              fontFamily:'Open Sans'
+                            }}" [states]="chartOptions.states"></apx-chart>
+                            <!-- <p *ngIf="this.totallabelCount >5" class="color-primary cursor see_btn"
+                                (click)="chartModal('inventory')">
+                                See More
+                            </p> -->
+                        </div>
+                    </div>
+                    <!-- </ng-container> -->
+                    <div class="card cardborder dash-card px-2 py-0" fxFlex fxFlex.gt-sm="50%">
+                        <!-- <p class="text-center pt-4 font-w-600 fs-16">Total Quilts : {{quiltData.totalQuilts}}</p> -->
+                        <div class="card_head">
+                            <div class="chart_title">
+                                New/Used
+                            </div>
+                            <div class="chart_options" *ngIf="this.usedFilters" [formGroup]="usedFilters">
+                                <mat-form-field appearance="outline" class="input-pdt"
+                                    *ngIf="![this.roleEnum.customerManager, this.roleEnum.consignManager].includes(loggedInUserRole)">
+                                    <mat-select formControlName="continentId">
+                                        <mat-option value="0" >
+                                            Global
+                                        </mat-option>
+                                        <mat-option *ngFor="let item of allCusRegionLocations" [value]="item.id">
+                                            {{ item.continentName }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <ng-container *ngIf="this.usedFilters.controls?.continentId?.value > 0">
+                                    <mat-form-field appearance="outline" class="input-pdt"
+                                        *ngIf="![this.roleEnum.customerManager, this.roleEnum.consignManager].includes(loggedInUserRole)">
+                                        <mat-select formControlName="locationId">
+                                            <mat-option *ngIf="usedLocation?.length === 0" value="0">
+                                                No location
+                                            </mat-option>
+                                            <mat-option *ngIf="usedLocation?.length > 0" value="0">
+                                                All
+                                            </mat-option>
+                                            <mat-option *ngFor="let item of usedLocation" [value]="item.id">
+                                                {{ item.locationName }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </ng-container>
+
+                                <mat-form-field appearance="outline" class="input-pdt">
+                                    <mat-select formControlName="quiltSize">
+                                        <mat-option value="0">
+                                            All Size
+                                        </mat-option>
+                                        <mat-option *ngFor="let type of allQuiltTypes" [value]="type.id">
+                                            {{ type.name }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div id="chart1">
+                            <apx-chart [series]="newUsedSeries" [chart]="chartOptions.chart" [labels]="newUsedLabels"
+                                [fill]="chartOptions.fill" [dataLabels]="chartOptions.dataLabels"
+                                [title]="chartOptions.title" [theme]="chartOptions.theme"
+                                [responsive]="chartOptions.responsive" [plotOptions]="chartOptions.plotOptions"
+                                [legend]="chartOptions.legend" [noData]="{
+                            text:'No Data Available',
+                            align: 'center',
+                            verticalAlign: 'middle',
+                            offsetX : 0,
+                            offsetY:0,
+                            style: {
+                              fontSize:'20px',
+                              fontFamily:'Open Sans'
+                            }}" [states]="chartOptions.states"></apx-chart>
+                        </div>
+                    </div>
+
+                </div>
+                <div fxLayout="row" fxLayout.lt-md="column" fxFlex fxLayoutGap="20px" class="Usagebysize">
+                    <!-- <ng-container *ngIf="!locationUserRoles.includes(loggedInUserRole)"> -->
+                    <div class="card cardborder dash-card px-2 py-0" fxFlex fxFlex.gt-sm="50%" >
+                        <!-- <p class="text-center pt-4 font-w-600 fs-16">Total Quilts : {{quiltData.totalQuilts}}</p> -->
+                        <div class="card_head">
+                            <div class="chart_title">
+                                Usage by size
+                            </div>
+                            <div class="chart_options"
+                                *ngIf="this.usageBySizeFilters && ![this.roleEnum.customerManager, this.roleEnum.consignManager].includes(loggedInUserRole)"
+                                [formGroup]="usageBySizeFilters">
+                                <mat-form-field appearance="outline" class="input-pdt">
+                                    <mat-select formControlName="continentId">
+                                        <mat-option value="0" >
+                                            Global
+                                        </mat-option>
+                                        <mat-option *ngFor="let item of allCusRegionLocations" [value]="item.id">
+                                            {{ item.continentName }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <ng-container *ngIf="this.usageBySizeFilters.controls?.continentId?.value > 0">
+                                    <mat-form-field appearance="outline" class="input-pdt">
+                                        <mat-select formControlName="locationId">
+                                            <mat-option *ngIf="usageBySizeLocations?.length === 0" value="0">
+                                                No location
+                                            </mat-option>
+                                            <mat-option *ngIf="usageBySizeLocations?.length > 0" value="0">
+                                                All
+                                            </mat-option>
+                                            <mat-option *ngFor="let item of usageBySizeLocations" [value]="item.id">
+                                                {{ item.locationName }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </ng-container>
+                                <mat-form-field appearance="outline" class="input-pdt">
+                                    <mat-select formControlName="dateId">
+                                        <mat-option *ngFor="let item of datesofUsage" [value]="item.value">
+                                            {{ item.viewValue }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div id="chart2">
+                            <apx-chart [series]="usageBySizeSeriesAll" [chart]="chartOptions.chart"
+                                [labels]="usageBySizeLabelsAll" [fill]="chartOptions.fill"
+                                [dataLabels]="chartOptions.dataLabels" [title]="chartOptions.title"
+                                [theme]="chartOptions.theme" [responsive]="chartOptions.responsive"
+                                [plotOptions]="chartOptions.plotOptions" [legend]="chartOptions.legend" [noData]="{
+                text:'No Data Available',
+                align: 'center',
+                verticalAlign: 'middle',
+                offsetX : 0,
+                offsetY:0,
+                style: {
+                  fontSize:'20px',
+                  fontFamily:'Open Sans'
+                }}" [states]="chartOptions.states"></apx-chart>
+                            <!-- <p *ngIf="this.totallabelCount >5" class="color-primary cursor see_btn"
+                                (click)="chartModal('usedBySize')">
+                                See More
+                            </p> -->
+                        </div>
+                    </div>
+                    <!-- </ng-container> -->
+                    <div class="card cardborder dash-card px-2 py-0" fxFlex fxFlex.gt-sm="50%">
+                        <!-- <p class="text-center pt-4 font-w-600 fs-16">Total Quilts : {{quiltData.totalQuilts}}</p> -->
+                        <div class="card_head">
+                            <div class="chart_title">
+                                Total Usage
+                            </div>
+                            <div class="chart_options"
+                                *ngIf="this.totalUsageFilter && ![this.roleEnum.customerManager, this.roleEnum.consignManager].includes(loggedInUserRole)"
+                                [formGroup]="totalUsageFilter">
+                                <mat-form-field appearance="outline" class="input-pdt">
+                                    <mat-select formControlName="continentId">
+                                        <mat-option value="0" >
+                                            Global
+                                        </mat-option>
+                                        <mat-option *ngFor="let item of allCusRegionLocations" [value]="item.id">
+                                            {{ item.continentName }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <ng-container *ngIf="this.totalUsageFilter.controls?.continentId?.value > 0">
+                                    <mat-form-field appearance="outline" class="input-pdt">
+                                        <mat-select formControlName="locationId">
+                                            <mat-option *ngIf="totalUsageLocations?.length === 0" value="0">
+                                                No location
+                                            </mat-option>
+                                            <mat-option *ngIf="totalUsageLocations?.length > 0" value="0">
+                                                All
+                                            </mat-option>
+                                            <mat-option *ngFor="let item of totalUsageLocations" [value]="item.id">
+                                                {{ item.locationName }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </ng-container>
+                                <mat-form-field appearance="outline" class="input-pdt">
+                                    <mat-select formControlName="dateId">
+                                        <mat-option *ngFor="let item of datesofUsage" [value]="item.value">
+                                            {{ item.viewValue }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div id="chart3">
+                            <apx-chart [series]="totalUsageSeries" [chart]="chartOptions.chart"
+                                [labels]="totalUsageLabels" [fill]="chartOptions.fill"
+                                [dataLabels]="chartOptions.dataLabels" [title]="chartOptions.title"
+                                [theme]="chartOptions.theme" [responsive]="chartOptions.responsive"
+                                [plotOptions]="chartOptions.plotOptions" [legend]="chartOptions.legend" [noData]="{
+                text:'No Data Available',
+                align: 'center',
+                verticalAlign: 'middle',
+                offsetX : 0,
+                offsetY:0,
+                style: {
+                  fontSize:'20px',
+                  fontFamily:'Open Sans'
+                }}" [states]="chartOptions.states"></apx-chart>
+                        </div>
+                    </div>
+
+                </div>
+                <ng-container *ngIf="masterAdminRoles.includes(loggedInUserRole)">
+                    <div fxLayout="row" fxLayout.lt-md="column" fxFlex fxLayoutGap="20px">
+                        <div class="card cardborder dash-card px-2 py-0" fxFlex fxFlex.gt-sm="50%">
+                            <div class="card_head">
+                                <div class="chart_title">
+                                    Retired Quilts
+                                </div>
+                            </div>
+                            <div id="chart4" *ngIf="!noChart">
+                                <apx-chart [series]="chartOptions4.series" [chart]="chartOptions4.chart"
+                                    [labels]="chartOptions4.labels" [title]="chartOptions4.title"
+                                    [dataLabels]="chartOptions4.dataLabels" [theme]="chartOptions4.theme"
+                                    [responsive]="chartOptions4.responsive" [noData]="{
+                text:'No Data Available',
+                align: 'center',
+                verticalAlign: 'middle',
+                offsetX : 0,
+                offsetY:0,
+                style: {
+                  fontSize:'20px',
+                  fontFamily:'Open Sans'
+                }}" [states]="chartOptions4.states"></apx-chart>
+                            </div>
+                            <ng-container *ngIf="noChart">
+                                <p class="retiredNoData">No Data Available</p>
+                            </ng-container>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+
+            <div class=" p-0 dash-card" fxFlex>
+
+                <div class="avgQuiltBox">
+                    <img src="../../../../assets/logos/avg.svg" alt="Avg">
+                    <span class="avgQuiltBox_text"><span>{{mapDetails.avgUsagePerQuilt}}</span>Avg Uses per
+                        Quilt</span>
+                </div>
+                <!-- <p>Maps</p>> -->
+                <!-- <div class="card border-blue">  -->
+                <!-- <div class="mb-xl-6"> -->
+                <!-- <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start "> -->
+                <!-- <div>  -->
+                <div class="card p-0">
+                    <div *ngIf="quiltLocationLookupForm" [formGroup]="quiltLocationLookupForm">
+                        <mat-form-field appearance="outline" class="input-pdt card-search fs-16 searchBox mat-w-160">
+                            <mat-icon matSuffix class="sub-prefix cursor"
+                                (click)="locationLookupSearch()">search</mat-icon>
+                            <input matInput placeholder="Location Lookup" formControlName="searchByLocation" trim
+                                (keyup.enter)="locationLookupSearch()">
+                        </mat-form-field>
+                    </div>
+                    <div class="card-body p-0">
+                        <google-map [zoom]="mapZoom" [center]="mapCenter" [options]="mapOptions">
+                            <ng-container *ngFor="let item of markers">
+                                <map-marker #marker="mapMarker" [position]="item.mapCenter" [label]="marker.label"
+                                    [options]="markerOptions" (mapClick)="openInfoWindow(marker,item)">
+                                </map-marker>
+                                <map-info-window>
+                                    <div>
+                                        <table class="table table-borderless">
+                                            <thead>
+                                                <tr class="tablelight text-center fs-14">
+                                                    <th>
+                                                        {{(loggedInUserRole==this.roleEnum.masterAdmin ||
+                                                        [this.roleEnum.globalAdmin].includes(loggedInUserRole)||loggedInUserRole==this.roleEnum.serviceManager)?'Part
+                                                        Number':'Size'}}
+                                                    </th>
+                                                    <th>
+                                                        Quantity
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <ng-container *ngFor="let data of markerInfoContent">
+                                                    <tr class="text-center">
+                                                        <td>
+                                                            {{data['size'] || '--'}}
+                                                        </td>
+
+                                                        <td>
+                                                            {{data['quantity'] || '--'}}</td>
+
+                                                    </tr>
+                                                </ng-container>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </map-info-window>
+                            </ng-container>
+                        </google-map>
+                        <!-- <div class="map_card">
+                            <div class="map_card_text">
+                                <span>Total Quilts</span>
+                                <span>{{mapDetails.totalQuilts}}</span>
+                            </div>
+                            <div class="map_card_text">
+                                <span class="fw-600">Active Quilts</span>
+                                <span>{{mapDetails.activeQuilts}}</span>
+                            </div>
+                            <div class="map_card_text">
+                                <span class="fw-600">Service Center Quilts</span>
+                                <span>{{mapDetails.serviceCenterQuilts}}</span>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+
+                <!-- </div> -->
+                <!-- </div>  -->
+                <!-- </div> -->
+            </div>
+        </div>
+    </ng-container>
+    <!-- cards with table -->
+    <ng-container
+        *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole) || [this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(loggedInUserRole)">
+        <div class="row" *ngIf="contentView==='cards';else fullTable">
+            <ng-container *ngIf="quiltMovData && quiltMovData.length > 0; else noDataForQuilt">
+                <div class="mt-3"
+                    [class]="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole) || [this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(loggedInUserRole) ? 'col-xl-12' : 'col-xl-6' "
+                    *ngFor="let quilt of quiltMovData">
+                    <!-- <div class="card responsive-card hovertable p-2 pt-4 mt-4 h-100" 
+                [ngClass]="customerIds.includes(quilt.customerId, quilt.customerName) ? 'card-default' : 'card-hover' "> -->
+                    <!-- <div class="card responsive-card hovertable p-2 pt-4 mt-4 h-100" 
+                [ngClass]="customerIds.includes(quilt.customerId, quilt.customerName) ? 'card-default' : 'card-hover' " (click)="selectCustomer(quilt.customerId, quilt.customerName)"> -->
+                    <div class="card responsive-card hovertable p-2 pt-4 mt-4 h-100"
+                        [ngClass]="cardClicked == quilt.customerId ? 'activeCard' : ''"
+                        (click)="chartResponse(quilt.customerId)">
+                        <h2 class="text-center mb-2 main-color font-w-600 fs-24">{{quilt.customerName}}</h2>
+                        <div class="row pt-3">
+                            <div class="col-md-3 text-center mb-2"><span
+                                    class="sub-head-color font-w-600 fs-18 quilt-text-font font-title">{{orderTypeId ===
+                                    1 ?
+                                    [this.roleEnum.consignAdmin,
+                                    this.roleEnum.consignManager].includes(loggedInUserRole) ? "Quilts Consigned :" :
+                                    "Quilts
+                                    Leased :" : "Quilts Purchased :"}}
+                                </span>
+                                <span
+                                    class="main-color font-w-600 fs-18 quilt-text-font font-title">{{quilt.quiltsOrdered}}</span>
+                            </div>
+                            <ng-container
+                                *ngIf="![this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole)">
+                                <div class="col-md-3 text-center mb-2"><span
+                                        class="sub-head-color font-w-600 fs-18 quilt-text-font font-title">Assigned:
+                                    </span> <span
+                                        class="greenclr font-w-600 fs-18 quilt-text-font font-title">{{quilt.quiltsAssigned}}</span>
+                                </div>
+                            </ng-container>
+                            <div class="col-md-3 text-center">
+                                <span class="sub-head-color font-w-600 fs-18 mb-2 quilt-text-font font-title">Remaining:
+                                </span> <span class="red-color font-w-600 fs-18 quilt-text-font font-title">
+                                    {{quilt.quiltsRemaining}}</span>
+                            </div>
+                            <ng-container
+                                *ngIf="![this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(loggedInUserRole)">
+                                <div class="col-md-3 text-center">
+                                    <span class="sub-head-color font-w-600 fs-18 mb-2 quilt-text-font font-title">Active
+                                        Quilt:
+                                    </span> <span class="font-w-600 fs-18 quilt-text-font font-title">
+                                        {{quilt.activeQuilts}}</span>
+                                </div>
+                            </ng-container>
+                        </div>
+                        <!-- <div class="table-responsive"> as overflow-x is hidding the tooltip -->
+                        <table class="table table-borderless"
+                            [class]="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole) || [this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(loggedInUserRole) ? 'bulkTable' : '' ">
+                            <thead>
+                                <tr class="tablelight text-center fs-14">
+                                    <th>
+                                        Location
+                                    </th>
+                                    <th
+                                        *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole) || [this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(loggedInUserRole)">
+                                        Part Number</th>
+                                    <th>Quilt Type</th>
+                                    <th>{{([this.roleEnum.consignAdmin,
+                                        this.roleEnum.consignManager].includes(loggedInUserRole) && this.tab !==
+                                        "purchased") ? 'Consigned' : 'On
+                                        Hand'}}</th>
+                                    <!-- <th
+                                        *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole)">
+                                        Consigned</th> -->
+                                    <th
+                                        *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole) || ([this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(loggedInUserRole) && this.tab === 'purchased')">
+                                        Supplier Inbound</th>
+                                    <th>
+                                        {{masterAdminRoles.includes(loggedInUserRole) ||
+                                        [this.roleEnum.globalAdmin].includes(loggedInUserRole)||
+                                        [this.roleEnum.serviceManager].includes(this.loggedInUserRole) ||
+                                        ([this.roleEnum.consignAdmin,
+                                        this.roleEnum.consignManager].includes(loggedInUserRole) && this.tab ===
+                                        "purchased") ?
+                                        'Customer Network Inbound' :
+                                        'Inbound'}}</th>
+                                    <th
+                                        *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole)">
+                                        RMA Returning</th>
+                                    <th>{{masterAdminRoles.includes(loggedInUserRole) ||
+                                        [this.roleEnum.serviceManager].includes(this.loggedInUserRole) ||
+                                        [this.roleEnum.globalAdmin].includes(loggedInUserRole)||
+                                        ([this.roleEnum.consignAdmin,
+                                        this.roleEnum.consignManager].includes(loggedInUserRole) && this.tab ===
+                                        "purchased") ?
+                                        'Customer Network Outbound' :
+                                        'Outbound'}}</th>
+                                    <th
+                                        *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole) || [this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole)">
+                                        Used</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container *ngIf="items$ | async as quiltMov;">
+                                    <ng-container
+                                        *ngIf="quiltMov && quiltMov.length > 0 && ([this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole) || quilt.activeQuilts); else noData">
+                                        <ng-container *ngFor="let data of quilt['quiltsDistributions']; let i = index">
+                                            <ng-container *ngIf="contentView==='cards'">
+                                                <tr class="text-center">
+                                                    <td>
+                                                        {{data['locationName'] || '--'}}
+                                                    </td>
+                                                    <td
+                                                        *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole)|| [this.roleEnum.serviceManager].includes(this.loggedInUserRole) || [this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole)">
+                                                        {{data['partNumber'] || '--'}}
+                                                    </td>
+                                                    <td>
+                                                        {{data['quiltType'] || '--'}}</td>
+                                                    <td>
+                                                        <div class="tool">
+                                                            {{data['onhand']}}
+                                                            <span class="tooltiptext"
+                                                                *ngIf="data['onhand'] && !([this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole) && this.tab !== 'purchased')">
+                                                                <ng-container
+                                                                    *ngFor="let item of data['onhandSerialNumber']">
+                                                                    <p>{{item}}</p>
+                                                                </ng-container>
+                                                                <p class="color-primary cursor" *ngIf="!([this.roleEnum.consignAdmin,
+                                                                this.roleEnum.consignManager].includes(loggedInUserRole) && this.tab !==
+                                                                'purchased')"
+                                                                    (click)="serialsReport(quilt['customerId'],quilt['customerName'],data['locationId'],6,0,0)">
+                                                                    See More
+                                                                </p>
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <!-- <td
+                                                        *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole)|| [this.roleEnum.serviceManager].includes(this.loggedInUserRole)">
+                                                        {{data['consigned']}}
+                                                    </td> -->
+                                                    <td
+                                                        *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole) || ([this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole) && this.tab === 'purchased')">
+                                                        <div class="tool">
+                                                            {{data['supplierInbound'] || '--'}}
+                                                            <span class="tooltiptext" *ngIf="data['supplierInbound']">
+                                                                <ng-container
+                                                                    *ngFor="let item of data['supplierInboundSerialNumber']">
+                                                                    <p>{{item}}</p>
+                                                                </ng-container>
+                                                                <p class="color-primary cursor"
+                                                                    (click)="serialsReport(quilt['customerId'],quilt['customerName'],data['locationId'],7,2,0)">
+                                                                    See More
+                                                                </p>
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="tool">
+                                                            {{data['inbound']}}
+                                                            <span class="tooltiptext" *ngIf="data['inbound']">
+                                                                <ng-container
+                                                                    *ngFor="let item of data['inboundSerialNumber']">
+                                                                    <p>{{item}}</p>
+                                                                </ng-container>
+                                                                <p class="color-primary cursor"
+                                                                    (click)="serialsReport(quilt['customerId'],quilt['customerName'],data['locationId'],7,1,0)">
+                                                                    See More
+                                                                </p>
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td
+                                                        *ngIf="masterAdminRoles.includes(loggedInUserRole) ||[this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole)">
+                                                        <div class="tool">
+                                                            {{data['rmaOutbound'] || '--'}}
+                                                            <span class="tooltiptext" *ngIf="data['rmaOutbound']">
+                                                                <ng-container
+                                                                    *ngFor="let item of data['rmaOutboundSerialNumber']">
+                                                                    <p>{{item}}</p>
+                                                                </ng-container>
+                                                                <p class="color-primary cursor"
+                                                                    (click)="serialsReport(quilt['customerId'],quilt['customerName'],data['locationId'],8,0,2)">
+                                                                    See More
+                                                                </p>
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="tool">
+                                                            {{data['outbound']}}
+                                                            <span class="tooltiptext" *ngIf="data['outbound']">
+                                                                <ng-container
+                                                                    *ngFor="let item of data['outboundSerialNumber']">
+                                                                    <p>{{item}}</p>
+                                                                </ng-container>
+                                                                <p class="color-primary cursor"
+                                                                    (click)="serialsReport(quilt['customerId'],quilt['customerName'],data['locationId'],8,0,1)">
+                                                                    See More
+                                                                </p>
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td
+                                                        *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole) || [this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole)">
+                                                        {{data['usedCount'] || '--'}}
+                                                    </td>
+                                                </tr>
+                                            </ng-container>
+                                            <!-- <ng-container *ngIf="contentView!=='cards'">
+                                            <tr class="text-center" (click)="openData(!collapsed,i)"
+                                                [attr.aria-expanded]="collapsedNot!==i"
+                                                aria-controls="collapseExample1">
+                                                <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                                    {{data['locationName'] || '--'}}
+                                                </td>
+                                                <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                                    {{data['quiltType'] || '--'}}</td>
+                                                <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                                    {{data['onhand']}}
+                                                </td>
+                                                <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                                    {{data['inbound']}}
+                                                </td>
+                                                <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                                    {{data['outbound']}}
+                                                </td>
+                                            </tr>
+                                            </ng-container> -->
+                                            <!-- <ng-container *ngIf="data['quiltType'] === 'Multiple'">
+                                                <ng-container *ngIf="collapsed">
+                                                    <tr class="text-center fs-16" style="background-color: #8FABC9;"
+                                                        id="collapseExample1" [ngbCollapse]="collapsedNot!==i"
+                                                        *ngFor="let quil of data['quiltsBreakdown']">
+                                                        <td class="text-white">
+                                                        </td>
+                                                        <td class="text-white">{{quil['quiltType'] || '--'}}</td>
+                                                        <td class="text-white">
+                                                            {{quil['onhand']}}
+                                                        </td>
+                                                        <td class="text-white">
+                                                            {{quil['inbound']}}
+                                                        </td>
+                                                        <td class="text-white">
+                                                            {{quil['outbound']}}
+                                                        </td>
+                                                    </tr>
+                                                </ng-container>
+                                            </ng-container> -->
+                                        </ng-container>
+
+                                    </ng-container>
+                                    <ng-template #noData>
+                                        <tr *ngIf="!isLoading">
+                                            <td colspan="9" class="bg-white">
+                                                <div class="text-center">
+                                                    <h3>No quilt shipped yet</h3>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                        <div class="text-end color-primary cursor my-3 me-3 font-w-600 fs-14"
+                            style="position: absolute; bottom:0; right:0;"
+                            *ngIf="([this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole) && quilt.quiltsOrdered) || quilt.activeQuilts"
+                            (click)="particularTable(quilt['customerId'], quilt['customerName'])">View Full
+                            Table</div>
+                        <!-- </div> -->
+                    </div>
+                </div>
+                <mat-paginator [length]="length" [pageSize]="quiltsMovementForm.controls.pageSize.value"
+                    [pageSizeOptions]="pageSizeOptions" (page)="paginator($event)" showFirstLastButtons
+                    aria-label="Select page">
+                </mat-paginator>
+            </ng-container>
+            <ng-template #noDataForQuilt>
+                <div class="card responsive-card p-2 pt-4 mt-4 h-100">
+                    <h3 class="w-100 text-center">No Quilt Found</h3>
+                </div>
+            </ng-template>
+        </div>
+
+
+        <!-- card with full table -->
+        <ng-template #fullTable>
+            <div class="card res-card pt-3 mt-3" *ngFor="let quilt of quiltMovData">
+                <div fxLayout="row" class="mx-3" fxLayout.lt-md="column">
+                    <div fxFlex="50%">
+                        <h2 class="main-color font-w-600 fs-24"><img class="cursor mb-1"
+                                src="../../../../assets/logos/arrow-backP.svg" (click)="backToTables()">
+                            &nbsp;{{quilt.customerName}}</h2>
+                    </div>
+                    <div fxFlex fxLayout="row" fxLayoutAlign="space-around center" fxLayout.lt-md="column">
+                        <p><span class="sub-head-color font-w-600 fs-18">{{orderTypeId === 1 ?
+                                [this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole) ?
+                                "Quilts Consigned :" : "Quilts
+                                Leased :" : "Quilts Purchased :"}} </span> <span
+                                class="main-color font-w-600 fs-18">{{quilt.quiltsOrdered}}</span></p>
+                        <ng-container
+                            *ngIf="![this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole)">
+                            <p><span class="sub-head-color font-w-600 fs-18">Assigned: </span> <span
+                                    class="greenclr font-w-600 fs-18">{{quilt.quiltsAssigned}}</span></p>
+                        </ng-container>
+                        <p><span class="sub-head-color font-w-600 fs-18">Remaining: </span> <span
+                                class="red-color font-w-600 fs-18">
+                                {{quilt.quiltsRemaining}}</span></p>
+                        <ng-container
+                            *ngIf="![this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole)">
+                            <p><span class="sub-head-color font-w-600 fs-18">Active Quilt: </span> <span
+                                    class="font-w-600 fs-18">
+                                    {{quilt.activeQuilts}}</span></p>
+                        </ng-container>
+                    </div>
+                </div>
+                <div class="mx-4">
+                    <table class="table">
+                        <thead>
+                            <tr class="tablelight text-center main-color fs-16 cursor"
+                                [class]="masterAdminRoles.includes(loggedInUserRole) ||[this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole) || [this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(loggedInUserRole) ? 'bulkTable' : '' ">
+                                <th (click)="sortName('locationName')">
+                                    Location
+                                </th>
+                                <th
+                                    *ngIf="masterAdminRoles.includes(loggedInUserRole)|| [this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole) || [this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(loggedInUserRole)">
+                                    Part Number</th>
+                                <th (click)="sortName('quiltType')">Quilt Type</th>
+                                <th (click)="sortName('onhand')">
+                                    {{[this.roleEnum.consignAdmin,
+                                    this.roleEnum.consignManager].includes(loggedInUserRole) && this.tab !==
+                                    "purchased" ? 'Consigned' : 'On
+                                    Hand'}}</th>
+                                <!-- <th
+                                    *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole)">
+                                    Consigned</th> -->
+                                <th
+                                    *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole) || ([this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(loggedInUserRole) && this.tab === 'purchased')">
+                                    Supplier Inbound</th>
+                                <th>{{masterAdminRoles.includes(loggedInUserRole) ||
+                                    [this.roleEnum.globalAdmin].includes(loggedInUserRole) ||
+                                    [this.roleEnum.serviceManager].includes(this.loggedInUserRole) ||
+                                    ([this.roleEnum.consignAdmin,
+                                    this.roleEnum.consignManager].includes(loggedInUserRole) && this.tab ===
+                                    'purchased') ?
+                                    'Customer Network Inbound' :
+                                    'Inbound'}}</th>
+                                <th
+                                    *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole)|| [this.roleEnum.serviceManager].includes(this.loggedInUserRole)">
+                                    RMA Returning</th>
+                                <th>{{masterAdminRoles.includes(loggedInUserRole) ||
+                                    [this.roleEnum.globalAdmin].includes(loggedInUserRole) ||
+                                    [this.roleEnum.serviceManager].includes(this.loggedInUserRole) ||
+                                    ([this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole)
+                                    && this.tab ===
+                                    'purchased') ?
+                                    'Customer Network Outbound' :
+                                    'Outbound'}}</th>
+                                <th
+                                    *ngIf="masterAdminRoles.includes(loggedInUserRole) ||[this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole) || [this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole)">
+                                    Used</th>
+                                <!-- <th>
+                                Location 
+                            </th>
+                            <th>Quilt Type</th>
+                            <th>On Hand</th>
+                            <th>Inbound </th>
+                            <th>Outbound</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngIf="items$ | async as quiltMov;">
+                                <ng-container *ngIf="quiltMov && quiltMov.length > 0; else noData">
+                                    <ng-container *ngFor="let data of quilt['quiltsDistributions']; let i = index">
+                                        <tr class="text-center main-color fs-16" (click)="openData(!collapsed,i)"
+                                            [attr.aria-expanded]="collapsedNot!==i" aria-controls="collapseExample2">
+                                            <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                                {{data['locationName'] || '--'}}
+                                            </td>
+                                            <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' "
+                                                *ngIf="masterAdminRoles.includes(loggedInUserRole) ||[this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole) || [this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole)">
+                                                {{data['partNumber'] || '--'}}
+                                            </td>
+                                            <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                                {{data['quiltType'] || '--'}}</td>
+                                            <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                                <div class="tool">
+                                                    {{data['onhand']}}
+                                                    <span class="tooltiptext"
+                                                        *ngIf="data['onhand'] && !([this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole) && this.tab !== 'purchased')">
+                                                        <ng-container *ngFor="let item of data['onhandSerialNumber']">
+                                                            <p>{{item}}</p>
+                                                        </ng-container>
+                                                        <p class="color-primary cursor" *ngIf="!([this.roleEnum.consignAdmin,
+                                                        this.roleEnum.consignManager].includes(loggedInUserRole) && this.tab !==
+                                                        'purchased')"
+                                                            (click)="serialsReport(quilt['customerId'],quilt['customerName'],data['locationId'],6,0,0)">
+                                                            See More
+                                                        </p>
+                                                    </span>
+                                                </div>
+                                            </td>
+
+                                            <!-- <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' "
+                                                *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole)|| [this.roleEnum.serviceManager].includes(this.loggedInUserRole) ">
+                                                {{data['consigned']}}
+                                            </td> -->
+
+                                            <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' "
+                                                *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole) || ([this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole) && this.tab === 'purchased')">
+                                                <div class="tool">
+                                                    {{data['supplierInbound'] || '--'}}
+                                                    <span class="tooltiptext" *ngIf="data['supplierInbound']">
+                                                        <ng-container
+                                                            *ngFor="let item of data['supplierInboundSerialNumber']">
+                                                            <p>{{item}}</p>
+                                                        </ng-container>
+                                                        <p class="color-primary cursor"
+                                                            (click)="serialsReport(quilt['customerId'],quilt['customerName'],data['locationId'],7,2,0)">
+                                                            See More
+                                                        </p>
+                                                    </span>
+                                                </div>
+                                            </td>
+
+                                            <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                                <div class="tool">
+                                                    {{data['inbound']}}
+                                                    <span class="tooltiptext" *ngIf="data['inbound']">
+                                                        <ng-container *ngFor="let item of data['inboundSerialNumber']">
+                                                            <p>{{item}}</p>
+                                                        </ng-container>
+                                                        <p class="color-primary cursor"
+                                                            (click)="serialsReport(quilt['customerId'],quilt['customerName'],data['locationId'],7,1,0)">
+                                                            See More
+                                                        </p>
+                                                    </span>
+                                                </div>
+                                            </td>
+
+                                            <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' "
+                                                *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole)">
+                                                <div class="tool">
+                                                    {{data['rmaOutbound'] || '--'}}
+                                                    <span class="tooltiptext" *ngIf="data['rmaOutbound']">
+                                                        <ng-container
+                                                            *ngFor="let item of data['rmaOutboundSerialNumber']">
+                                                            <p>{{item}}</p>
+                                                        </ng-container>
+                                                        <p class="color-primary cursor"
+                                                            (click)="serialsReport(quilt['customerId'],quilt['customerName'],data['locationId'],8,0,2)">
+                                                            See More
+                                                        </p>
+                                                    </span>
+                                                </div>
+                                            </td>
+
+                                            <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                                <div class="tool">
+                                                    {{data['outbound']}}
+                                                    <span class="tooltiptext" *ngIf="data['outbound']">
+                                                        <ng-container *ngFor="let item of data['outboundSerialNumber']">
+                                                            <p>{{item}}</p>
+                                                        </ng-container>
+                                                        <p class="color-primary cursor"
+                                                            (click)="serialsReport(quilt['customerId'],quilt['customerName'],data['locationId'],8,0,1)">
+                                                            See More
+                                                        </p>
+                                                    </span>
+                                                </div>
+                                            </td>
+
+                                            <td *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.globalAdmin].includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(this.loggedInUserRole) || [this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole)"
+                                                [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                                {{data['usedCount'] || '--'}}
+                                            </td>
+
+                                        </tr>
+                                        <ng-container *ngIf="data['quiltType'] === 'Multiple'">
+                                            <ng-container *ngIf="collapsed">
+                                                <tr class="text-center fs-16" style="background-color: #8FABC9;"
+                                                    id="collapseExample2" [ngbCollapse]="collapsedNot!==i"
+                                                    *ngFor="let quil of data['quiltsBreakdown']">
+                                                    <td class="text-white">
+                                                    </td>
+                                                    <td class="text-white">
+                                                    </td>
+                                                    <td class="text-white">{{quil['quiltType'] || '--'}}</td>
+                                                    <td class="text-white">
+                                                        {{quil['onhand']}}
+                                                    </td>
+                                                    <td class="text-white">
+                                                        {{quil['supplierInbound']}}
+                                                    </td>
+                                                    <td class="text-white">
+                                                        {{quil['inbound']}}
+                                                    </td>
+                                                    <td class="text-white">
+                                                        {{quil['rmaOutbound']}}
+                                                    </td>
+                                                    <td class="text-white">
+                                                        {{quil['outbound']}}
+                                                    </td>
+                                                    <td class="text-white">
+                                                    </td>
+                                                </tr>
+                                            </ng-container>
+                                        </ng-container>
+                                    </ng-container>
+                                </ng-container>
+                                <ng-template #noData>
+                                    <tr *ngIf="!isLoading">
+                                        <td colspan="9" class="bg-white">
+                                            <div class="text-center">
+                                                <h3>No quilts found</h3>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                    <mat-paginator [length]="length" [pageIndex]="quiltsMovementForm?.getRawValue()?.pageNumber - 1"
+                        [pageSize]="quiltsMovementForm?.getRawValue()?.pageSize" [pageSizeOptions]="pageSizeOptions"
+                        (page)="paginator($event)" showFirstLastButtons aria-label="Select page">
+                    </mat-paginator>
+                </div>
+            </div>
+        </ng-template>
+    </ng-container>
+
+    <ng-container *ngIf="companyAdminRoles.includes(loggedInUserRole)">
+        <div class="card res-card pt-3 mt-3" *ngFor="let quilt of quiltMovData">
+            <div fxLayout="row" class="mx-3" fxLayout.lt-md="column">
+                <div fxFlex="50%">
+                    <h2 class="main-color font-w-600 fs-24">
+                        &nbsp;{{quilt.customerName}}</h2>
+                </div>
+                <div fxFlex fxLayout="row" fxLayoutAlign="space-around center" fxLayout.lt-md="column">
+                    <p><span class="sub-head-color font-w-600 fs-18">{{orderTypeId === 1 ?
+                            "Quilts Leased :" : "Quilts Purchased :"}} </span> <span
+                            class="main-color font-w-600 fs-18">{{quilt.quiltsOrdered}}</span></p>
+                    <p><span class="sub-head-color font-w-600 fs-18">Assigned: </span> <span
+                            class="greenclr font-w-600 fs-18">{{quilt.quiltsAssigned}}</span></p>
+                    <p><span class="sub-head-color font-w-600 fs-18">Remaining: </span> <span
+                            class="red-color font-w-600 fs-18">
+                            {{quilt.quiltsRemaining}}</span></p>
+                    <p><span class="sub-head-color font-w-600 fs-18">Active Quilt: </span> <span
+                            class="font-w-600 fs-18">
+                            {{quilt.activeQuilts}}</span></p>
+                </div>
+            </div>
+            <div class="mx-4">
+                <table class="table">
+                    <thead>
+                        <tr class="tablelight text-center main-color fs-16 cursor">
+                            <th (click)="sortName('locationName')">
+                                Location
+                            </th>
+                            <th>Part Number</th>
+                            <th (click)="sortName('quiltType')">Quilt Type</th>
+                            <th (click)="sortName('onhand')">On Hand</th>
+                            <!-- <th *ngIf="this.tab === 'purchased'">Consigned</th> -->
+                            <th>Supplier Inbound</th>
+                            <th (click)="sortName('inbound')">Customer Network Inbound</th>
+                            <th>RMA Returning</th>
+                            <th (click)="sortName('outbound')">Customer Network Outbound</th>
+                            <th>Used</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="items$ | async as quiltMov;">
+                            <ng-container *ngIf="quiltMov && quiltMov.length > 0 && quilt.activeQuilts; else noData1">
+                                <ng-container *ngFor="let data of quilt['quiltsDistributions']; let i = index">
+                                    <tr class="text-center main-color fs-16" (click)="openData(!collapsed,i)"
+                                        [attr.aria-expanded]="collapsedNot!==i" aria-controls="collapseExample">
+                                        <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                            {{data['locationName'] || '--'}}
+                                        </td>
+                                        <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                            {{data['partNumber'] || '--'}}
+                                        </td>
+                                        <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                            {{data['quiltType'] || '--'}}</td>
+                                        <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                            <div class="tool">
+                                                {{data['onhand']}}
+                                                <span class="tooltiptext" *ngIf="data['onhand']">
+                                                    <ng-container *ngFor="let item of data['onhandSerialNumber']">
+                                                        <p>{{item}}</p>
+                                                    </ng-container>
+                                                    <p class="color-primary cursor"
+                                                        (click)="serialsReport(quilt['customerId'],quilt['customerName'],data['locationId'],6,0,0)">
+                                                        See More
+                                                    </p>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <!-- <td *ngIf="this.tab === 'purchased'"
+                                            [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                            {{data['consigned']}}
+                                        </td> -->
+                                        <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                            <div class="tool">
+                                                {{data['supplierInbound'] || '--'}}
+                                                <span class="tooltiptext" *ngIf="data['supplierInbound']">
+                                                    <ng-container
+                                                        *ngFor="let item of data['supplierInboundSerialNumber']">
+                                                        <p>{{item}}</p>
+                                                    </ng-container>
+                                                    <p class="color-primary cursor"
+                                                        (click)="serialsReport(quilt['customerId'],quilt['customerName'],data['locationId'],7,2,0)">
+                                                        See More
+                                                    </p>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                            <div class="tool">
+                                                {{data['inbound']}}
+                                                <span class="tooltiptext" *ngIf="data['inbound']">
+                                                    <ng-container *ngFor="let item of data['inboundSerialNumber']">
+                                                        <p>{{item}}</p>
+                                                    </ng-container>
+                                                    <p class="color-primary cursor"
+                                                        (click)="serialsReport(quilt['customerId'],quilt['customerName'],data['locationId'],7,1,0)">
+                                                        See More
+                                                    </p>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                            <div class="tool">
+                                                {{data['rmaOutbound'] || '--'}}
+                                                <span class="tooltiptext" *ngIf="data['rmaOutbound']">
+                                                    <ng-container *ngFor="let item of data['rmaOutboundSerialNumber']">
+                                                        <p>{{item}}</p>
+                                                    </ng-container>
+                                                    <p class="color-primary cursor"
+                                                        (click)="serialsReport(quilt['customerId'],quilt['customerName'],data['locationId'],8,0,2)">
+                                                        See More
+                                                    </p>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                            <div class="tool">
+                                                {{data['outbound']}}
+                                                <span class="tooltiptext" *ngIf="data['outbound']">
+                                                    <ng-container *ngFor="let item of data['outboundSerialNumber']">
+                                                        <p>{{item}}</p>
+                                                    </ng-container>
+                                                    <p class="color-primary cursor"
+                                                        (click)="serialsReport(quilt['customerId'],quilt['customerName'],data['locationId'],8,0,1)">
+                                                        See More
+                                                    </p>
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td [ngClass]="data['quiltType'] === 'Multiple' ? 'cursor' : '' ">
+                                            {{data['usedCount'] || '--'}}
+                                        </td>
+                                    </tr>
+                                    <ng-container *ngIf="data['quiltType'] === 'Multiple'">
+                                        <ng-container *ngIf="collapsed">
+                                            <tr class="text-center fs-16" style="background-color: #8FABC9;"
+                                                id="collapseExample" [ngbCollapse]="collapsedNot!==i"
+                                                *ngFor="let quil of data['quiltsBreakdown']">
+                                                <td class="text-white">
+                                                </td>
+                                                <td class="text-white">
+                                                </td>
+                                                <td class="text-white">{{quil['quiltType'] || '--'}}</td>
+                                                <td class="text-white">
+                                                    {{quil['onhand'] || '--'}}
+                                                </td>
+                                                <!-- <td class="text-white">
+                                                </td> -->
+                                                <td class="text-white">
+                                                    {{quil['supplierInbound']}}
+                                                </td>
+                                                <td class="text-white">
+                                                    {{quil['inbound']}}
+                                                </td>
+                                                <td class="text-white">
+                                                    {{quil['rmaOutbound']}}
+                                                </td>
+                                                <td class="text-white">
+                                                    {{quil['outbound']}}
+                                                </td>
+                                                <td class="text-white">
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                    </ng-container>
+                                </ng-container>
+                            </ng-container>
+                            <ng-template #noData1>
+                                <tr *ngIf="!isLoading">
+                                    <td colspan="9" class="bg-white">
+                                        <div class="text-center">
+                                            <h3>No quilt shipped yet</h3>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </ng-container>
+                    </tbody>
+                </table>
+                <mat-paginator [length]="length" [pageIndex]="quiltsMovementForm?.getRawValue()?.pageNumber - 1"
+                    [pageSize]="quiltsMovementForm?.getRawValue()?.pageSize" [pageSizeOptions]="pageSizeOptions"
+                    (page)="paginator($event)" showFirstLastButtons aria-label="Select page">
+                </mat-paginator>
+            </div>
+        </div>
+
+    </ng-container>
+
+    <ng-container *ngIf="locationUserRoles.includes(loggedInUserRole)">
+        <div class="card res-card pt-3 mt-3">
+            <div fxLayout="row" class="mx-3" fxLayout.lt-md="column">
+                <div fxFlex="50%">
+                    <h2 class="main-color font-w-600 fs-24">
+                        &nbsp;{{locationCustomerName}}</h2>
+                </div>
+                <div fxFlex fxLayout="row" fxLayoutAlign="end center" fxLayout.lt-md="column">
+                    <p><span class="sub-head-color font-w-600 fs-18">Quilts Onhand: </span> <span
+                            class="greenclr font-w-600 fs-18">{{locQuiltLeased}}</span></p>
+                </div>
+            </div>
+            <div class="mx-4">
+                <table class="table">
+                    <thead>
+                        <tr class="tablelight text-center main-color fs-16 cursor">
+                            <th>Part Number</th>
+                            <th (click)="sortName('quiltType')">Quilt Type</th>
+                            <th (click)="sortName('onhand')">On Hand</th>
+                            <th>Supplier Inbound</th>
+                            <th (click)="sortName('inbound')">Customer Network Inbound</th>
+                            <th>RMA Returning</th>
+                            <th (click)="sortName('outbound')">Customer Network Outbound</th>
+                            <th>Used</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="items$1 | async as quiltMovLoc;">
+                            <ng-container *ngIf="quiltMovLoc && quiltMovLoc.length > 0; else noData2">
+                                <!-- <ng-container *ngFor="let data of quilt['quiltsDistributions']"> -->
+                                <tr class="text-center main-color fs-16" *ngFor="let data of quiltMovLoc">
+                                    <td>
+                                        {{data['partNumber'] || '--'}}
+                                    </td>
+                                    <td>{{data['quiltType'] || '--'}}</td>
+                                    <td>
+                                        <div class="tool">
+                                            {{data['onhand']}}
+                                            <span class="tooltiptext" *ngIf="data['onhand']">
+                                                <ng-container *ngFor="let item of data['onhandSerialNumber']">
+                                                    <p>{{item}}</p>
+                                                </ng-container>
+                                                <p class="color-primary cursor"
+                                                    (click)="serialsReport(null,locationCustomerName,data['locationId'],6,0,0)">
+                                                    See More
+                                                </p>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="tool">
+                                            {{data['supplierInbound'] || '--'}}
+                                            <span class="tooltiptext" *ngIf="data['supplierInbound']">
+                                                <ng-container *ngFor="let item of data['supplierInboundSerialNumber']">
+                                                    <p>{{item}}</p>
+                                                </ng-container>
+                                                <p class="color-primary cursor"
+                                                    (click)="serialsReport(data['customerId'],data['customerName'],data['locationId'],7,2,0)">
+                                                    See More
+                                                </p>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="tool">
+                                            {{data['inbound']}}
+                                            <span class="tooltiptext" *ngIf="data['inbound']">
+                                                <ng-container *ngFor="let item of data['inboundSerialNumber']">
+                                                    <p>{{item}}</p>
+                                                </ng-container>
+                                                <p class="color-primary cursor"
+                                                    (click)="serialsReport(null,locationCustomerName,data['locationId'],7,1,0)">
+                                                    See More
+                                                </p>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="tool">
+                                            {{data['rmaOutbound'] || '--'}}
+                                            <span class="tooltiptext" *ngIf="data['rmaOutbound']">
+                                                <ng-container *ngFor="let item of data['rmaOutboundSerialNumber']">
+                                                    <p>{{item}}</p>
+                                                </ng-container>
+                                                <p class="color-primary cursor"
+                                                    (click)="serialsReport(data['customerId'],data['customerName'],data['locationId'],8,0,2)">
+                                                    See More
+                                                </p>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="tool">
+                                            {{data['outbound']}}
+                                            <span class="tooltiptext" *ngIf="data['outbound']">
+                                                <ng-container *ngFor="let item of data['outboundSerialNumber']">
+                                                    <p>{{item}}</p>
+                                                </ng-container>
+                                                <p class="color-primary cursor"
+                                                    (click)="serialsReport(null,locationCustomerName,data['locationId'],8,0,1)">
+                                                    See More
+                                                </p>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="tool">
+                                            {{data['usedCount']}}
+                                            <span class="tooltiptext" *ngIf="data['usedCount']">
+                                                <ng-container *ngFor="let item of data['usedSerialNumber']">
+                                                    <p>{{item}}</p>
+                                                </ng-container>
+                                                <!-- <p class="color-primary cursor"
+                                                    (click)="serialsReport(data['customerId'],data['customerName'],data['locationId'],8)">
+                                                    See More
+                                                </p> -->
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- </ng-container> -->
+                            </ng-container>
+                            <ng-template #noData2>
+                                <tr *ngIf="!isLoading">
+                                    <td colspan="9" class="bg-white">
+                                        <div class="text-center">
+                                            <h3>No quilts found</h3>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                            <!-- <mat-paginator [length]="quiltMovLoc.length" [pageIndex]="quiltsMovementForm?.getRawValue()?.pageNumber - 1" [pageSize]="pageSize"
+                [pageSizeOptions]="pageSizeOptions" (page)="paginator($event)" showFirstLastButtons
+                aria-label="Select page">
+            </mat-paginator> -->
+                        </ng-container>
+                    </tbody>
+                </table>
+                <mat-paginator [length]="length" [pageIndex]="quiltsLocationForm?.getRawValue()?.pageNumber - 1"
+                    [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="paginatorLocation($event)"
+                    showFirstLastButtons aria-label="Select page">
+                </mat-paginator>
+            </div>
+        </div>
+
+    </ng-container>
+
+
+    <!-- </div> -->

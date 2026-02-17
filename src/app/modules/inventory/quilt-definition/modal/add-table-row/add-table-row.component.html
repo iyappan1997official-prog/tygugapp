@@ -1,0 +1,102 @@
+<div class="row bg-light">
+    <div class="col-12 bg-modal text-center text-white py-3">
+        <h2 class="mb-0">{{componentAccessFor ==='edit'?'Edit':'Add'}} Quilt {{addRowFor | titlecase}}</h2>
+    </div>
+
+    <form [formGroup]="addRow" class="modal-form">
+        <div fxLayoutGap="20px" fxLayout="column" class="p-4">
+            <div class="flex-column" *ngIf="addRowFor==='definition'">
+                <label class="modal-label">Description</label>
+                <mat-form-field appearance="outline" fxFlex>
+                    <input formControlName="description" matInput [required]="addRowFor==='definition'">
+
+                    <mat-error>
+                        <show-error [formControlErr]="addRow.controls.description"
+                            requiredMsg="Please enter a description of the quilt.">
+                        </show-error>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="flex-column" *ngIf="addRowFor==='construction'">
+                <label class="modal-label">Construction</label>
+                <mat-form-field appearance="outline" fxFlex>
+                    <input formControlName="construction" matInput [required]="addRowFor==='construction'">
+
+                    <mat-error>
+                        <show-error [formControlErr]=" addRow.controls.construction"
+                            requiredMsg="Please enter the construction detail of the quilt.">
+                        </show-error>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="flex-column" *ngIf="addRowFor==='size'">
+                <label class="modal-label">Size</label>
+                <mat-form-field appearance="outline" fxFlex>
+                    <input formControlName="size" matInput [required]="addRowFor==='size'">
+
+                    <mat-error>
+                        <show-error [formControlErr]=" addRow.controls.size"
+                            requiredMsg="Please enter the size of the Quilt.">
+                        </show-error>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="flex-column">
+                <label class="modal-label">Type</label>
+                <ng-container *ngIf="addRowFor==='size'; else alphabetsInput">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <input formControlName="type" matInput maxlength="2" integers required>
+
+                        <mat-error>
+                            <show-error [formControlErr]="addRow.controls.type" requiredMsg="Please enter the type.">
+                            </show-error>
+                        </mat-error>
+                    </mat-form-field>
+                </ng-container>
+                <ng-template #alphabetsInput>
+
+                    <mat-form-field appearance="outline" fxFlex>
+                        <input formControlName="type" matInput maxlength="1" pattern="[a-zA-Z ]*" uppercase required>
+
+                        <mat-error>
+                            <show-error [formControlErr]="addRow.controls.type" requiredMsg="Please enter the type."
+                                patternMsg="Alphabets only.">
+                            </show-error>
+                        </mat-error>
+                    </mat-form-field>
+                </ng-template>
+            </div>
+
+            <!-- <div class="flex-column" *ngIf="addRowFor==='definition'">
+                <label class="modal-label">Part Number</label>
+            <mat-form-field appearance="outline" fxFlex>
+                <input formControlName="partNumber" matInput [required]="addRowFor==='definition'" integers>
+
+                <mat-error>
+                    <show-error [formControlErr]="addRow.controls.partNumber" requiredMsg="Please enter the part number of the quilt.">
+                    </show-error>
+                </mat-error>
+            </mat-form-field>
+             </div>
+
+             <div class="flex-column" *ngIf="addRowFor==='definition'">
+                <label class="modal-label">Max Pallet Quantity</label>
+            <mat-form-field appearance="outline" fxFlex>
+                <input formControlName="maxPallet" matInput integers max="999999999">
+                  <mat-error  >
+                      <show-error [formControlErr]="addRow.controls.maxPallet" maxValueMsg="Please enter a valid max pallet quantity."></show-error>
+      </mat-error>
+     
+            </mat-form-field>
+             </div> -->
+        </div>
+    </form>
+
+    <div class="pb-4 px-4" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
+        <button class="btn btn-newPrimary p-12 btncolor" (click)="callAddRow()">Save</button>
+        <button class="btn p-12 btnborder" (click)="modal.dismiss()">Cancel</button>
+    </div>
+</div>

@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/81774146-0c67-4cd5-9004-e80088cbe05e/resourceGroups/QuiltTracker-Development/providers/Microsoft.Web/sites/QuiltTracker-QA-FrontEnd",
+    "appService.deploySubpath": "dist"
+}

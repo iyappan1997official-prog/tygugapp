@@ -1,0 +1,45 @@
+$color:#8FABC9;
+.child{
+    top:50%;
+}
+
+.height{
+    height: 100%;
+    width: 100%;
+    background-color: white;
+}
+
+ .custom-frame {
+    & .mat-checkbox-background, .mat-checkbox-frame {
+      border-radius: 30% !important;
+    }
+  }
+
+
+  // .example-full-width {
+  //   width: 50%;
+  // }
+
+//  mat-label{
+//      color:red;
+//  }
+  
+  
+
+  .user-prefix{
+    position: relative;
+      top: -1px;
+    //   color: #00000078;
+    color:$color;
+  }
+
+  // .labelcolor{
+  //     color:$color;
+  // }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+    color: $color;
+}
+
+
+

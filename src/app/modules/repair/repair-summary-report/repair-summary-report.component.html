@@ -1,0 +1,448 @@
+<!--<div class="card py-4 cardheight scroll noFilterContentScroller" id="repairSummaryReport" [formGroup]="repairForm">
+  <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+    <div fxFlex="50%" fxLayoutAlign.lt-md="start center">
+      <h2 class="mb-0 main-color font-w-600 fs-24">
+        <img class="cursor mb-1 doNotPrint" src="../../../../assets/logos/arrow-backP.svg" routerLink="/repair">
+        &nbsp;Repair Summary Report
+      </h2>
+    </div>
+  </div>
+
+  <div class="filters-row mt-3 w-100" fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center" fxLayoutGap="10px">
+    <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+      <mat-label>Location</mat-label>
+      <mat-select formControlName="locationId">
+        <mat-option value="0">All</mat-option>
+        <mat-option *ngFor="let location of allLocations" [value]="location.id">
+          {{location.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+      <mat-label>Quilt Status</mat-label>
+      <mat-select formControlName="quiltStatusId">
+        <mat-option value="0">All</mat-option>
+        <mat-option *ngFor="let status of allQuiltStatus" [value]="status.id">
+          {{status.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="search-reset-container">
+      <button class="btn btn-newPrimary btncolor p-12" (click)="searchReport()">
+        Search
+      </button>
+      <button class="btn btnborder p-12" (click)="resetReport()">
+        Reset
+      </button>
+    </div>
+  </div>
+  <div style="margin-top: 15px; text-align: right;">
+    <button class="btn btnborder p-12" (click)="exportReport()">
+      Export
+    </button>
+  </div>
+
+  <div class="table-responsive mt-3">
+    <table class="table repair-summary-table">
+      <thead>
+        <tr class="tablelight text-center">
+          <th>Location</th>
+          <th>Cleaned Count</th>
+          <th>Repaired Count</th>
+          <th>Retired Count</th>
+          <th>Total Returned</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="!isLoading; else loader">
+          <ng-container *ngIf="reportData && reportData.length > 0; else noData">
+            <ng-container *ngFor="let item of reportData; let i = index">
+              <tr class="text-center">
+                <td class="p-relative">
+                  <span class="cursor-pointer arrow-position"
+                        (click)="toggleLocationDetails(i)"
+                        [attr.aria-expanded]="expandedLocationIndex === i">
+                    <ng-container *ngIf="expandedLocationIndex === i; else collapsedArrow">
+                      <img class="cursor ht-20 w-20" src="../../../../assets/logos/downarrowS.svg">
+                    </ng-container>
+                    <ng-template #collapsedArrow>
+                      <img class="cursor ht-20 w-20" src="../../../../assets/logos/rightarrowS.svg">
+                    </ng-template>
+                  </span>
+                  {{item.locationName}}
+                </td>
+                <td>{{item.cleanedCount}}</td>
+                <td>{{item.repairedCount}}</td>
+                <td>{{item.retiredCount}}</td>
+                <td>{{item.totalReturned}}</td>
+              </tr>
+
+              <tr *ngIf="expandedLocationIndex === i">
+                <td colspan="5" class="p-0">
+                  <div class="location-details-container">
+                    <table class="table part-number-table">
+                      <thead>
+                        <tr class="text-center">
+                          <th>Part Number</th>
+                          <th>Cleaning Count</th>
+                          <th>Repaired Count</th>
+                          <th>Retired Count</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <ng-container *ngIf="item.partNumbers && item.partNumbers.length > 0; else noPartData">
+                          <ng-container *ngFor="let part of item.partNumbers; let j = index">
+                            <tr class="text-center">
+                              <td class="p-relative">
+                                <span class="cursor-pointer arrow-position"
+                                      (click)="togglePartDetails(i, j)"
+                                      [attr.aria-expanded]="isPartExpanded(i, j)">
+                                  <ng-container *ngIf="isPartExpanded(i, j); else collapsedPartArrow">
+                                    <img class="cursor ht-20 w-20" src="../../../../assets/logos/downarrowS.svg">
+                                  </ng-container>
+                                  <ng-template #collapsedPartArrow>
+                                    <img class="cursor ht-20 w-20" src="../../../../assets/logos/rightarrowS.svg">
+                                  </ng-template>
+                                </span>
+                                {{part.partNumber}}
+                              </td>
+                              <td>{{part.cleaningCount}}</td>
+                              <td>{{part.repairedCount}}</td>
+                              <td>{{part.retiredCount}}</td>
+                              <td>{{part.total}}</td>
+                            </tr>
+
+                            <tr *ngIf="isPartExpanded(i, j)">
+                              <td colspan="5" class="p-0">
+                                <div class="part-details-container merged-details-container">
+                                  <div class="merged-details-box">
+                                    <div class="repair-details-column">
+                                      <div class="repair-details-header"><b>Repair Details</b></div>
+                                      <div *ngIf="part.repairDetails && part.repairDetails.length > 0; else noRepairDetails">
+                                        <ul class="repair-details-list">
+                                          <li *ngFor="let detail of part.repairDetails">
+                                            {{detail}}
+                                          </li>
+                                        </ul>
+                                      </div>
+                                      <ng-template #noRepairDetails>
+                                        <div class="no-detail-text">No repair details available</div>
+                                      </ng-template>
+                                    </div>
+                                    <div class="retired-details-column">
+                                      <div class="retired-details-header"><b>Retired Details</b></div>
+                                      <div *ngIf="part.retiredDetails && part.retiredDetails.length > 0; else noRetiredDetails">
+                                        <ul class="repair-details-list">
+                                          <li *ngFor="let detail of part.retiredDetails">
+                                            {{detail}}
+                                          </li>
+                                        </ul>
+                                      </div>
+                                      <ng-template #noRetiredDetails>
+                                        <div class="no-detail-text">No retired details available</div>
+                                      </ng-template>
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          </ng-container>
+                        </ng-container>
+                        <ng-template #noPartData>
+                          <tr>
+                            <td colspan="5" class="text-center py-3 text-muted">
+                              No part number data available
+                            </td>
+                          </tr>
+                        </ng-template>
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+          </ng-container>
+          <ng-template #noData>
+            <tr>
+              <td colspan="5" class="py-4 text-muted text-center">
+                No data available
+              </td>
+            </tr>
+          </ng-template>
+        </ng-container>
+        <ng-template #loader>
+          <tr>
+            <td colspan="5" class="py-4 text-center">
+              <app-loader></app-loader>
+            </td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+  </div>
+
+  <mat-paginator [length]="length"
+                 [pageIndex]="repairForm?.getRawValue()?.pageNumber - 1"
+                 [pageSize]="repairForm.controls.pageSize.value"
+                 [pageSizeOptions]="pageSizeOptions"
+                 (page)="paginator($event)"
+                 showFirstLastButtons
+                 aria-label="Select page">
+  </mat-paginator>
+</div>-->
+
+<div class="card py-4 cardheight scroll noFilterContentScroller"
+     id="repairSummaryReport"
+     [formGroup]="repairForm">
+
+  <!-- Header -->
+  <div fxLayout="row" fxLayoutAlign="start center">
+    <h2 class="mb-0 main-color font-w-600 fs-24">
+      <img class="cursor mb-1 doNotPrint"
+           src="../../../../assets/logos/arrow-backP.svg"
+           routerLink="/repair/repair-reports">
+
+      &nbsp;Repair Summary Report
+    </h2>
+  </div>
+  <!-- Filters -->
+  <div class="filters-row mt-3"
+       fxLayout="row"
+       fxLayoutGap="10px">
+
+    <mat-form-field appearance="outline" class="searchBox">
+      <mat-label>Location</mat-label>
+      <mat-select formControlName="locationId">
+        <mat-option value="0">All</mat-option>
+        <mat-option *ngFor="let location of allLocations"
+                    [value]="location.id">
+          {{ location.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="searchBox">
+      <mat-label>Quilt Status</mat-label>
+      <mat-select formControlName="quiltStatusId">
+        <mat-option value="0">All</mat-option>
+        <mat-option *ngFor="let status of allQuiltStatus"
+                    [value]="status.id">
+          {{ status.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="search-reset-container">
+      <button class="btn btn-newPrimary btncolor p-12"
+              (click)="searchReport()">
+        Search
+      </button>
+      <button class="btn btnborder p-12"
+              (click)="resetReport()">
+        Reset
+      </button>
+    </div>
+  </div>
+
+  <!-- ✅ DATE + EXPORT IN SAME ROW -->
+  <div class="date-export-row">
+
+    <div *ngIf="dateRangeDisplay" class="report-date-text">
+      {{ dateRangeDisplay }}
+    </div>
+
+    <button class="btn btnborder p-12"
+            (click)="exportReport()">
+      Export
+    </button>
+
+  </div>
+
+
+  <!-- Main Table -->
+  <div class="table-responsive mt-3">
+    <table class="table repair-summary-table">
+      <colgroup>
+        <col style="width: 26%">
+        <col style="width: 18%">
+        <col style="width: 18%">
+        <col style="width: 18%">
+        <col style="width: 20%">
+      </colgroup>
+      <thead>
+        <tr class="tablelight text-center">
+          <th class="hierarchy-header">
+            <span class="header-spacer"></span>
+            Location
+          </th>
+          <th>Cleaned</th>
+          <th>Repaired</th>
+          <th>Retired</th>
+          <th>Total Returned</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <ng-container *ngIf="!isLoading; else loader">
+
+          <ng-container *ngFor="let item of reportData; let i = index">
+
+            <!-- LOCATION -->
+            <tr class="text-center">
+              <td class="hierarchy-cell">
+
+                <div class="arrow-box"
+                     (click)="toggleLocationDetails(i)">
+
+                  <img class="arrow-icon"
+                       [src]="expandedLocationIndex === i
+      ? '../../../../assets/logos/downarrowS.svg'
+      : '../../../../assets/logos/rightarrowS.svg'">
+                </div>
+
+                <div class="row-label">
+                  {{ item.locationName }}
+                </div>
+
+              </td>
+
+
+              <td>{{ item.cleanedCount }}</td>
+              <td>{{ item.repairedCount }}</td>
+              <td>{{ item.retiredCount }}</td>
+              <td>{{ item.totalReturned }}</td>
+            </tr>
+
+
+            <!-- PART WRAPPER -->
+            <tr *ngIf="expandedLocationIndex === i">
+              <td colspan="5" class="border-0 p-0">
+
+                <div class="part-wrapper">
+
+                  <table class="table part-number-table">
+                    <thead>
+                      <tr class="text-center">
+                        <th class="hierarchy-header">
+                          <span class="header-spacer"></span>
+                          Part Number
+                        </th>
+                        <th>Cleaned</th>
+                        <th>Repaired</th>
+                        <th>Retired</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <ng-container *ngFor="let part of item.partNumbers; let j = index">
+
+                        <!-- PART ROW -->
+                        <tr class="text-center">
+                          <td class="hierarchy-cell">
+                            <div class="arrow-box" (click)="togglePartDetails(i,j)">
+                              <img class="arrow-icon"
+                                   [src]="isPartExpanded(i,j)
+                       ? '../../../../assets/logos/downarrowS.svg'
+                       : '../../../../assets/logos/rightarrowS.svg'">
+                            </div>
+                            <div class="row-label">{{ part.partNumber }}</div>
+                          </td>
+
+                          <td>{{ part.cleaningCount }}</td>
+                          <td>{{ part.repairedCount }}</td>
+                          <td>{{ part.retiredCount }}</td>
+                          <td>{{ part.total }}</td>
+                        </tr>
+
+                        <!-- QUILT TABLE -->
+                        <tr *ngIf="isPartExpanded(i,j)">
+                          <td colspan="5" class="border-0 p-0">
+
+                            <div class="quilt-wrapper">
+                              <table class="table quilt-table">
+
+                                <thead>
+                                  <tr class="text-center">
+                                    <th class="hierarchy-header">
+                                      <span class="header-spacer"></span>
+                                      Serial Number
+                                    </th>
+                                    <th>Cleaned</th>
+                                    <th>Repaired</th>
+                                    <th>Retired</th>
+                                    <th>Returned</th>
+                                  </tr>
+                                </thead>
+
+                                <tbody>
+                                  <ng-container *ngFor="let quilt of part.quilts; let k = index">
+
+                                    <tr class="text-center">
+                                      <td class="hierarchy-cell">
+                                        <div class="arrow-box"
+                                             (click)="toggleQuiltDetails(i,j,k)">
+                                          <img class="arrow-icon"
+                                               [src]="isQuiltExpanded(i,j,k)
+                                   ? '../../../../assets/logos/downarrowS.svg'
+                                   : '../../../../assets/logos/rightarrowS.svg'">
+                                        </div>
+                                        <div class="row-label">{{ quilt.serialNumber }}</div>
+                                      </td>
+
+                                      <td>{{ quilt.cleaned }}</td>
+                                      <td>{{ quilt.repaired }}</td>
+                                      <td>{{ quilt.retired }}</td>
+                                      <td>{{ quilt.returned }}</td>
+                                    </tr>
+
+                                  </ng-container>
+                                </tbody>
+
+                              </table>
+                            </div>
+
+                          </td>
+                        </tr>
+
+                      </ng-container>
+                    </tbody>
+                  </table>
+
+                </div>
+              </td>
+            </tr>
+
+          </ng-container>
+
+        </ng-container>
+        <ng-template #loader>
+          <tr>
+            <td colspan="5" class="text-center py-4">
+              <app-loader></app-loader>
+            </td>
+          </tr>
+        </ng-template>
+
+      </tbody>
+    </table>
+  </div>
+
+
+
+  <!-- Paginator -->
+  <mat-paginator [length]="length"
+                 [pageIndex]="repairForm.getRawValue().pageNumber - 1"
+                 [pageSize]="repairForm.controls.pageSize.value"
+                 [pageSizeOptions]="pageSizeOptions"
+                 (page)="paginator($event)"
+                 showFirstLastButtons>
+  </mat-paginator>
+
+
+
+</div>
+

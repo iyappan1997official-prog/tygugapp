@@ -1,0 +1,86 @@
+<div class="content-wrapper">
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+        <div fxFlex="50%" fxLayoutAlign.lt-md="start center">
+            <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+                <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                <input matInput [formControl]="getSearchByControl()" placeholder="Search Customer" trim>
+                <mat-icon *ngIf="customerListForm?.controls?.searchBy?.value?.length > 0" matSuffix
+                    class="sub-prefix cursor" (click)="searchReset()">clear</mat-icon>
+            </mat-form-field>
+        </div>
+        <div fxFlex fxLayout="row" fxLayoutAlign="end center" fxLayoutAlign.lt-md="start center" fxLayout.lt-sm="column"
+            *ngIf="[this.roleEnum.masterAdmin].includes(loggedInUserRole)">
+            <button class="btn btn-newPrimary p-12 text-white btncolor" routerLink="/customers/add-customer">Add
+                New Customer</button>
+        </div>
+    </div>
+
+    <div class="card mt-4 px-3 pt-3 pb-0 table-responsive">
+        <table class="table">
+            <thead>
+              <tr class="tablelight text-center">
+                <th width="15.5%" (click)="sort('customerNumber')" class="cursor">
+                  <div class="list-customerNumber-header text-center">
+                    Customer No.
+                    <i class="fa fa-sort ms-2" aria-hidden="true"></i>
+                  </div>
+                </th>
+                <th width="15.5%" (click)="sort('name')" class="cursor">
+                  <div class="list-name-header text-center">
+                    Name
+                    <i class="fa fa-sort ms-2" aria-hidden="true"></i>
+                  </div>
+                </th>
+                <!-- <th width="12%">Epicor Customer</th> -->
+                <th width="12%">Freight Forwarder</th>
+                <th width="20%">Address</th>
+                <th width="15.5%">Phone No.</th>
+              </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="items$ | async as customers;">
+                    <ng-container *ngIf="customers && customers.length > 0; else noData">
+                        <tr class="text-center" [routerLink]="['/orders/view-orders',customer['id']]"
+                            [queryParams]="[this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(loggedInUserRole) ? {tab:'locations', isEpicore: customer['isEpicoreIntegrated']} : {tab:'orders', isEpicore: customer['isEpicoreIntegrated']}"
+                            *ngFor="let customer of customers"
+                            (click)="storeData( customer['name'] ,customer['customerNumber'])">
+                            <td class="cursor">
+                                {{customer['customerNumber'] || '--'}}
+                            </td>
+                            <td class="cursor">{{customer['name'] || '--'}}</td>
+                            <!-- <td class="cursor">
+                                {{customer['isEpicoreIntegrated']?'Yes':'No'}}
+                            </td> -->
+                            <td class="cursor">
+                                {{customer['isFreightForwarder']?'Yes':'No'}}
+                            </td>
+                            <td class="cursor">{{customer['address'] || '--'}}
+                            </td>
+                            <td class="cursor">
+                                {{customer['phoneNumber'] || '--'}}
+                            </td>
+                        </tr>
+                    </ng-container>
+
+                    <ng-template #noData>
+                        <tr>
+                            <td colspan="9" class="bg-white">
+                                <div class="text-center">
+                                    <h3>No customers found</h3>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </ng-container>
+            </tbody>
+        </table>
+        <mat-paginator [length]="totalCustomers" [pageSize]="customerListForm.controls.pageSize.value"
+            [pageSizeOptions]="pageSizeOptions" (page)="paginator($event)" showFirstLastButtons
+            aria-label="Select page">
+        </mat-paginator>
+        <!-- <mat-paginator [length]="totalCustomers" [pageIndex]="customerListForm?.getRawValue()?.pageNumber - 1" [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions" (page)="paginator($event)" showFirstLastButtons
+        aria-label="Select page">
+    </mat-paginator> -->
+    </div>
+</div>

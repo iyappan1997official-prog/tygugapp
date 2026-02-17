@@ -1,0 +1,299 @@
+<div class="content-wrapper">
+  <div class="card p-4 cardheight">
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between start">
+      <div>
+        <h2 class="font-w-600 main-color fs-24 input-pdt"><img class="cursor mb-1"
+            src="../../../../assets/logos/arrow-backP.svg" routerLink="/users">
+          <!-- <i class="fa-solid fa-arrow-left cursor text-dark" routerLink="/users"></i> -->
+          &nbsp; {{componentAccessFor ===
+          'add-user'? 'Add User Details' : 'Edit User Details'}}</h2>
+      </div>
+      <div fxLayout="row" fxLayoutGap="20px">
+        <button class="btn btn-newPrimary p-12 text-white btncolor" (click)="addUser()">{{componentAccessFor
+          ==='add-user'? 'Add User':'Save Changes'}}</button>
+        <button class="btn btnborder p-12" (click)="resetForm()"> Discard</button>
+      </div>
+    </div>
+    <form [formGroup]="addUserForm">
+      <div class="mt-2 main-color">
+        <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px" class="mb-3">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start">
+            <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" class="mb-0 font-w-600 pt-4 fs-20">First
+              Name
+            </h3>
+            <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 input-pdt fs-20">
+
+              <input formControlName="firstName" matInput trimValue required>
+
+              <mat-error>
+                <show-error requiredMsg="Please enter the first name."
+                  [formControlErr]="addUserForm.controls.firstName">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start">
+            <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" class="mb-0 font-w-600 pt-4 fs-20">Last
+              Name
+            </h3>
+            <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 input-pdt fs-20">
+
+              <input formControlName="lastName" matInput trimValue required>
+
+              <mat-error>
+                <show-error requiredMsg="Please enter the last name." [formControlErr]="addUserForm.controls.lastName">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px" ngClass.lt-md="mt-1"
+          class="mb-3">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start">
+            <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" class="mb-0 font-w-600 pt-4 fs-20">Email
+              Address
+            </h3>
+            <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 input-pdt fs-20">
+              <input formControlName="email" matInput required>
+
+              <mat-error>
+                <show-error requiredMsg="Email is required or has an invalid value. Please correct."
+                  [formControlErr]="addUserForm.controls.email"
+                  patternMsg="Email is required or has an invalid value. Please correct.">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start">
+            <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" class="mb-0 font-w-600 pt-4 fs-20">Phone
+              No.
+            </h3>
+            <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 input-pdt fs-20">
+              <input formControlName="phoneNumber" matInput maxlength="15" trimValue required>
+
+              <mat-error>
+                <show-error [formControlErr]="addUserForm.controls.phoneNumber"
+                  requiredMsg="Phone No. is required or has an invalid value. Please correct."
+                  maxLengthMsg="Phone Number is required or has invalid value.  Please correct."
+                  patternMsg="Phone No. is required or has an invalid value. Please correct.">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px" ngClass.lt-md="mt-1"
+          class="mb-3">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="p-relative">
+            <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" class="mb-0 font-w-600 pt-4 fs-20">
+              Password </h3>
+            <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 input-pdt mb-2 fs-20">
+              <input [formControl]="passwordFieldAsFormControl" matInput maxLength="25"
+                [type]="passwordVisible?'text': 'password'" [required]="this.componentAccessFor === 'add-user'">
+              <mat-icon matSuffix class="secondary-text cursor-pointer" (click)="passwordVisible=!passwordVisible"
+                [title]="passwordVisible?'Hide Password':'Show Password'">
+                <img class="eye-icon-pos"
+                  [src]="passwordVisible? '../../../../assets/logos/Eye.svg' : '../../../../assets/logos/Hide-eye.svg' "
+                  alt="eye">
+              </mat-icon>
+              <mat-error>
+                <!-- <mat-hint align="start" class="hintMessage">
+                  <img class="" src="../../../../assets/logos/Info.svg">
+                  &nbsp; <span class="hint-text">Password must be between 8 to 25 characters including upper case and
+                    lower
+                    case, at least one number and one special character</span>
+                </mat-hint> -->
+                <show-error requiredMsg="Please enter your password." [formControlErr]="passwordFieldAsFormControl"
+                  patternMsg="Please enter a valid password" maxLengthMsg="Please enter a valid password">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+            <div class="iconPosition"><img data-toggle="tooltip" data-placement="bottom"
+                title="Password must be between 8 to 25 characters including upper case and lower case, at least one number and one special character"
+                class="" src="../../../../assets/logos/Info.svg"></div>
+          </div>
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start">
+            <ng-container
+              *ngIf="[this.roleEnum.masterAdmin, this.roleEnum.consignAdmin,this.roleEnum.customerAdmin, this.roleEnum.globalAdmin].includes(loggedInUserRole)">
+              <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" class="mb-0 font-w-600 pt-4 fs-20">Role
+              </h3>
+              <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+              <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 input-pdt fs-20">
+
+                <mat-select formControlName="roleId" (selectionChange)="onRoleChange($event)" required>
+                  <ng-container *ngFor="let role of allUserRoles">
+                    <mat-option [value]="role.id">
+                      {{role.name}}
+                    </mat-option>
+
+                  </ng-container>
+                </mat-select>
+                <mat-error *ngIf="allUserRoles.length">
+                  <show-error [formControlErr]="addUserForm.controls.roleId"
+                    requiredMsg="Please select a role from the dropdown option.">
+                  </show-error>
+                </mat-error>
+              </mat-form-field>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- Region , Customer , Location and password fields for Master Admin, Consign Admin and Customer Admin -->
+        <div
+          *ngIf="[this.roleEnum.masterAdmin, this.roleEnum.consignAdmin,this.roleEnum.customerAdmin, this.roleEnum.globalAdmin].includes(loggedInUserRole)"
+          fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" class="mb-3" fxLayoutGap.lt-lg="2px"
+          ngClass.lt-md="mt-1">
+          <div fxFlex=50% fxLayout="column" fxLayoutAlign.gt-md="start"
+            *ngIf="![6].includes(addUserForm?.getRawValue()?.roleId)">
+            <!-- Region fields for Master Admin/Customer Admin/Service center Admin/ Service center User in added mode ends here -->
+            <div fxFlex
+              *ngIf="!([this.roleEnum.consignManager,this.roleEnum.serviceManager].includes(loggedInUserRole)) && this.addUserForm.controls.roleId.value "
+              fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start">
+              <ng-container
+                *ngIf="![6].includes(addUserForm?.getRawValue()?.roleId) && ([1,9,10].includes(addUserForm?.getRawValue()?.roleId) || (![3].includes(addUserForm?.getRawValue()?.roleId) && loggedInUserRole!==this.roleEnum.masterAdmin && addUserForm?.controls?.custGroupId.value))">
+                <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" class="mb-0 font-w-600 pt-4 fs-20">
+                  Location
+                </h3>
+                <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+                <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 input-pdt fs-20">
+                  <mat-select formControlName="locationId">
+                    <mat-option *ngIf="!alllocations?.length" disabled>
+                      No Location Available.
+                    </mat-option>
+
+                    <mat-option *ngFor="let location of alllocations" [value]="location.id">
+                      {{location.name}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error>
+                    <show-error [formControlErr]="addUserForm.controls.locationId"
+                      requiredMsg="Please select a location from the dropdown option.">
+                    </show-error>
+                  </mat-error>
+                </mat-form-field>
+              </ng-container>
+            </div>
+            <!-- Gobal customer group -->
+            <div fxFlex
+              *ngIf="([this.roleEnum.masterAdmin].includes(loggedInUserRole)) && [3,4,5,7,8,11].includes(addUserForm?.getRawValue()?.roleId) && this.addUserForm.controls.roleId.value "
+              fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start">
+              <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" class="mb-0 font-w-600 pt-4 fs-20">
+                Customer Group
+              </h3>
+              <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+              <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 input-pdt fs-20">
+                <mat-select formControlName="custGroupId" >
+                  <mat-option *ngIf="!allCompanyGroups?.length" disabled>
+                    No Customer Group.
+                  </mat-option>
+
+                  <mat-option *ngFor="let group of allCompanyGroups" [value]="group.id">
+                    {{group.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error>
+                  <show-error [formControlErr]="addUserForm.controls.custGroupId"
+                    requiredMsg="Please select a customer group name from the dropdown option.">
+                  </show-error>
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <!-- Gobal customer group -->
+          </div>
+          <div fxLayout="column" fxFlex=50% fxLayoutAlign.gt-md="start"
+            *ngIf="![1,3,4,5,7,8,9,10,11].includes(addUserForm?.getRawValue()?.roleId)">
+            <!-- Customer/ Multiple select customers fields for Master Admin/Consigned Admin in added mode -->
+            <div fxFlex=50% fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start"
+              *ngIf="![this.roleEnum.customerAdmin].includes(loggedInUserRole)">
+              <ng-container
+                *ngIf="([6].includes(addUserForm?.getRawValue()?.roleId) && addUserForm?.controls?.regionId.value) || [6].includes(addUserForm?.getRawValue()?.roleId)">
+                <ng-container *ngIf="![6].includes(addUserForm?.getRawValue()?.roleId);else multiCompany">
+                  <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" class="mb-0 font-w-600 pt-4 fs-20">
+                    Customer
+                  </h3>
+                  <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+                  <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 input-pdt fs-20">
+                    <mat-select formControlName="companyId" (selectionChange)="getLocationsById($event.value)">
+                      <mat-option *ngIf="!allCustomers?.length" disabled>
+                        No Customer Available.
+                      </mat-option>
+
+                      <mat-option *ngFor="let customer of allCustomers" [value]="customer.id">
+                        {{ customer.customerName || customer.name}}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error>
+                      <show-error [formControlErr]="addUserForm.controls.companyId"
+                        requiredMsg="Please select a company from the dropdown option.">
+                      </show-error>
+                    </mat-error>
+                  </mat-form-field>
+                </ng-container>
+
+                <ng-template #multiCompany>
+                  <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" class="mb-0 font-w-600 pt-4 fs-20">
+                    Customer
+                  </h3>
+                  <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+                  <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 input-pdt fs-20">
+                    <mat-select formControlName="customerIds" multiple>
+                      <mat-option *ngIf="!allCustomers?.length" disabled>
+                        No Customer Available.
+                      </mat-option>
+
+                      <mat-option *ngFor="let customer of allCustomers" [value]="customer.id">
+                        {{customer.name}}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error>
+                      <show-error [formControlErr]="addUserForm.controls.companyId"
+                        requiredMsg="Please select a company from the dropdown option.">
+                      </show-error>
+                    </mat-error>
+                  </mat-form-field>
+                </ng-template>
+
+              </ng-container>
+            </div>
+            <!-- Customer/ Multiple select customers fields for Master Admin/Consigned Admin in added mode ends here -->
+          </div>
+          <div fxLayout="column" fxFlex=50% fxLayoutAlign.gt-md="start">
+            <div fxFlex=50% fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start"
+              *ngIf="![this.roleEnum.customerAdmin,this.roleEnum.globalAdmin].includes(loggedInUserRole)">
+              <ng-container
+                *ngIf="[4,5,6,7,8].includes(addUserForm?.getRawValue()?.roleId)&& this.addUserForm.controls.custGroupId.value">
+                <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" class="mb-0 font-w-600 pt-4 fs-20">
+                  Location
+                </h3>
+                <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+                <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 input-pdt fs-20">
+                  <mat-select formControlName="locationId">
+                    <mat-option *ngIf="!alllocations?.length" disabled>
+                      No Location Available.
+                    </mat-option>
+
+                    <mat-option *ngFor="let item of alllocations" [value]="item.id">
+                      {{ item.itemName || item.name}}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error>
+                    <show-error [formControlErr]="addUserForm.controls.locationId"
+                      requiredMsg="Please select a location from the dropdown option.">
+                    </show-error>
+                  </mat-error>
+                </mat-form-field>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+        <!-- Region , Customer , Location and password fields for Master Admin, Consign Admin and Customer Admin ends here -->
+
+      </div>
+    </form>
+  </div>
+
+</div>

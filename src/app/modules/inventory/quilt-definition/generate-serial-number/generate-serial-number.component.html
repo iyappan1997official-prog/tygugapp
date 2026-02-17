@@ -1,0 +1,305 @@
+<div class="content-wrapper">
+    <div class="card py-4 cardheight mb-4">
+        <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center"
+            fxLayoutAlign.lt-md="start start">
+            <h2 class="font-w-600 main-color fs-24 mb-0"> <img class="cursor mb-1"
+                    src="../../../../assets/logos/arrow-backP.svg" routerLink="/inventory/quilts-inventory"
+                    [queryParams]="{tab:'quilt-definition'}"> &nbsp; Serial Number</h2>
+            <div fxLayout="row" fxLayoutGap="20px">
+                <button class="btn btn-newPrimary p-12 text-white btncolor" (click)="editGenerateSeries()"
+                    [hidden]="!editMaxQuilt">Save
+                    Changes</button>
+
+                <button class="btn btn-newPrimary p-12 text-white btncolor" (click)="generateSeries()">Generate
+                    Series</button>
+                <button class="btn p-12 btnborder" (click)="initForm()">Discard</button>
+            </div>
+        </div>
+        <div class="mt-4 main-color" [formGroup]="generateSerialNoForm">
+            <div fxLayout="row" fxLayoutGap="15%">
+                <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+                    <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Part Number</h3>
+                    <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+                    <div fxFlex fxLayout="column">
+
+                        <mat-form-field appearance="outline" fxFlex class="font-w-600 input-pdt fs-20">
+                            <mat-select formControlName="partNumberId"
+                                (selectionChange)="partNumberMappedData($event.value)" required>
+                                <mat-option>
+                                    <ngx-mat-select-search [(ngModel)]="searchText"
+                                        [ngModelOptions]="{ standalone: true }" placeholderLabel="Search..."
+                                        noEntriesFoundLabel="No matching option found.">
+                                    </ngx-mat-select-search>
+                                </mat-option>
+                                <mat-option [value]="0">New</mat-option>
+                                <mat-option *ngFor="let partNo of allPartNumbers | stringFilterBy: searchText : 'name'"
+                                    [value]="partNo.id">
+                                    {{ partNo.name }}
+                                </mat-option>
+
+                                <!-- <mat-option [value]="0">New</mat-option> -->
+                            </mat-select>
+
+                            <mat-error>
+                                <show-error [formControlErr]="generateSerialNoForm.controls.partNumberId"
+                                    requiredMsg="The part number is empty or has an invalid value. Please correct.">
+                                </show-error>
+                            </mat-error>
+                        </mat-form-field>
+
+                        <div *ngIf="formValues?.partNumberId === 0" fxFlex="50%" fxFlex.lt-lg="100%"
+                            fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+                            <mat-form-field appearance="outline" class="font-w-600 input-pdt fs-20" fxFlex>
+                                <input matInput placeholder="Part Number" formControlName="partNumber" integers
+                                    minlength="8" maxlength="8" required>
+                                <mat-error>
+                                    <show-error [formControlErr]="generateSerialNoForm.controls.partNumber"
+                                        requiredMsg="Part number is required."
+                                        patternMsg="Only numbers are allowed."></show-error>
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+
+                <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+                    <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Type </h3>
+                    <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+                    <mat-form-field appearance="outline" fxFlex class="font-w-600 input-pdt fs-20">
+
+                        <mat-select formControlName="quiltTypeId" required>
+                            <mat-option *ngFor="let type of allTypes" [value]="type.id">
+                                {{type.description}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error>
+                            <show-error [formControlErr]="generateSerialNoForm.controls.quiltTypeId"
+                                requiredMsg="Choose a type from the dropdown menu. "></show-error>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div fxLayout="row" fxLayoutGap="15%">
+                <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+                    <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Construction</h3>
+                    <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+                    <mat-form-field appearance="outline" fxFlex class="font-w-600 input-pdt fs-20">
+                        <mat-select formControlName="quiltConstructionId" required>
+                            <mat-option *ngFor="let construction of allConstruction" [value]="construction.id">
+                                {{construction.construction}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error>
+                            <show-error [formControlErr]="generateSerialNoForm.controls.quiltConstructionId"
+                                requiredMsg=" Choose a construction from the dropdown menu."></show-error>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+                    <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Size </h3>
+                    <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+                    <mat-form-field appearance="outline" fxFlex class="font-w-600 input-pdt fs-20">
+                        <mat-select formControlName="quiltSizeId" required>
+                            <mat-option *ngFor="let size of allSize" [value]="size.id">
+                                {{size.size}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error>
+                            <show-error [formControlErr]="generateSerialNoForm.controls.quiltSizeId"
+                                requiredMsg="Choose a quilt size from the dropdown menu."></show-error>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div fxLayout="row" fxLayoutGap="15%">
+                <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+                    <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Weight </h3>
+                    <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+                    <mat-form-field appearance="outline" class="font-w-600 input-pdt fs-20" fxFlex>
+                        <input matInput formControlName="weight" decimals required>
+                        <mat-error>
+                            <show-error [formControlErr]="generateSerialNoForm.controls.weight"
+                                requiredMsg="Please enter the weight of the quilt."
+                                patternMsg="Weight should be greater than 0 and upto four decimal digits.">
+                            </show-error>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+                    <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Start Serial No. </h3>
+                    <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+                    <mat-form-field appearance="outline" class="font-w-600 input-pdt fs-20" fxFlex>
+                        <input matInput formControlName="seriesStartNumber" placeholder="0000" uppercase minlength="4"
+                            maxlength="4" class="mat-fs-18">
+                        <!-- <mat-error>
+                            <show-error [formControlErr]="generateSerialNoForm.controls.seriesStartNumber"
+                                requiredMsg="Please enter the last four characters of the serial number, starting with."
+                                patternMsg="Please enter the last four characters of the serial number, starting with.">
+                            </show-error>
+                        </mat-error> -->
+                    </mat-form-field>
+                </div>
+            </div>
+            <div fxLayout="row" fxLayoutGap="15%">
+                <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+                    <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Quantity </h3>
+                    <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+                    <mat-form-field appearance="outline" class="font-w-600 input-pdt fs-20" fxFlex>
+                        <input matInput formControlName="quantity" placeholder="Quantity" integers required
+                            class="mat-fs-18">
+                        <mat-error>
+                            <show-error [formControlErr]="generateSerialNoForm.controls.quantity"
+                                requiredMsg="Please enter the quantity."></show-error>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+                    <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Max Quilts </h3>
+                    <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+                    <mat-form-field appearance="outline" class="font-w-600 input-pdt fs-20" fxFlex>
+                        <input matInput formControlName="maxQuilts" placeholder="Max Quilts" integers required
+                            class="mat-fs-18">
+                        <mat-error>
+                            <show-error [formControlErr]="generateSerialNoForm.controls.maxQuilts"
+                                requiredMsg="Please enter the max quilts."></show-error>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="15%">
+                <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+                    <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Region </h3>
+                    <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+                    <mat-form-field [formGroup]="regionSelected" appearance="outline" fxFlex
+                        class="font-w-600 input-pdt fs-20">
+                        <mat-select formControlName="regionId" (selectionChange)="getLocationsByRegion($event.value)"
+                            required>
+                            <mat-option *ngFor="let region of allCompanyRegions" [value]="region.id">
+                                {{region.name}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+                    <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Location </h3>
+                    <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+                    <mat-form-field appearance="outline" fxFlex class="font-w-600 input-pdt fs-20">
+                        <mat-select formControlName="locationId" required>
+                            <mat-option *ngFor="let data of alllocations" [value]="data.id">
+                                {{data.name}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error>
+                            <show-error [formControlErr]="generateSerialNoForm.controls.locationId"
+                                requiredMsg="Choose a quilt size from the dropdown menu."></show-error>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="15%">
+                <div fxFlex="100%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+                    <h3 fxFlex="13%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Description </h3>
+                    <div class=" font-w-600 fs-20" fxFlex="2%" ngClass="head-dot-position">:</div>
+                    <mat-form-field appearance="outline" class="font-w-600 input-pdt fs-20" fxFlex>
+                        <input matInput formControlName="description" placeholder="Description" required maxlength="48"
+                            class="mat-fs-18">
+                        <mat-error>
+                            <show-error [formControlErr]="generateSerialNoForm.controls.description"
+                                requiredMsg="Please enter the description."></show-error>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="15%">
+                <div fxFlex="100%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+                    <h3 fxFlex="13%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Customer Facing Description
+                    </h3>
+                    <div class=" font-w-600 fs-20" fxFlex="2%" ngClass="head-dot-position">:</div>
+                    <mat-form-field appearance="outline" class="font-w-600 input-pdt fs-20" fxFlex>
+                        <input matInput formControlName="customerFacingDescription"
+                            placeholder="Customer Facing Description" required maxlength="20" class="mat-fs-18">
+                        <mat-error>
+                            <show-error [formControlErr]="generateSerialNoForm.controls.customerFacingDescription"
+                                requiredMsg="Please enter the description."></show-error>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="card pt-4 pb-0 cardheight">
+        <div fxLayout="row" class="mb-4">
+            <h2 class="font-w-600 main-color fs-24 mb-0">Quilt Series</h2>
+        </div>
+        <div>
+            <table class="table">
+                <thead>
+                    <tr class="tablelight text-center">
+                        <th width="16.66%">
+                            Part Number
+                        </th>
+                        <th width="16.66%">
+                            Series Start
+                        </th>
+                        <th width="16.66%">
+                            Series End
+                        </th>
+                        <th width="16.66%"></th>
+                        <th width="16.66%"></th>
+                        <th width="16.66%"></th>
+                    </tr>
+                </thead>
+                <tbody class="table-overflow">
+                    <ng-container *ngIf="items$ | async as seriesData;">
+                        <ng-container *ngIf="seriesData && seriesData.length > 0; else noData">
+                            <tr class="text-center" *ngFor="let series of seriesData">
+                                <td>
+                                    {{series['partNumber'] || '--'}}
+                                </td>
+                                <td>{{series['quiltSeriesStart'] || '--'}}</td>
+                                <td>{{series['quiltSeriesEnd'] || '--'}}</td>
+                                <td>
+                                    <a class="text-color mb-0 cursor-pointer font-w-600 text-decoration-none"
+                                        (click)="exportInExcel(series['id'],series['quiltSeriesStart'],series['quiltSeriesEnd'])">Export
+                                        in
+                                        Excel</a>
+                                </td>
+                                <td>
+                                    <a class="text-color mb-0 cursor-pointer font-w-600 text-decoration-none"
+                                        (click)="generatePdfService.genrateSeriesQRCodes(series['id'])">Generate
+                                        QR
+                                        Code</a>
+                                </td>
+                                <td>
+                                    <a class="text-danger mb-0 cursor-pointer font-w-600 text-decoration-none"
+                                        (click)="openConfirmDeleteModal(series['id'])">Delete QR Code</a>
+                                    <!-- <button class="btn btn-danger btn-sm text-white" (click)="openConfirmDeleteModal(series['id'])">
+                                        Delete QR Code</button> -->
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                        <ng-template #noData>
+                            <tr>
+                                <td colspan="9" class="bg-white">
+                                    <div class="text-center">
+                                        <h3>No series found</h3>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </ng-container>
+                </tbody>
+            </table>
+            <mat-paginator [length]="totalCount" [pageIndex]="paginatorForm?.getRawValue()?.pageNumber - 1"
+                [pageSize]="paginatorForm?.getRawValue()?.pageSize" [pageSizeOptions]="pageSizeOptions"
+                (page)="paginator($event)" showFirstLastButtons aria-label="Select page">
+            </mat-paginator>
+        </div>
+    </div>
+</div>

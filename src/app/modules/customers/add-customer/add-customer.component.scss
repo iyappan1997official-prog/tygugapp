@@ -1,0 +1,38 @@
+.add-icon{
+    border-radius: 50%;
+    padding:7px 10px;
+    background-color: #3D7CCA;
+}
+:host ::ng-deep .mat-form-field-wrapper{
+    padding-bottom: 0;
+}
+:host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding-top: 1em;
+}
+
+// .form-heading-position{
+//     transform: translateY(23px) ;
+// }
+
+.mat-checkbox#autoship-checkbox {
+    margin-top: 22px !important; /* Adjust the top margin of the checkbox */
+}
+.form-heading-position{
+    max-width: 50% !important;
+}
+
+:host ::ng-deep .mat-checkbox-checked .mat-checkbox-background {
+    background-color: #3D7CCA !important; /* Set to blue */
+    border-color: #3D7CCA !important; /* Set the border to match the background */
+}
+:host ::ng-deep .mat-checkbox {
+    vertical-align: middle;
+}
+
+:host ::ng-deep .mat-checkbox-layout {
+    align-items: center; /* Aligns the checkbox and label vertically */
+}
+
+:host ::ng-deep .mat-checkbox-label {
+    margin-top: -3px; /* Adjust this value to fine-tune alignment */
+}

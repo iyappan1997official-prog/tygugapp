@@ -1,0 +1,35 @@
+
+.add-margin{
+    margin-left:300px;
+    padding:8px;
+}
+
+// .dash-card .apexcharts-legend{
+//     max-width: 82px;
+//    word-break: break-word;
+   
+//   }
+
+.InventoryOverview .dash-card .apexcharts-legend-series,.Usagebysize .dash-card .apexcharts-legend-series{
+    display: flex; /* Align the dot and text on the same line */
+}
+
+.InventoryOverview .dash-card .apexcharts-legend-marker,.Usagebysize .dash-card .apexcharts-legend-marker{
+    flex-shrink: 0; /* Prevent the colored dot from shrinking */
+    margin-right:2px; /* Add some space between the dot and the text */
+}
+
+.InventoryOverview .dash-card .apexcharts-legend-text,.Usagebysize .dash-card .apexcharts-legend-text{
+    white-space: normal; /* Allow text to wrap normally */
+    word-break: break-word; /* Allow words to break if needed */
+    overflow-wrap: break-word; /* Ensure long words break properly */
+    max-width: 43px; /* Set the max-width for text to control wrapping */
+}
+
+.apexcharts-legend.apexcharts-align-center.apx-legend-position-right {
+    padding: 0px !important;
+}
+
+  :host ::ng-deep  span.apexcharts-legend-text {
+    font-size: 10.7px !important;
+}

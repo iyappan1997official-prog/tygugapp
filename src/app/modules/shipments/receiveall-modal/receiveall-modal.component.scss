@@ -1,0 +1,56 @@
+
+
+/* General form field styling */
+.mat-form-field {
+    font-size: inherit;
+    font-weight: 400;
+    line-height: 1.125;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    letter-spacing: normal;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+/* Custom Select Dropdown Styling */
+.custom-select {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.custom-select select {
+    width: 100%;
+    padding: 18px 20px;
+    font-size: 16px;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    line-height: 1.5;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: white;
+    appearance: none;
+    cursor: pointer;
+    color: #333;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease;
+}
+
+.custom-select select:hover {
+    border-color: #888;
+}
+
+.custom-select::after {
+    content: '\25BC'; /* Down arrow */
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    pointer-events: none;
+    color: #333;
+}
+
+/* For dropdown focus style */
+.custom-select select:focus {
+    border-color: #007BFF;
+    outline: none;
+}

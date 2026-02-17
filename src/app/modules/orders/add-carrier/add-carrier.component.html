@@ -1,0 +1,88 @@
+<div class="card py-4 cardheight content-wrapper">
+  <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+    <div>
+      <h2 class="font-w-600 main-color fs-24">
+        <img class="cursor mb-1" src="../../../../assets/logos/arrow-backP.svg" (click)="navigateToCarriersListing()">
+        &nbsp;{{componentAccessFor==='add-carrier'?'Add ':'Edit '}} Carrier
+      </h2>
+    </div>
+    <div fxLayout="row" fxLayoutGap="20px">
+      <button class="btn btn-newPrimary text-white btncolor"
+        (click)="addCarrier()">{{componentAccessFor==='add-carrier'?'Add Carrier':'Save Changes'}}</button> &nbsp;
+      &nbsp;
+      <button class="btn btnborder" (click)="resetForm()">Discard</button>
+    </div>
+  </div>
+  <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between start">
+    <div>
+      <h2 class="font-w-600 main-color fs-24">
+        {{ this.customerNameFromList }}<span class="fs-16 font-w-600">({{this.customerNumberFromList}})</span>
+      </h2>
+    </div>
+  </div>
+  <div class="mt-2  main-color" [formGroup]="addCarrierForm">
+    <div fxLayout="row">
+      <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="form-heading-position">Name</h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="65%" class="font-w-600 fs-20 input-pdt">
+          <input matInput formControlName="name" trimValue required>
+
+          <mat-error>
+            <show-error requiredMsg="
+            Please enter the name of the carrier." [formControlErr]="addCarrierForm.controls.name">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row">
+      <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="form-heading-position">Phone No. </h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="65%" class="font-w-600 fs-20 input-pdt">
+
+          <input formControlName="phoneNumber" matInput maxlength="15" trimValue>
+
+          <mat-error>
+            <!-- requiredMsg="Phone No. is required or has an invalid value. Please correct." -->
+            <show-error [formControlErr]="addCarrierForm.controls.phoneNumber"
+              maxLengthMsg="Phone Number is required or has invalid value.  Please correct."
+              patternMsg="Phone No. is required or has an invalid value. Please correct.">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row">
+      <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-md="50%" class="mb-0 font-w-600 fs-20" ngClass="form-heading-position">Additional
+          Notes
+        </h3>
+        <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <!-- <div fxLayout="row" fxLayoutGap="15px" fxFlex> -->
+        <mat-form-field appearance="outline" fxFlex="65%" class="font-w-600 fs-20">
+
+          <textarea matInput autosize formControlName="additionalNotes" trimValue rows="7"></textarea>
+        </mat-form-field>
+        <!-- </div> -->
+      </div>
+    </div>
+    <div fxLayout="row">
+      <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-md="50%" ngClass.gt-sm="" class="mb-0 font-w-600 fs-20">Preferrence </h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%">:</div>
+        <div fxLayout="row" fxLayoutGap="15px" fxFlex="65%">
+          <mat-radio-group formControlName="isPreferred" aria-label="Select preference" fxLayoutGap="20px">
+            <mat-radio-button color="primary" class="circle-checkbox font-w-600 fs-20"
+              [checked]="addCarrierForm.controls.isPreferred.value===true" [value]="true">Yes
+            </mat-radio-button>
+            <mat-radio-button color="primary" class="circle-checkbox font-w-600 fs-20"
+              [checked]="addCarrierForm.controls.isPreferred.value===false" [value]="false">No
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

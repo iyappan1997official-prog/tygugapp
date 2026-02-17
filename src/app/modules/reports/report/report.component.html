@@ -1,0 +1,182 @@
+<!-- <ng-container *ngIf="!reportView"> -->
+<div class="card py-4 cardheight">
+  <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center" fxLayoutAlign.lt-md="start start">
+    <h2 class="font-w-600 main-color fs-24">Reports</h2>
+    <button class="btn btn-newPrimary p-12  text-white btncolor"
+      (click)="generateReport(this.reportTypeForm.controls.reportId.value,this.reportTypeForm.controls.customerId.value,this.reportTypeForm.controls.startDate.value,this.reportTypeForm.controls.endDate.value)">Generate
+      Report</button>
+  </div>
+  <div class="mt-2 main-color">
+    <form [formGroup]="reportTypeForm">
+      <div fxLayout="row">
+        <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+          <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Report </h3>
+          <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+          <mat-form-field appearance="outline" fxFlex class="font-w-600 input-pdt fs-20">
+            <mat-select formControlName="reportId" (selectionChange)="onReportTypeChange($event)">
+              <mat-option *ngFor="let report of allReportTypes" [value]="report.id">
+                {{report.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="allReportTypes.length">
+              <show-error [formControlErr]="reportTypeForm.controls.reportId"
+                requiredMsg="Please select a report type from the dropdown option.">
+              </show-error>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <ng-container *ngIf="reportValue">
+        <!-- <ng-container  *ngIf="loggedInUserRole !== this.roleEnum.customerAdmin"> -->
+        <ng-container *ngIf="!hideCustomerField">
+          <div fxLayout="row">
+            <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center"
+              class="mb-3">
+              <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Customer </h3>
+              <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+              <mat-form-field appearance="outline" fxFlex class="font-w-600 input-pdt fs-20">
+                <mat-select formControlName="customerId" (selectionChange)="companySelected($event.value)">
+                  <!-- <app-select-check-all [model]="reportTypeForm.get('customerId')" [values]="allCustomers">
+            </app-select-check-all> -->
+                  <mat-option *ngFor="let customer of allCustomersOrders" [value]="customer.id">
+                    {{customer.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="allCustomersOrders.length">
+                  <show-error [formControlErr]="reportTypeForm.controls.customerId"
+                    requiredMsg="Please select a customer from the dropdown option.">
+                  </show-error>
+                </mat-error>
+              </mat-form-field>
+              <!-- <ng-container *ngIf="reportTypeForm.controls.reportId.value === 2 || reportTypeForm.controls.reportId.value === 1">
+          <mat-form-field appearance="outline" fxFlex class="font-w-600 input-pdt fs-20">
+            <mat-select formControlName="customerId" multiple>
+              <mat-option *ngFor="let customer of allCustomers" [value]="customer.id">
+                {{customer.name}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="allCustomers.length">
+              <show-error [formControlErr]="reportTypeForm.controls.customerId"
+                requiredMsg="Please select a customer from the dropdown option.">
+              </show-error>
+            </mat-error>
+          </mat-form-field>
+          </ng-container>
+          <ng-container *ngIf="reportTypeForm.controls.reportId.value !== 2 && reportTypeForm.controls.reportId.value !== 1 ">
+            <mat-form-field appearance="outline" fxFlex class="font-w-600 input-pdt fs-20">
+              <mat-select formControlName="customerId">
+                <mat-option *ngFor="let customer of allCustomers" [value]="customer.id">
+                  {{customer.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="allCustomers.length">
+                <show-error [formControlErr]="reportTypeForm.controls.customerId"
+                  requiredMsg="Please select a customer from the dropdown option.">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+            </ng-container> -->
+            </div>
+          </div>
+        </ng-container>
+        <!-- </ng-container> -->
+
+        <!-- location for customer -->
+        
+        <ng-container
+          *ngIf="this.custGroupId && loggedInUserRole !== this.roleEnum.customerManager && (reportTypeForm.controls.reportId.value === 6 || reportTypeForm.controls.reportId.value === 7 ||  reportTypeForm.controls.reportId.value === 8)">
+          <div fxLayout="row">
+            <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center"
+              class="mb-3">
+              <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Location </h3>
+              <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+              <mat-form-field appearance="outline" fxFlex class="font-w-600 input-pdt fs-20">
+                <mat-select formControlName="locationIds" multiple (selectionChange)="locationSelected($event.value)">
+                  <mat-option #allSelected (click)="toggleAllSelection()" [value]="-1">All</mat-option>
+                  <mat-option *ngFor="let location of allLocation" [value]="location.id">
+                    {{location.name}}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="allLocation.length">
+                  <show-error [formControlErr]="reportTypeForm.controls.locationIds"
+                    requiredMsg="Please select a location from the dropdown option.">
+                  </show-error>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </ng-container>
+        <!-- location for customer -->
+
+        <ng-container
+          *ngIf="this.custGroupId && (reportTypeForm.controls.reportId.value === 6 || reportTypeForm.controls.reportId.value === 7 ||  reportTypeForm.controls.reportId.value === 8)">
+          <div fxLayout="row">
+            <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center"
+              class="mb-3">
+              <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Order Type </h3>
+              <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+              <mat-form-field appearance="outline" fxFlex class="font-w-600 input-pdt fs-20">
+                <mat-select formControlName="orderTypeId">
+                  <mat-option value="0">
+                    All
+                  </mat-option>
+                  <ng-container *ngFor="let ordertype of allOrderType">
+                    <mat-option *ngIf="[1, 2].includes(ordertype.id)" [value]="ordertype.id">
+                      {{ordertype.name}}
+                    </mat-option>
+                  </ng-container>
+                </mat-select>
+                <mat-error *ngIf="allOrderType.length">
+                  <show-error [formControlErr]="reportTypeForm.controls.orderTypeId"
+                    requiredMsg="Please select a order type from the dropdown option.">
+                  </show-error>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </ng-container>
+
+        <div fxLayout="row" [hidden]="reportTypeForm.controls.reportId.value === 10">
+          <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position" *ngIf="!this.todayDate">Start Date
+            </h3>
+            <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position" *ngIf="this.todayDate">Date </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" class="font-w-600 input-pdt fs-20" fxFlex>
+              <input matInput formControlName="startDate" [matDatepicker]="picker"
+                [value]="this.todayDate ? reportTypeForm.controls['startDate'].value : '' ">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <mat-error>
+                <show-error [formControlErr]="reportTypeForm.controls.startDate"
+                  requiredMsg="Please select start date.">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row"
+          [hidden]="reportTypeForm.controls.reportId.value === 6 || reportTypeForm.controls.reportId.value === 7 ||  reportTypeForm.controls.reportId.value === 8 || reportTypeForm.controls.reportId.value === 10">
+          <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position">End Date </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" class="font-w-600 input-pdt fs-20" fxFlex>
+              <input matInput formControlName="endDate" [matDatepicker]="picker1"
+                [min]="reportTypeForm.controls['startDate'].value">
+              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+              <mat-error>
+                <show-error [formControlErr]="reportTypeForm.controls.endDate" requiredMsg="Please select end date.">
+                </show-error>
+              </mat-error>
+
+              <mat-error *ngIf="reportTypeForm.controls.endDate?.hasError('matDatepickerMin')">
+                End date should be greater than the start date
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </ng-container>
+    </form>
+  </div>
+</div>

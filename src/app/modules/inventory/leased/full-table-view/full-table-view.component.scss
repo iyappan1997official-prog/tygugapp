@@ -1,0 +1,140 @@
+mat-form-field {
+    mat-icon {
+        font-size: 27px;
+        margin-right: 10px;
+    }
+}
+
+.width-inp {
+    width: 15.188rem !important;
+}
+
+@media screen and (min-width:1280px) and (max-width: 1440px) {
+    .width-inp {
+        width: 15rem !important;
+    }
+}
+
+.mat-form-field-wrapper {
+    padding-bottom: 0;
+    margin: 0 !important;
+}
+
+.bg-color {
+    background-color: #8FABC9;
+}
+
+
+
+.theight {
+    position: relative;
+    height: 160px;
+    overflow: hidden;
+}
+
+.tablehead {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+}
+
+.tabledes {
+    font-size: 14px !important;
+}
+
+
+@media screen and (min-width:1280px) and (max-width:1336px) {
+    .example-full-width {
+        width: 20%;
+    }
+}
+
+
+@media only screen and (max-width:1279px) {
+    .half-width {
+        width: 50%;
+    }
+
+    .small-display {
+        display: none;
+    }
+}
+
+.res-card {
+    border: 1px solid #ffffff;
+    border-radius: 10px;
+}
+
+.card-row {
+    margin-bottom: 1rem;
+    justify-content: center;
+
+    .card {
+        padding: 0.85rem 1rem;
+        border: 1px solid #8fabc9;
+        height: 100%;
+
+        &_head {
+            h3 {
+                font-size: 22px;
+                color: #515355;
+                font-weight: 500;
+                margin-bottom: 1rem !important;
+            }
+        }
+
+        &_body {
+            font-weight: 600;
+            text-align: center;
+
+            &-head {
+                font-size: 20px;
+                margin-bottom: .4rem;
+            }
+
+            &-text {
+                font-size: 18px;
+            }
+        }
+    }
+}
+
+// .card {
+//     table {
+//         tr {
+//             th {
+//                 padding-bottom: .4rem;
+//             }
+//             td {
+//                 padding: 0 !important;
+//                 font-weight: 600;
+//                 .viewbtn {
+//                     color: #3d7cca;
+//                     text-decoration: underline;
+//                 }
+//             }
+//             &:hover {
+//                 background-color: #fff;
+//             }
+//         }
+//     }
+// }
+.card-wrapper {
+    max-height: calc(100vh - 21.5rem);
+    overflow: hidden auto;
+}
+
+.view-text-color {
+    color: #407EC9;
+}
+
+/* Make all sort icons black */
+th .fa-sort {
+  color: #000 !important;
+  opacity: 1 !important;
+  font-size: 14px; /* optional: same size as your screenshot */
+}
+
+/* Also ensure hover does NOT change color */
+th .fa-sort:hover {
+  color: #000 !important;
+}

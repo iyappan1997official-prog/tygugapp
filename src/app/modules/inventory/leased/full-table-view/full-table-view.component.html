@@ -1,0 +1,285 @@
+<div class="content-wrapper">
+    <!-- ([this.roleEnum.customerAdmin, this.roleEnum.customerManager].includes(loggedInUserRole) && contentScroll) ? '' : 'content-wrapper' -->
+    <div class="pt-2 ox-none">
+        <form [formGroup]="inventoryForm">
+            <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutAlign="space-between center">
+                <div fxLayout="row" fxLayoutGap="10px" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+                    <!-- <div class="searchWrapper">
+                        <span><img src="../../../../assets/logos/SearchSvg.svg" alt="Search"></span>
+                        <input placeholder="Quilt serial number" formControlName="quiltSerialNumber"
+                            class="w-100 form-control p-0">
+                    </div> -->
+                    <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mw-160">
+                        <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                        <input matInput formControlName="quiltSerialNumber" placeholder="Quilt number" trim>
+                        <!-- <mat-icon  matSuffix class="sub-prefix cursor">clear</mat-icon> -->
+                    </mat-form-field>
+
+                    <!-- <div class="searchWrapper">
+                        <span><img src="../../../../assets/logos/SearchSvg.svg" alt="Search"></span> -->
+                    <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mw-160">
+                        <mat-icon matPrefix class="sub-prefix mt-2">search</mat-icon>
+                        <mat-select formControlName="quiltStatusId" placeholder="Quilt status" class="w-100 p-0"
+                            style="border:none;">
+                            <!-- <mat-option value="0" disabled>
+                                Select Quilt Status
+                            </mat-option> -->
+                            <mat-option value="0">
+                                All
+                            </mat-option>
+                            <ng-container *ngFor="let status of allStatus">
+                                <mat-option
+                                    *ngIf="[this.roleEnum.customerAdmin, this.roleEnum.customerManager, this.roleEnum.globalAdmin].includes(loggedInUserRole) ? [1,6].includes(status.id) : [1, 2, 3,12].includes(status.id)"
+                                    [value]="status.id">
+                                    {{status.name}}
+                                </mat-option>
+                            </ng-container>
+                        </mat-select>
+                    </mat-form-field>
+                    <!-- </div> -->
+
+                    <!-- <div class="searchWrapper">
+                        <span><img src="../../../../assets/logos/SearchSvg.svg" alt="Search"></span>
+                        <input placeholder="Pallet serial number" formControlName="palletSerialNumber"
+                            class="w-100 form-control p-0">
+                    </div> -->
+                    <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mw-160">
+                        <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                        <input matInput formControlName="palletSerialNumber" placeholder="Pallet Number" trim>
+                        <!-- <mat-icon  matSuffix class="sub-prefix cursor">clear</mat-icon> -->
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mw-160">
+                        <input matInput formControlName="orderNumber" placeholder="Order Number" trim>
+                    </mat-form-field>
+
+
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="20px" class="border-left ps-3">
+                    <button class="btn btn-newPrimary btncolor p-12 mb-xl-0 mb-3"
+                        (click)="searchAppliedFlters()">Search</button>
+                    <button class="btn btnborder p-12 mb-xl-0 mb-3" [disabled]="searchFilter===false"
+                        (click)="resetFilters()">Reset</button>
+                </div>
+            </div>
+            <!-- <div class="card bg-color px-4 py-4 mt-3" id="collapseExample" [ngbCollapse]="isCollapsed"> -->
+            <div fxLayout="row" fxLayoutAlign="space-between center">
+
+                <div fxLayout="row" fxLayoutGap="10px" fxLayoutGap.lt-xl="10px" fxLayout.lt-lg="column" class="mt-2"
+                    fxFlex>
+                    <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mw-160"
+                        *ngIf="![this.roleEnum.customerManager].includes(this.loggedInUserRole)">
+                        <mat-icon matPrefix class="sub-prefix mt-2">search</mat-icon>
+                        <mat-select formControlName="locationId" placeholder="Current location" class="w-100 p-0"
+                            style="border:none;">
+                            <!-- <mat-option value="0" disabled>
+                                Select Location
+                            </mat-option> -->
+                            <mat-option value="0">
+                                All
+                            </mat-option>
+                            <!-- <mat-option *ngIf="companyAdminRoles.includes(this.loggedInUserRole)" value="1">
+                                Warehouse</mat-option> -->
+                            <mat-option *ngFor="let location of allLocations" [value]="location.id">
+                                {{location.name}}
+                            </mat-option>
+                            <!-- <mat-option *ngIf="companyAdminRoles.includes(this.loggedInUserRole)" value="1">
+                                Warehouse</mat-option> -->
+                        </mat-select>
+                    </mat-form-field>
+
+
+                    <mat-form-field appearance="outline" class="width-inp searchBox mw-160 input-pdt fs-16">
+                        <input matInput placeholder="Ship Date" formControlName="shipDate" [matDatepicker]="picker">
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="width-inp searchBox mw-160 input-pdt fs-16">
+                        <input matInput placeholder="Receive Date" formControlName="receiveDate"
+                            [matDatepicker]="picker1">
+                        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                        <mat-datepicker #picker1></mat-datepicker>
+                    </mat-form-field>
+
+                    <ng-container
+                        *ngIf="this.currentTab === 'leased' && [this.roleEnum.customerAdmin, this.roleEnum.customerManager].includes(loggedInUserRole)">
+                        <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mw-160">
+                            <mat-select [formControl]="nickNameId" (selectionChange)="orderNameFilter($event.value)"
+                                placeholder="Order Name">
+                                <ng-container *ngIf="allOrderNames?.length">
+                                    <mat-option [value]="0">All</mat-option>
+                                    <mat-option *ngFor="let data of allOrderNames" [value]="data.id">
+                                        {{data.name}}
+                                    </mat-option>
+                                </ng-container>
+                            </mat-select>
+                        </mat-form-field>
+                    </ng-container>
+                </div>
+
+                <div *ngIf="[this.roleEnum.customerAdmin, this.roleEnum.customerManager, this.roleEnum.globalAdmin].includes(loggedInUserRole)"
+                    fxFlex fxLayoutAlign="end center">
+                    <button
+                        *ngIf="![this.roleEnum.customerManager,this.roleEnum.globalAdmin].includes(loggedInUserRole)"
+                        class="btn btn-newPrimary btncolor p-12 me-3" (click)="updateStatus()">Update Quilt
+                        Status</button>
+                    <button class="btn btn-newPrimary btncolor p-12" (click)="createPallet()">Create Pallet</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="card res-card pt-4 mt-3 pb-2">
+            <div fxLayout="row" class="mx-3" fxLayout.lt-md="column">
+                <div fxFlex="50%"
+                    *ngIf="[this.roleEnum.customerAdmin, this.roleEnum.customerManager,this.roleEnum.globalAdmin].includes(loggedInUserRole); else MAView">
+                    <h2 class="mb-0 main-color font-w-600 fs-24"><img class="cursor mb-1"
+                            src="../../../../assets/logos/arrow-backP.svg" (click)="handleRouting()">
+                    </h2>
+                </div>
+                <ng-template #MAView>
+                    <div fxFlex="50%">
+                        <h2 class="mb-0 main-color font-w-600 fs-24"><img
+                                *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(loggedInUserRole) || path.includes('purchased') || ([this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(loggedInUserRole) && path.includes('purchased'))"
+                                class="cursor mb-1" src="../../../../assets/logos/arrow-backP.svg"
+                                (click)="handleRouting()">
+                            &nbsp;{{companyName || ''}} <span class="fs-16">({{companyNumber || ''}})</span></h2>
+                    </div>
+                </ng-template>
+                <ng-container *ngIf="![this.roleEnum.globalAdmin].includes(loggedInUserRole)">
+                    <ng-container
+                        *ngIf="[this.roleEnum.masterAdmin, this.roleEnum.warehouseUser, this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(loggedInUserRole);">
+                        <div fxFlex fxLayout="row" fxLayoutAlign="end center" fxLayout.lt-md="column"
+                            fxLayoutGap="30px">
+                            <p class="mb-0"><span class="sub-head-color font-w-600 fs-18">Quilts Assigned: </span><span
+                                    class="main-color font-w-600 fs-18">{{quiltsAssigned || ''}}</span></p>
+                            <p class="mb-0"><span class="sub-head-color font-w-600 fs-18">Order Number: </span>
+                                <span class="main-color font-w-600 fs-18">{{orderNumberName || ''}}</span>
+                            </p>
+                            <p class="mb-0"><span class="sub-head-color font-w-600 fs-18">Active Quilt: </span>
+                                <span class="main-color font-w-600 fs-18">{{activeQuilts || ''}}</span>
+                            </p>
+                        </div>
+                    </ng-container>
+                    <!-- <ng-template #companyAdminView>
+                        <div fxFlex fxLayout="row" fxLayoutAlign="end center" fxLayout.lt-md="column" fxLayoutGap="30px"
+                            class="pb-2">
+                             <p class="mb-0"><span class="sub-head-color font-w-600 fs-18">Inventory Scanned:
+                                </span><span class="main-color font-w-600 fs-18">{{inventoryScanned || 0}}</span></p>
+                            <p class="mb-0"><span class="sub-head-color font-w-600 fs-18">On Hand: </span>
+                                <span class="main-color font-w-600 fs-18">{{onHand || 0}}</span>
+                            </p> 
+                        </div>
+                    </ng-template> -->
+                </ng-container>
+            </div>
+            <div class="card-row row" *ngIf="companyAdminRoles.includes(this.loggedInUserRole)">
+                <div class="col-xl-3 col-xxl-2 ">
+                    <div class="card cursor-pointer" (click)="partNumberCardFilterReset()">
+                        <div class="card_head">
+                            <h3 class="text-center">Total Quantity</h3>
+                        </div>
+                        <div class="card_body">
+                            <div class="card_body-head view-text-color">{{totalQuantity}}</div>
+                        </div>
+                    </div>
+                </div>
+                <ng-container *ngIf="partnumberItems$ | async as partnumbers;">
+                    <ng-container *ngIf="partnumbers && partnumbers.length > 0">
+
+                        <div class="col-xl-3 col-xxl-2 " *ngFor="let item of partnumbers">
+                            <div class="card cursor-pointer" (click)="partNumberCardFilter(item.inventoryId)">
+                                <div class="card_head">
+                                    <h3 class="text-center">Part Number</h3>
+                                </div>
+                                <div class="card_body">
+                                    <div class="card_body-head">{{item.partNumber}} -
+                                        {{item.customerFacingDescription}}</div>
+                                    <div class="card_body-text view-text-color">{{item.totalQuilts}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+
+            </div>
+
+            <div [class]="this.tab === 'leased' ? 'scroll threeRowFilter' : 'scroll innerContentWrapper'">
+                <div class="table-responsive pt-3 scroll">
+                    <table class="table">
+                        <thead>
+                            <tr class="tablelight text-center">
+                                <th>
+                                    Quilt Serial Number <i class="fa fa-sort" aria-hidden="true"
+                                        (click)="sort('serialnumber')"></i>
+                                </th>
+                                <!-- <i class="fa fa-sort" aria-hidden="true" (click)="sortbtn('quiltstatus')"></i> -->
+                                <th>Quilt Status</th>
+                                <th>Current Location <i class="fa fa-sort" aria-hidden="true"
+                                        (click)="sort('location')"></i> </th>
+                                <th *ngIf="companyAdminRoles.includes(loggedInUserRole)">Order Number</th>
+                                <th>Pallet Number</th>
+                                <th>Ship Date <i class="fa fa-sort" aria-hidden="true"
+                                        (click)="sort('shipDate')"></i></th>
+                                <th>Receive Date <i class="fa fa-sort" aria-hidden="true"
+                                        (click)="sort('receiveDate')"></i></th>
+                                <th
+                                    *ngIf="[this.roleEnum.customerAdmin, this.roleEnum.customerManager, this.roleEnum.globalAdmin].includes(loggedInUserRole)">
+                                    <mat-checkbox color="primary"
+                                        (change)="$event ? masterToggle($event.checked) : null"
+                                        [checked]="isAllSelected"></mat-checkbox>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngIf="items$ | async as inventoryData;">
+                                <ng-container *ngIf="inventoryData && inventoryData.length > 0; else noData">
+                                    <tr class="text-center" *ngFor="let data of inventoryData">
+                                        <td class="cursor">
+                                            {{data['quiltSerialNumber'] || '--'}}
+                                        </td>
+                                        <td>{{data['quiltStatus'] || '--'}}</td>
+                                        <td>
+                                            {{data['location'] || '--'}}
+                                        </td>
+                                        <td *ngIf="companyAdminRoles.includes(loggedInUserRole)">
+                                            {{data['orderNumber']}}
+                                        </td>
+                                        <td>
+                                            {{data['palletNumber'] || '--'}}
+                                        </td>
+                                        <td>
+                                            {{data['shipDate'] ? (data['shipDate'] |date: 'MM/dd/yyyy') : '--'}}
+                                        </td>
+                                        <td>{{data['receiveDate'] ? (data['receiveDate'] |date: 'MM/dd/yyyy') : '--'}}
+                                        </td>
+                                        <td
+                                            *ngIf="[this.roleEnum.customerAdmin, this.roleEnum.customerManager,this.roleEnum.globalAdmin].includes(loggedInUserRole)">
+                                            <mat-checkbox color="primary" (click)="$event.stopPropagation()"
+                                                (change)="$event ? selectRows(data, $event.checked) : null"
+                                                [checked]="checkStockInSelectedRows(data)">
+                                            </mat-checkbox>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+
+                                <ng-template #noData>
+                                    <tr>
+                                        <td colspan="9" class="bg-white">
+                                            <div class="text-center">
+                                                <h3>No data found</h3>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                    <mat-paginator [length]="this.totalCount" [pageIndex]="formValues?.pageNumber - 1"
+                        [pageSize]="formValues?.controls?.pageSize.value" [pageSizeOptions]="pageSizeOptions"
+                        (page)="paginator($event)" showFirstLastButtons aria-label="Select page">
+                    </mat-paginator>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+<div class="row bg-light">
+  <div class="col-12 bg-modal text-center text-white py-2">
+    <h2>Pallet Lookup</h2>
+  </div>
+
+  <!-- Pallet Serial Number -->
+  <div class="col-1"></div>
+  <div class="col-5 mt-5 text-start font-w-600 fs-18 main-color">Pallet Serial Number</div>
+  <div class="col-5 mt-5 text-end font-w-400 fs-18 main-color">
+    {{ palletData?.serialNumber || '--' }}
+  </div>
+  <div class="col-1"></div>
+
+  <!-- Description -->
+  <div class="col-1"></div>
+  <div class="col-5 text-start mt-3 font-w-600 fs-18 main-color">Description</div>
+  <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color">
+    {{ palletData?.description || '--' }}
+  </div>
+  <div class="col-1"></div>
+
+  <!-- Quilt Count -->
+  <div class="col-1"></div>
+  <div class="col-5 text-start mt-3 font-w-600 fs-18 main-color">Quilt Count</div>
+  <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color">
+    {{ palletData?.totalQuilts || 0 }}
+  </div>
+  <div class="col-1"></div>
+
+  <!--Status -->
+  <div class="col-1"></div>
+  <div class="col-5 text-start mt-3 font-w-600 fs-18 main-color">Status</div>
+  <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color">
+    {{palletData?.palletStatus || '--'}}
+  </div>
+  <div class="col-1"></div>
+
+  <!--Location-->
+  <div class="col-1"></div>
+  <div class="col-5 text-start mt-3 font-w-600 fs-18 main-color">Current Location</div>
+  <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color">
+    {{palletData?.location || '--'}}
+  </div>
+  <div class="col-1"></div>
+
+  <!-- Footer Buttons -->
+  <div class="col-1"></div>
+  <div class="col-5 text-center my-5">
+    <button class="btn p-12 btn-newPrimary" (click)="activeModal.close()">Ok</button>
+  </div>
+  <div class="col-1"></div>
+</div>
+
+

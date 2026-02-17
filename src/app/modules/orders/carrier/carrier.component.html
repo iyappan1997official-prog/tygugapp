@@ -1,0 +1,85 @@
+<div class="py-4">
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center" fxLayoutAlign.lt-md="start start"
+        *ngIf="![this.roleEnum.customerAdmin].includes(loggedInUserRole)">
+        <h2 class="main-color font-w-600 fs-24 mt-3">{{this.customerName}} <span
+                class="fs-16 font-w-600">({{this.customerNumber}})</span></h2>
+    </div>
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+        <div fxFlex="50%" fxLayoutAlign.lt-md="start center">
+            <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+                <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                <input matInput [formControl]="getSearchByControl()" placeholder="Search Carrier" trimValue>
+                <mat-icon *ngIf="carrierListForm?.controls?.searchBy?.value?.length > 0" matSuffix
+                    class="sub-prefix cursor" (click)="searchReset()">clear</mat-icon>
+            </mat-form-field>
+        </div>
+        <div fxFlex fxLayoutAlign="end center" fxLayoutAlign.lt-md="start center" fxLayout.lt-sm="column"
+            *ngIf="loggedInUserRole===this.roleEnum.masterAdmin">
+            <button class="btn btn-newPrimary p-12 text-white btncolor" routerLink="/orders/add-carrier"
+                [queryParams]="{customerId,customerName: this.customerName ,customerNumber:this.customerNumber}">Add
+                New
+                Carrier</button>
+        </div>
+    </div>
+
+    <div class="card mt-4 pt-3 px-3 py-0 table-responsive">
+        <table class="table">
+            <thead>
+                <tr class="tablelight text-center">
+                    <th>
+                        Preferred Carrier
+                    </th>
+                    <th>Sr No.</th>
+                    <th>Name</th>
+                    <th>Phone No.</th>
+                    <th>Additional Notes</th>
+                    <th *ngIf="loggedInUserRole===this.roleEnum.masterAdmin"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="items$ | async as carriers;">
+                    <ng-container *ngIf="carriers && carriers.length > 0; else noData">
+                        <tr class="text-center" *ngFor="let carrier of carriers; let i = index;">
+                            <td>
+                                <mat-checkbox color="primary" class="circle-checkbox" [checked]="carrier['isPreferred']"
+                                    disabled>
+                                </mat-checkbox>
+                            </td>
+                            <td>{{carrierListForm.controls.pageSize.value * (carrierListForm?.getRawValue()?.pageNumber
+                                - 1) + i + 1}}</td>
+                            <td>{{carrier['name'] || '--'}}</td>
+                            <td>{{carrier['phoneNumber'] || '--'}}</td>
+                            <td>{{carrier['additionalNotes'] || '--'}}</td>
+                            <td *ngIf="loggedInUserRole===this.roleEnum.masterAdmin">
+                                <span class="w-24 d-inline-block me-3">
+                                    <img class="cursor lg-w-20" src="../../../../assets/logos/EditP.svg"
+                                        [routerLink]="['/orders/edit-carrier',carrier['id']]"
+                                        [queryParams]="{customerId}">
+                                </span>
+                                <span class="w-24 d-inline-block">
+                                    <img class="cursor lg-w-20" *ngIf="carrier['customerId']!=0"
+                                        src="../../../../assets/logos/DeleteP.svg"
+                                        (click)="openConfirmDeleteModal(carrier['id'])">
+                                </span>
+                            </td>
+                        </tr>
+                    </ng-container>
+
+                    <ng-template #noData>
+                        <tr>
+                            <td colspan="9" class="bg-white">
+                                <div class="text-center">
+                                    <h3>No carriers found</h3>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </ng-container>
+            </tbody>
+        </table>
+        <mat-paginator [length]="totalCarriers" [pageIndex]="carrierListForm?.getRawValue()?.pageNumber - 1"
+            [pageSize]="carrierListForm.controls.pageSize.value" [pageSizeOptions]="pageSizeOptions"
+            (page)="paginator($event)" showFirstLastButtons aria-label="Select page">
+        </mat-paginator>
+    </div>
+</div>

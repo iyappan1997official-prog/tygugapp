@@ -1,0 +1,51 @@
+.light-card {
+    background: #F4F7FC;
+    border-radius: 20px;
+    padding: 1.2rem 1rem;
+}
+.p-relative{
+    position: relative;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+.non-inputField{
+    border-top: 10px solid transparent;
+    padding: 13px 0;
+}
+.total-count{
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.mat-form-field-type-mat-native-select.mat-form-field-disabled
+  .mat-form-field-infix::after,
+.mat-input-element:disabled{
+    font-size: 20px !important;
+}
+
+
+.arrow .mat-select-arrow{
+    opacity: 0;
+}
+
+// .mat-select-content[_ngcontent-bqg-c270], .mat-disabled[_ngcontent-bqg-c270], mat-select.mat-disabled[_ngcontent-bqg-c270]{
+//     color: grey !important;
+// }
+
+.mat-select-disabled .mat-select-value {
+    color: grey !important;
+}
+
+.delete-btn{
+    position: absolute;
+    right: 1rem;
+    top: 1.5rem;
+}

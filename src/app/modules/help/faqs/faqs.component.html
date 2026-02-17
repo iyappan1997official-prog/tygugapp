@@ -1,0 +1,95 @@
+<div class="mt-3">
+  <h2 class="pt-2 main-color font-w-600 fs-24">Frequently Asked Questions (FAQs)</h2>
+
+  <div class="card py-4 cardheight">
+
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center" class="mb-2">
+      <div>
+        <h2 class="main-color font-w-600 fs-24 mb-0">Mobile Application</h2>
+      </div>
+      <div>
+        <button *ngIf="userRole===this.roleEnum.masterAdmin" class="btn btn-newPrimary p-12 text-white btncolor"
+          (click)="openAddFaqModal()">Add FAQs</button>
+      </div>
+    </div>
+    <ng-container *ngIf=" savedFaqs?.mobileApplicationFAQ?.length">
+      <ng-container *ngFor="let faq of savedFaqs?.mobileApplicationFAQ; let last = last; let i=index">
+        <div fxLayout="row" class="my-2" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+          <div>
+            <h3 class="textcolor mb-0 cursor-pointer font-w-600 fs-18"
+              (click)="mobileAppQueToggle(!mobileQueCollapsed,i)" [attr.aria-expanded]="mobileAppQueExpand!==i"
+              aria-controls="collapseExample">
+              <ng-template #collapsedMobileQueTemplate>
+                <img class="cursor ht-20 w-20" src="../../../../assets/logos/rightarrowS.svg">
+              </ng-template>
+              <ng-container *ngIf="mobileAppQueExpand===i; else collapsedMobileQueTemplate">
+                <img class="cursor ht-20 w-20" src="../../../../assets/logos/downarrowS.svg">
+              </ng-container> &nbsp;
+              {{faq?.question}}
+            </h3>
+          </div>
+          <div>
+            <p class="cursor mb-0" *ngIf="userRole===this.roleEnum.masterAdmin" mat-button [matMenuTriggerFor]="menu">
+              <img class="cursor ht-20" src="../../../../assets/logos/3 dots menuS.svg">
+            </p>
+            <mat-menu #menu="matMenu">
+              <button class="font-w-600" mat-menu-item (click)="openAddFaqModal('mobile','edit',faq?.id)">Edit</button>
+              <button class="font-w-600" mat-menu-item (click)="openConfirmDeleteModal(faq['id'])">Delete</button>
+              <!-- "deleteFaq(faq.id)" -->
+            </mat-menu>
+          </div>
+        </div>
+        <div class="px-4" id="collapseExample" [ngbCollapse]="mobileAppQueExpand!==i">
+          <h3 class="main-color font-w-600 fs-18">{{faq?.answer}}</h3>
+        </div>
+        <mat-divider *ngIf="!last"></mat-divider>
+      </ng-container>
+    </ng-container>
+  </div>
+
+
+  <div class="card py-4 mt-3 cardheight">
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+      <div>
+        <h2 class="mb-0 main-color font-w-600 fs-24">Web Application</h2>
+      </div>
+      <div>
+        <button *ngIf="userRole===this.roleEnum.masterAdmin" class="btn btn-newPrimary p-12 text-white btncolor"
+          (click)="openAddFaqModal('web')">Add
+          FAQs</button>
+      </div>
+    </div>
+
+    <ng-container *ngIf="savedFaqs?.webApplicationFAQ?.length">
+      <ng-container *ngFor="let faq of savedFaqs?.webApplicationFAQ; let last = last; let i=index">
+        <div fxLayout="row" class="my-3" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+          <div>
+            <h3 class="textcolor mb-0 cursor-pointer font-w-600 fs-18" (click)="webAppQueToggle(!webQueCollapsed,i)"
+              [attr.aria-expanded]="webAppQueExpand!==i" aria-controls="collapseExample3">
+              <ng-template #collapsedWebQueTemplate>
+                <img class="cursor ht-20 w-20" src="../../../../assets/logos/rightarrowS.svg">
+              </ng-template>
+              <ng-container *ngIf="webAppQueExpand===i ;else collapsedWebQueTemplate">
+                <img class="cursor ht-20 w-20" src="../../../../assets/logos/downarrowS.svg">
+              </ng-container>
+              &nbsp; {{faq.question}}
+            </h3>
+          </div>
+          <div>
+            <p *ngIf="userRole===this.roleEnum.masterAdmin" class="cursor" mat-button [matMenuTriggerFor]="menu">
+              <img class="cursor ht-20" src="../../../../assets/logos/3 dots menuS.svg">
+            </p>
+            <mat-menu #menu="matMenu">
+              <button class="font-w-600" mat-menu-item (click)="openAddFaqModal('web','edit',faq?.id)">Edit</button>
+              <button class="font-w-600" mat-menu-item (click)="openConfirmDeleteModal(faq['id'])">Delete</button>
+            </mat-menu>
+          </div>
+        </div>
+        <div class="px-4" id="collapseExample3" [ngbCollapse]="webAppQueExpand!==i">
+          <h3 class="main-color font-w-600 fs-18">{{faq.answer}}</h3>
+        </div>
+        <mat-divider *ngIf="!last"></mat-divider>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>

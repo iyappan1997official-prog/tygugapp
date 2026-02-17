@@ -1,0 +1,56 @@
+<div class="card cardborder px-2 py-0" fxFlex
+    [formGroup]="(this.chartVal == 'inventory') ? inventoryOverviewFilters : usageBySizeFilters">
+    <div class="card_head">
+        <div class="chart_title">
+            {{title}}
+        </div>
+        <div class="chart_options">
+            <mat-form-field appearance="outline" class="input-pdt">
+                <mat-select formControlName="regionId">
+                    <mat-option value="0">
+                        Global
+                    </mat-option>
+                    <mat-option *ngFor="let item of allCusRegionLocations" [value]="item.id">
+                        {{ item.regionName }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <ng-container *ngIf="this.chartVal == 'inventory'; else dateFilter">
+                <mat-form-field appearance="outline" class="input-pdt">
+                    <mat-select formControlName="quiltSize">
+                        <mat-option value="0">
+                            All Size
+                        </mat-option>
+                        <mat-option *ngFor="let type of sizeOrdate" [value]="type.id">
+                            {{ type.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </ng-container>
+            <ng-template #dateFilter>
+                <mat-form-field appearance="outline" class="input-pdt" [formGroup]="dateGroup">
+                    <mat-select formControlName="dateId">
+                        <mat-option *ngFor="let item of sizeOrdate" [value]="item.value"
+                            (selectionChange)="dateUsage(item.value)">
+                            {{ item.viewValue }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </ng-template>
+        </div>
+    </div>
+    <div id="chart">
+        <apx-chart [series]="series" [chart]="chartOptions.chart" [labels]="labels" [fill]="chartOptions.fill"
+            [dataLabels]="chartOptions.dataLabels" [title]="chartOptions.title" [plotOptions]="chartOptions.plotOptions"
+            [theme]="chartOptions.theme" [responsive]="chartOptions.responsive" [legend]="chartOptions.legend" [noData]="{
+        text:'No Data Available',
+        align: 'center',
+        verticalAlign: 'middle',
+        offsetX : 0,
+        offsetY:0,
+        style: {
+          fontSize:'20px',
+          fontFamily:'Open Sans'
+        }}" [states]="chartOptions.states"></apx-chart>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+<div class="card cardborder p-3">
+    <h2 class="mb-4 font-w-600 main-color fs-24">
+        <img class="cursor mb-1 pe-2 doNotPrint" src="../../../../assets/logos/arrow-backP.svg" (click)="modal.close()">
+        User Details
+    </h2>
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="row w-100 font-w-600 ">
+                <div class="col-md-6">
+                    <p class="text-secondary mb-2 fs-16">Name</p>
+                    <h3 class="font-w-600 main-color fs-20">{{userDetails?.firstName}} {{userDetails?.lastName}}
+                    </h3>
+                </div>
+                <div class="col-md-6" *ngIf="userDetails?.region?.name">
+                    <p class="text-secondary mb-2 fs-16">Region</p>
+                    <h3 class="font-w-600 main-color fs-20">{{userDetails?.region?.name}}</h3>
+                </div>
+                <div class="col-md-6">
+                    <p class="text-secondary mb-2 fs-16">Email</p>
+                    <h3 class="font-w-600 main-color fs-20">{{userDetails?.email}}</h3>
+                </div>
+
+                <div class="col-md-6">
+                    <p class="text-secondary mb-2 fs-16">Phone No.</p>
+                    <h3 class="font-w-600 main-color fs-20">{{userDetails?.phoneNumber}}</h3>
+                </div>
+                <div class="col-md-6" *ngIf="userDetails?.company?.name">
+                    <p class="text-secondary mb-2 fs-16">Company</p>
+                    <h3 class="font-w-600 main-color fs-20">{{userDetails?.company.name}}</h3>
+                </div>
+                <div class="col-md-6">
+                    <p class="text-secondary mb-2 fs-16">Location</p>
+                    <h3 class="font-w-600 main-color fs-20">{{userDetails?.location?.name}}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

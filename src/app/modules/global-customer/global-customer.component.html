@@ -1,0 +1,72 @@
+<div class="content-wrapper pb-4">
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+        <div fxFlex="50%" fxLayoutAlign.lt-md="center center">
+            <!-- <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+                <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                <input matInput formControlName="searchBy" placeholder="Search" trimValue>
+                <mat-icon *ngIf="distributionListForm?.controls?.searchBy?.value?.length > 0" matSuffix
+                    class="sub-prefix cursor" (click)="searchReset()">clear</mat-icon>
+            </mat-form-field> -->
+        </div>
+        <div fxLayout="row" fxLayoutAlign="end center" fxLayoutAlign.lt-md="start center" fxLayout.lt-sm="column">
+            <button class="btn btn-newPrimary p-12 text-white btncolor"
+                routerLink="/global-customer/add-global-customer">Add
+                Customer Group</button>
+        </div>
+    </div>
+
+    <div class="card px-3 mt-3 pt-3 pb-0 table-responsive">
+        <table class="table mb-4">
+            <thead>
+                <tr class="tablelight text-center">
+                  <th width="33.33%" (click)="sort('name')" class="cursor">
+                    <div class="list-name-header text-center">
+                      Customer Group
+                      <i class="fa fa-sort ms-2" aria-hidden="true"></i>
+                    </div>
+                  </th>
+                    <th width="33.33%">Customers List</th>
+                    <th width="33.33%">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="items$ | async as list;">
+                    <ng-container *ngIf="list && list.length > 0; else noData">
+                        <tr class="text-center" *ngFor="let data of list;let i = index">
+
+                            <td>{{data['name'] || '--'}}</td>
+
+                            <td>
+                                <ul class="p-0 mb-0">
+                                    <ng-container *ngFor="let cList of data['customerList']">
+                                        <li>{{cList.name}}</li>
+                                    </ng-container>
+                                </ul>
+                            </td>
+                            <td><img class="cursor lg-w-20" src="../../../../assets/logos/EditP.svg"
+                                    [routerLink]="['/global-customer/edit-global-customer', data['id']]"> &nbsp;
+                                <!-- <img
+                                    class="cursor lg-w-20" src="../../../../assets/logos/DeleteP.svg"
+                                    (click)="openConfirmDeleteModal(data['id'])"> -->
+                            </td>
+                        </tr>
+                    </ng-container>
+
+                    <ng-template #noData>
+                        <tr>
+                            <td colspan="9" class="bg-white">
+                                <div class="text-center">
+                                    <h3>No data found</h3>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </ng-container>
+            </tbody>
+        </table>
+        <mat-paginator [length]="totalLists" [pageIndex]="globalCustomerListForm?.getRawValue()?.pageNumber - 1"
+            [pageSize]="globalCustomerListForm.controls.pageSize.value" [pageSizeOptions]="pageSizeOptions"
+            (page)="paginator($event)" showFirstLastButtons aria-label="Select page">
+        </mat-paginator>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+<div class="card p-0">
+    <!-- <mat-form-field appearance="outline" class="input-pdt card-search fs-16 searchBox mat-w-160">
+        <mat-icon *ngIf="quiltLocationLookupForm?.controls?.searchByLocation?.value?.length > 0" matSuffix
+            class="sub-prefix cursor" (click)="locationLookupSearch()">search</mat-icon>
+        <input matInput placeholder="Location Lookup" formControlName="searchByLocation" trim
+            (keyup.enter)="locationLookupSearch()">
+    </mat-form-field> -->
+    <div class="card-body p-0">
+        <google-map [zoom]="mapZoom" [center]="mapCenter" [options]="mapOptions">
+            <map-marker *ngFor="let item of markers" #marker="mapMarker" [position]="item.mapCenter"
+                [options]="markerOptions" (mapClick)="openInfoWindow(marker,item)">
+            </map-marker>
+            <map-info-window>
+                <table class="table table-borderless">
+                    <thead>
+                        <tr class="tablelight text-center fs-14">
+                            <th>
+                               {{(loggedInUserRole==this.roleEnum.masterAdmin||loggedInUserRole==this.roleEnum.serviceManager)?'Part Number':'Size'}} 
+                            </th>
+                            <th>
+                                Quantity
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <div>
+                        <ng-container *ngFor="let data of markerInfoContent">
+                            <tr class="text-center">
+                                <td style="width: 75%;">
+                                    {{data['size'] || '--'}}
+                                </td>
+
+                                <td style="width: 25%;">
+                                    {{data['quantity'] || '--'}}</td>
+
+                            </tr>
+                        </ng-container> 
+                    </div>
+                    </tbody>
+                </table>
+            </map-info-window>
+        </google-map>
+    </div>
+</div>

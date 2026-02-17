@@ -1,0 +1,121 @@
+<div class="pt-3 ox-none">
+    <form [formGroup]="palletTable">
+        <!-- [formGroup]="inventoryForm" -->
+        <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutAlign="space-between center">
+            <div fxLayout="row" fxLayoutGap="10px" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+                <div class="searchWrapper">
+                    <span><img src="../../../../assets/logos/SearchSvg.svg" alt="Search"></span>
+                    <input placeholder="Pallet number" formControlName="palletNumber" class="w-100 form-control p-0">
+                </div>
+                <div class="searchWrapper">
+                    <span><img src="../../../../assets/logos/SearchSvg.svg" alt="Search"></span>
+                    <input placeholder="Quilt number" formControlName="quiltSerialNumber"
+                        class="w-100 form-control p-0">
+                </div>
+
+                <div class="searchWrapper"
+                    *ngIf="[this.roleEnum.consignAdmin,this.roleEnum.customerAdmin].includes(loggedInUserRole)">
+                    <span><img src="../../../../assets/logos/SearchSvg.svg" alt="Search"></span>
+                    <mat-select formControlName="locationId" placeholder="Select Location"
+                        class="w-100 form-control p-0" style="border:none;">
+                        <mat-option value="0" disabled>
+                            Select Location
+                        </mat-option>
+
+                        <mat-option *ngFor="let location of allLocations" [value]="location.id">
+                            {{location.name}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+                <div class="searchWrapper">
+                    <span><img src="../../../../assets/logos/SearchSvg.svg" alt="Search"></span>
+                    <input placeholder="Description" formControlName="description" class="w-100 form-control p-0">
+                </div>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="20px" class="border-left ps-3">
+                <button class="btn btn-newPrimary btncolor p-12 mb-xl-0 mb-3"
+                    (click)="searchAppliedFlters()">Search</button>
+                <button class="btn btnborder p-12 mb-xl-0 mb-3" [disabled]="searchFilter===false"
+                    (click)="resetFilters()">Reset</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="card res-card pt-4 mt-3 px-4">
+        <div fxLayout="row" class="mx-3" fxLayout.lt-md="column"
+            *ngIf="![this.roleEnum.consignAdmin,this.roleEnum.consignManager,this.roleEnum.customerAdmin,this.roleEnum.customerManager, this.roleEnum.globalAdmin].includes(loggedInUserRole)">
+            <div fxFlex fxLayout="row" fxLayoutAlign="end center" fxLayout.lt-md="column" fxLayoutGap="30px">
+                <p class="mb-0"><span class="sub-head-color font-w-600 fs-18">Inventory Scanned: </span><span
+                        class="main-color font-w-600 fs-18">{{inventory || 0}}</span></p>
+                <p class="mb-0"><span class="sub-head-color font-w-600 fs-18">On Hand: </span>
+                    <span class="main-color font-w-600 fs-18">{{onhand || 0}}</span>
+                </p>
+            </div>
+        </div>
+        <div class="table-responsive mx-4 pt-3">
+            <table class="table">
+                <thead>
+                    <tr class="tablelight text-center">
+                        <th>
+                            Pallet Number
+                        </th>
+                        <th>Description</th>
+                        <th>Location</th>
+                        <th>Total Quilts</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="items$ | async as pallets;">
+                        <ng-container *ngIf="pallets && pallets.length > 0; else noData">
+                            <tr class="text-center" *ngFor="let data of pallets">
+                                <td class="cursor">
+                                    {{data['serialNumber'] || '--'}}
+                                </td>
+                                <td>{{data['description'] || '--'}}</td>
+                                <td>
+                                    {{data['location'] || '--'}}
+                                </td>
+                                <td>
+                                    {{data['totalQuilts'] || '--'}}
+                                </td>
+                                <td><!--<img class="cursor lg-w-20" src="../../../../assets/logos/Eye.svg"
+                                        [routerLink]="['/inventory/quilts-inventory/pallet-details', data['id']]">
+                                    &nbsp;
+                                    <img *ngIf="data['locationId'] === loggedInLocationId" class="cursor lg-w-20" src="../../../../assets/logos/DeleteP.svg"
+                                        (click)="openConfirmDeleteModal(data['id'])"> -->
+                                    <div class="d-flex">
+                                        <div>
+                                            <img class="cursor lg-w-20" src="../../../../assets/logos/Eye.svg"
+                                                [routerLink]="['/inventory/quilts-inventory/pallet-details', data['id']]">
+                                        </div>
+                                        <div>
+                                            <img *ngIf="data['locationId'] === loggedInLocationId"
+                                                class="cursor lg-w-20" src="../../../../assets/logos/DeleteP.svg"
+                                                (click)="openConfirmDeleteModal(data['id'])">
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                        <ng-template #noData>
+                            <tr>
+                                <td colspan="9" class="bg-white">
+                                    <div class="text-center">
+                                        <h3>No data found</h3>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </ng-container>
+                </tbody>
+            </table>
+
+            <mat-paginator [length]="totalPallets" [pageIndex]="formValues?.pageNumber -1"
+                [pageSize]="formValues?.pageSize" [pageSizeOptions]="pageSizeOptions" (page)="paginator($event)"
+                showFirstLastButtons aria-label="Select page" class="px-0">
+            </mat-paginator>
+        </div>
+    </div>

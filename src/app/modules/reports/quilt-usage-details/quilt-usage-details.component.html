@@ -1,0 +1,88 @@
+<div class="card py-4 cardheight scroll noFilterContentScroller" id="comp" [formGroup]="quiltUsageDetailForm">
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+        <div fxFlex="50%" fxLayoutAlign.lt-md="start center">
+            <h2 class="mb-0 main-color font-w-600 fs-24">
+                <img class="cursor mb-1 doNotPrint" src="../../../../assets/logos/arrow-backP.svg"
+                    routerLink="/reports/quilt-usage">
+                &nbsp;{{serialNumber}} <span class="fs-18">({{customerName}})</span>
+            </h2>
+        </div>
+    </div>
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center" class="mt-4">
+        <div fxLayout="row" fxLayoutGap="10px" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+            <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+                <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                <input matInput placeholder="Order Number" trim formControlName="orderNumber">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+                <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                <input matInput placeholder="Shipment Number" trim formControlName="shipmentNumber">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="20px" class="border-left ps-3">
+            <button class="btn btn-newPrimary btncolor p-12 mb-xl-0 mb-3"
+                (click)="searchFilter=true;searchAppliedFlters()">Search</button>
+
+            <button class="btn btnborder p-12 mb-xl-0 mb-3" (click)="searchFilter=false;resetFilters();"
+                [disabled]="searchFilter===false">Reset</button>
+
+        </div>
+    </div>
+    <div class="table-responsive pt-3">
+        <table class="table">
+            <thead>
+                <tr class="tablelight text-center">
+                    <!-- <th>
+                        Order Number
+                    </th> -->
+                    <th>Shipment No.</th>
+                    <th>Order No.</th>
+                    <th>Shipping Type</th>
+                    <th>Shipping Date</th>
+                    <th>Shipping Source</th>
+                    <th>Shipping Destination</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="items$ | async as detail;">
+                    <ng-container *ngIf="detail && detail.length > 0; else noData">
+
+                        <tr class="text-center" *ngFor="let data of detail;let i = index">
+                            <!-- <td>
+                                {{data['order']}}
+                            </td> -->
+                            <td>{{data['shippingNumber']}}</td>
+                            <td>{{data['order']}}</td>
+                            <td>{{data['shipmentType']}}</td>
+
+                            <td>
+                                {{data['shippingDate'] ? (data['shippingDate'] | date:
+                                'MM/dd/yyyy') : '--'}}
+                            </td>
+                            <td>
+                                {{data['source']}}
+                            </td>
+                            <td>
+                                {{data['destination']}}
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <ng-template #noData>
+                        <tr>
+                            <td colspan="5" class="bg-white">
+                                <div class="text-center">
+                                    <h3>No data found</h3>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+    <mat-paginator [length]="length" [pageIndex]="quiltUsageDetailForm?.getRawValue()?.pageNumber - 1"
+        [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions" (page)="paginator($event)" showFirstLastButtons
+        aria-label="Select page">
+    </mat-paginator>
+</div>

@@ -1,0 +1,399 @@
+<div class="card py-4 cardheight content-wrapper">
+  <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between start">
+    <div>
+      <h2 class="font-w-600 main-color fs-24" routerLink="">
+        <img class="cursor mb-1" src="../../../../assets/logos/arrow-backP.svg"
+          [routerLink]="['/orders/view-orders',customerId]"
+          [queryParams]="{customerName: this.customerName ,customerNumber:this.customerNumber}" />
+        {{ componentAccessFor === "add-order" ? "Add " : "Edit " }} Order
+      </h2>
+    </div>
+    <div fxLayout="row" fxLayoutGap="20px">
+      <button class="btn btn-newPrimary text-white btncolor" (click)="addOrder()">
+        Save
+      </button>
+      <button class="btn btnborder" (click)="resetForm()">Discard</button>
+    </div>
+  </div>
+  <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between start">
+    <div>
+      <h2 class="font-w-600 main-color fs-24">
+        {{ this.customerNameFromList }}<span class="fs-16 font-w-600">({{this.customerNumberFromList}})</span>
+      </h2>
+    </div>
+  </div>
+  <div class="mt-2 main-color" [formGroup]="addOrderForm">
+    <h2 class="pt-4 pb-3 mb-2 font-w-700 fs-24">Order Details</h2>
+
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px">
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">
+          Order No.
+        </h3>
+        <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">
+          :
+        </div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <input matInput formControlName="orderNumber" trimValue required />
+          <mat-error>
+            <show-error [formControlErr]="addOrderForm.controls.orderNumber"
+              requiredMsg="Please enter a unique order number" patternMsg="Only AlphaNumeric and '_' are allowed.">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">
+          Order Type
+        </h3>
+        <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">
+          :
+        </div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <mat-select formControlName="orderTypeId" required>
+            <ng-container *ngFor="let type of allTypes">
+              <mat-option *ngIf="[1,2].includes(type.id)" [value]="type.id">
+                {{ type.name }}
+              </mat-option>
+            </ng-container>
+          </mat-select>
+          <mat-error>
+            <show-error [formControlErr]="addOrderForm.controls.orderTypeId"
+              requiredMsg="Please select a type from the dropdown option">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px">
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">
+          Order Date
+        </h3>
+        <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">
+          :
+        </div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <input matInput formControlName="orderDate" [matDatepicker]="orderDatePicker" (click)="orderDatePicker.open()"
+            readonly />
+          <mat-datepicker-toggle matSuffix [for]="orderDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #orderDatePicker readonly></mat-datepicker>
+          <mat-error>
+            <show-error [formControlErr]="addOrderForm.controls.orderDate" requiredMsg="Please select a valid date">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">
+          Order Status
+        </h3>
+        <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">
+          :
+        </div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <mat-select formControlName="orderStatusId" required>
+            <mat-option *ngFor="let data of allStatus" [value]="data.id">
+              {{ data.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error>
+            <show-error [formControlErr]="addOrderForm.controls.orderStatusId"
+              requiredMsg="Please select a status from the dropdown option">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <!-- <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px">
+      <div fxFlex="50%" fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">
+          Private Order
+        </h3>
+        <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">
+          :
+        </div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <mat-select formControlName="isPrivate" required>
+            <mat-option [value]="true">
+              Yes
+            </mat-option>
+            <mat-option [value]="false">
+              No
+            </mat-option>
+          </mat-select>
+          <mat-error>
+            <show-error [formControlErr]="addOrderForm.controls.isPrivate"
+              requiredMsg="Please select a status from the dropdown option">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div> -->
+    <section fxLayout="column">
+      <h2 class="pt-4 pb-3 mb-2 font-w-700 fs-24">Quilt Details</h2>
+      <ng-container formArrayName="orderInfo" *ngFor="
+          let data of addOrderForm.get('orderInfo')['controls'];
+          let i = index
+        ">
+        <ng-container [formGroupName]="i">
+          <section class="light-card mb-4" fxLayout="column">
+            <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px">
+              <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+                <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+                  class="mb-0 font-w-600 fs-20">
+                  Part Number
+                </h3>
+                <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">
+                  :
+                </div>
+                <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+                  <mat-select formControlName="partNumberId"
+                    (selectionChange)="partNumberMappedData($event.value, orderInfo.controls[i]['controls'].quiltTypeId)"
+                    required>
+                    <mat-option>
+                      <ngx-mat-select-search [(ngModel)]="searchText" [ngModelOptions]="{ standalone: true }"
+                        placeholderLabel="Search..." noEntriesFoundLabel="No matching option found.">
+                      </ngx-mat-select-search>
+                    </mat-option>
+                    <mat-option *ngFor="let partNo of allPartNumbers | stringFilterBy: searchText : 'name'"
+                      [value]="partNo.id">
+                      {{partNo.name}}
+                    </mat-option>
+                    <!-- <mat-option [value]="0">Other</mat-option> -->
+                  </mat-select>
+
+                  <mat-error>
+                    <show-error [formControlErr]="orderInfo.controls[i]['controls'].partNumberId"
+                      requiredMsg="Part number is required."></show-error>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+                <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+                  class="mb-0 font-w-600 fs-20">
+                  Quilt Type
+                </h3>
+                <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">
+                  :
+                </div>
+                <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt ">
+                  <mat-select formControlName="quiltTypeId" required class="arrow">
+                    <mat-option *ngFor="let type of allQuiltTypes" [value]="type.id">
+                      {{ type.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error>
+                    <show-error [formControlErr]="
+                        orderInfo.controls[i]['controls'].quiltTypeId
+                      " requiredMsg="Please select a type from the dropdown option">
+                    </show-error>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px" class="p-relative">
+              <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+                <h3 fxFlex="30.5%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+                  class="mb-0 font-w-600 fs-20">
+                  Quilts Ordered
+                </h3>
+                <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">
+                  :
+                </div>
+                <mat-form-field appearance="outline" fxFlex="56%" class="font-w-600 fs-20 input-pdt">
+                  <input matInput formControlName="quiltsAdded" integers required (paste)="
+                      updateQuiltsCount(
+                        orderInfo.controls[i]['controls'].quiltsAdded,
+                        addOrderForm.get('orderInfo')
+                      )
+                    " (keypress)="
+                      updateQuiltsCount(
+                        orderInfo.controls[i]['controls'].quiltsAdded,
+                        addOrderForm.get('orderInfo')
+                      )
+                    " />
+                  <mat-error>
+                    <show-error [formControlErr]="
+                        orderInfo.controls[i]['controls'].quiltsAdded
+                      " requiredMsg="Please enter the number of quilts ordered">
+                    </show-error>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start">
+                <h3 fxFlex="32.5%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+                  class="mb-0 font-w-600 fs-20">
+                  Quilts Added On
+                </h3>
+                <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">
+                  :
+                </div>
+                <mat-form-field appearance="outline" fxFlex="56%" class="font-w-600 fs-20 input-pdt">
+                  <input matInput formControlName="addedOn" [matDatepicker]="quiltDatePicker"
+                    [min]="addOrderForm.controls['orderDate'].value" (click)="quiltDatePicker.open()" required
+                    readonly />
+                  <mat-datepicker-toggle matSuffix [for]="quiltDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #quiltDatePicker readonly></mat-datepicker>
+                  <mat-error>
+                    <show-error [formControlErr]="orderInfo.controls[i]['controls'].addedOn"
+                      requiredMsg="Please select a valid date">
+                    </show-error>
+                  </mat-error>
+
+                  <mat-error *ngIf="orderInfo.controls[i]['controls'].addedOn?.hasError('matDatepickerMin')">
+                    Quilts added on should be greater or equal to the order date
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="delete-btn">
+                <ng-container *ngIf="orderInfo.length > 1 &&orderInfo.controls[i]['controls'].id.value === 0">
+                  <img src="../../../../assets/logos/DeleteP.svg" class="cursor lg-w-20" (click)="deleteOrderInfo(i)">
+                </ng-container>
+              </div>
+            </div>
+          </section>
+        </ng-container>
+      </ng-container>
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="end center" class="mb-3 me-5">
+        <button class="btn btnborder me-4" (click)="addOrderInfo()">
+          Add more
+        </button>
+      </div>
+    </section>
+
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px">
+      <div fxFlex="50%" fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">
+          Total Quilts
+        </h3>
+        <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">
+          :
+        </div>
+
+        <div fxFlex="55%" class="non-inputField">
+          <div fxLayout="column" fxLayoutAlign="end start">
+            <div class="total-count" fxFlex>
+              {{addOrderForm?.getRawValue()?.totalQuilts||0}}
+            </div>
+            <div fxFlex>
+              <mat-error>
+                <show-error [formControlErr]="addOrderForm.controls.totalQuilts"
+                  maxValueMsg="Total Quilts should be less than 1 billion.">
+                </show-error>
+              </mat-error>
+            </div>
+          </div>
+        </div>
+        <!-- </mat-form-field> -->
+      </div>
+    </div>
+
+    <section formGroupName="thirdPartyBillingDetails">
+      <h2 class="pt-4 pb-3 mb-2 font-w-600 fs-24">
+        Third Party Billing Details
+      </h2>
+
+      <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px">
+        <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+          <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">
+            Name
+          </h3>
+          <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">
+            :
+          </div>
+          <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+            <input matInput formControlName="name" trimValue />
+          </mat-form-field>
+        </div>
+        <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+          <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">
+            Address
+          </h3>
+          <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">
+            :
+          </div>
+          <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+            <input matInput formControlName="address" trimValue />
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px">
+        <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+          <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">
+            Country
+          </h3>
+          <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">
+            :
+          </div>
+
+          <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+            <mat-select formControlName="countryId" (selectionChange)="resetState($event.value)">
+              <mat-option *ngFor="let country of allCountries" [value]="country.id">
+                {{ country.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+          <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">
+            State
+          </h3>
+          <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">
+            :
+          </div>
+          <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+            <mat-select formControlName="stateId">
+              <mat-option *ngFor="let state of allStates" [value]="state.id">
+                {{ state.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px">
+        <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+          <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">
+            City
+          </h3>
+          <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">
+            :
+          </div>
+          <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+            <input matInput formControlName="cityName" trimValue />
+          </mat-form-field>
+        </div>
+        <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+          <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">
+            Zip
+          </h3>
+          <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">
+            :
+          </div>
+          <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+            <input matInput formControlName="zip" trimValue />
+          </mat-form-field>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

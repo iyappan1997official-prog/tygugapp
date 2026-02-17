@@ -1,0 +1,39 @@
+<div class="row bg-light">
+    <div class="col-12 bg-modal text-center text-white py-2">
+        <h2>{{componentAccessFor | titlecase}} FAQ</h2>
+    </div>
+    <form [formGroup]="addFaqForm">
+        <div class="cardwidth mx-auto mt-4">
+            <h2 class="mt-3 mb-0 main-color">Question</h2>
+            <div>
+                <mat-form-field appearance="outline" class="formwidth">
+                    <textarea matInput autosize formControlName="question" placeholder="Enter question" required></textarea>
+
+                    <mat-error>
+                        <show-error [formControlErr]=" addFaqForm.controls.question"
+                            requiredMsg="Question is required.">
+                        </show-error>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <h2 class="mt-2 mb-0 main-color">Answer</h2>
+            <div>
+                <mat-form-field appearance="outline" class="formwidth">
+                    <textarea cols="60" rows="3" matInput autosize formControlName="answer" placeholder="Enter Answer"
+                        required></textarea>
+
+                    <mat-error>
+                        <show-error [formControlErr]=" addFaqForm.controls.answer" requiredMsg="Answer is required.">
+                        </show-error>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="py-4 px-4" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
+            <button class="btn btn-newPrimary p-12 btncolor" (click)="callAddFaq()">Save</button>
+            <button class="btn p-12 btnborder" (click)="modal.dismiss()">Cancel</button>
+        </div>
+    </form>
+</div>

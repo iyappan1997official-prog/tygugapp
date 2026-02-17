@@ -1,0 +1,286 @@
+<div class="row mt-2" [formGroup]="viewShipmentForm">
+    <!-- <div fxFlex fxLayoutAlign="end center"> -->
+    <div class="row">
+        <div class="col-sm-10 pe-0">
+            <div fxLayout="row" fxLayoutGap="10px" fxLayoutGap.lt-xl="10px" fxLayout.lt-lg="column"
+                fxLayoutAlign=" center" class="flex-wrap">
+                <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mb-1">
+                    <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                    <input matInput formControlName="orderNumber" placeholder="Order number" trim>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mb-1">
+                    <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                    <input matInput formControlName="quiltSerialNumber" placeholder="Quilt number" trim>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mb-1">
+                    <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                    <input matInput formControlName="shipmentNumber" placeholder="Shipment number" trim>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mb-1">
+                    <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                    <mat-select formControlName="sourceId" placeholder="Source location" class="w-100 form-control p-0"
+                        style="border:none;">
+                        <mat-option>
+                            <ngx-mat-select-search [(ngModel)]="searchText" [ngModelOptions]="{ standalone: true }"
+                                placeholderLabel="Search..." noEntriesFoundLabel="No matching option found.">
+                            </ngx-mat-select-search>
+                        </mat-option>
+                        <mat-option value="0">
+                            All
+                        </mat-option>
+                        <mat-option *ngFor="let location of allLocations | stringFilterBy: searchText : 'name'"
+                            [value]="location.id">
+                            {{location.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mb-1">
+                    <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                    <mat-select formControlName="destinationId" placeholder="Destination location"
+                        class="w-100 form-control p-0" style="border:none;">
+                        <mat-option>
+                            <ngx-mat-select-search [(ngModel)]="searchText" [ngModelOptions]="{ standalone: true }"
+                                placeholderLabel="Search..." noEntriesFoundLabel="No matching option found.">
+                            </ngx-mat-select-search>
+                        </mat-option>
+                        <mat-option value="0">
+                            All
+                        </mat-option>
+                        <mat-option *ngFor="let location of allLocations | stringFilterBy: searchText : 'name'"
+                            [value]="location.id">
+                            {{location.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <!-- <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+                    <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                    <input matInput formControlName="billOfLadingNumber" placeholder="Bill of Lading Number" trim>
+                </mat-form-field> -->
+                <mat-form-field appearance="outline" class="half-width input-pdt searchBox mb-1 dataSearch fs-16">
+                    <input matInput placeholder="Start Date" formControlName="startDate" [matDatepicker]="picker">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="half-width input-pdt searchBox mb-1 dataSearch fs-16">
+                    <input matInput placeholder="End Date" formControlName="endDate" [matDatepicker]="picker1">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <!-- <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+                <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                <input matInput [formControl]="getSearchByControl()" placeholder="Search Shipment" trim>              
+            </mat-form-field> -->
+        </div>
+        <!-- </div>
+        <div fxFlex> -->
+        <div class="col-sm-2">
+            <div class="border-left ps-3">
+                <div><button class="btn btn-newPrimary btncolor p-12  mb-xl-0 mb-3"
+                        (click)="onSearchByValueChange()">Search</button></div>
+                <div><button class="btn btnborder p-12 mb-xl-0 mb-3 mt-2" [disabled]="searchFilter===false"
+                        (click)="searchReset()">Reset</button></div>
+            </div>
+        </div>
+    </div>
+    <!-- </div> -->
+    <ng-container *ngIf="contentView==='cards';else fullTable">
+        <ng-container *ngIf="items$ | async as shipmentTable;">
+            <ng-container *ngIf="shipmentTable && shipmentTable.length > 0; else noData">
+                <div class="col-12 mt-3" *ngFor="let data of shipmentTable">
+                    <div class="card mb-2 px-4 py-4">
+                        <h2 class="mb-0 main-color font-w-600 fs-24">{{data['customerName'] || 'Internal Transfer'}}
+                        </h2>
+                        <div class="text-center ">
+                        </div>
+                        <div class="theight table-responsive pt-3">
+                            <table class="table table-borderless tableheight">
+                                <thead>
+                                    <tr class="tablelight text-center">
+                                        <th *ngIf="data['customerName']">
+                                            Order No.
+                                        </th>
+                                        <th>Shipment No.</th>
+                                        <th>Type</th>
+                                        <th>Origin</th>
+                                        <th>Destination</th>
+                                        <th>Quilts Shipped</th>
+                                        <th>Quilts Received</th>
+                                        <th>Ship Date</th>
+                                        <th>Receive Date</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="text-center cursor" *ngFor="let item of data['shipmentsByCustomer']">
+                                        <ng-container>
+                                            <td *ngIf="data['customerName']"
+                                                (click)="openOrderModal(item['shipmentId'])">
+                                                {{item['orderNumber'] || '--'}}
+                                            </td>
+                                            <td (click)="openOrderModal(item['shipmentId'])">
+                                                {{item['shipmentNumber'] || '--'}}
+                                            </td>
+                                            <td (click)="openOrderModal(item['shipmentId'])">{{item['shipmentTypeName']
+                                                || '--'}}</td>
+                                            <td (click)="openOrderModal(item['shipmentId'])">
+                                                {{item['originName'] || '--'}}
+                                            </td>
+                                            <td (click)="openOrderModal(item['shipmentId'])">
+                                                {{item['destinationName'] || '--'}}
+                                            </td>
+                                            <td (click)="openOrderModal(item['shipmentId'])">
+                                                {{item['quiltsShipped'] || '--'}}
+                                            </td>
+                                            <td (click)="openOrderModal(item['shipmentId'])">
+                                                {{item['quiltsReceived'] || '--'}}
+                                            </td>
+                                            <td (click)="openOrderModal(item['shipmentId'])">
+                                                {{item['shipDate'] ? (item['shipDate'] |date: 'MM/dd/yyyy') : '--'}}
+                                            </td>
+                                            <td (click)="openOrderModal(item['shipmentId'])">
+                                                {{item['receiveDate'] ? (item['receiveDate'] |date: 'MM/dd/yyyy') : '--'
+                                                }}
+                                            </td>
+                                        </ng-container>
+                                        <!-- <td *ngIf="(item['originId'] == this.locationId) && !(item['quiltsReceived'])">
+                                            <img class="cursor lg-w-20" src="../../../../assets/logos/DeleteP.svg"
+                                                (click)="openConfirmDeleteModal(item['shipmentId'])">
+                                        </td> -->
+
+                                        <!-- *ngIf="(loggedInUserRole == this.roleEnum.customerAdmin && item['originId']!=1 && !(item['quiltsReceived'])) || 
+                                        (loggedInUserRole == this.roleEnum.masterAdmin && !(item['quiltsReceived']) && (item['originLocationTypeId'] == 4)) ||
+                                             ((item['originId'] == this.locationId) && !(item['quiltsReceived']) && ![this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(loggedInUserRole))" -->
+                                        <td
+                                            *ngIf="item['allowDelete'] && item['allowDelete']===true">
+
+                                            <img class="cursor lg-w-20" src="../../../../assets/logos/DeleteP.svg"
+                                                (click)="openConfirmDeleteModal(item['shipmentId'])">
+                                                
+
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-end mt-3 font-w-600">
+                            <span
+                                (click)="particularTable(data['customerId'], data['customerName'] || 'Internal Transfer')"
+                                class="text-primary cursor">
+                                View Full Table
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <mat-paginator [length]="this.totalShipment" [pageSize]="viewShipmentForm.controls.pageSize.value"
+                    [pageIndex]="formValues?.pageNumber - 1" [pageSizeOptions]="pageSizeOptions"
+                    (page)="paginator($event)" showFirstLastButtons aria-label="Select page">
+                </mat-paginator>
+            </ng-container>
+            <ng-template #noData>
+                <div class="card res-card py-3 mt-3">
+                    <div class="col-12 text-center">
+                        <span class="mb-0 main-color font-w-600 fs-24">No Data Found</span>
+                    </div>
+                </div>
+            </ng-template>
+        </ng-container>
+    </ng-container>
+
+    <ng-template #fullTable>
+        <div class="card res-card pt-3 mt-3">
+            <ng-container *ngIf="items$ | async as fullShipmentTable;">
+                <ng-container *ngIf="fullShipmentTable && fullShipmentTable.length > 0; else noData">
+                    <div fxLayout="row" class="mx-3" fxLayout.lt-md="column">
+                        <div fxFlex="50%"
+                            *ngIf="![this.roleEnum.customerAdmin, this.roleEnum.customerManager].includes(loggedInUserRole)">
+                            <h2 class="mb-0 main-color font-w-600 fs-24"> <img class="cursor mb-1"
+                                    src="../../../../assets/logos/arrow-backP.svg" (click)="backToTables()">
+                                &nbsp;{{cusName}}</h2>
+                        </div>
+                    </div>
+                    <div class="table-responsive mx-4 pt-3">
+                        <table class="table">
+                            <thead>
+                                <tr class="tablelight text-center">
+                                    <th *ngIf="particularTableID">
+                                        Order No.
+                                    </th>
+                                    <th>Shipment No.</th>
+                                    <th>Type</th>
+                                    <th>Origin</th>
+                                    <th>Destination</th>
+                                    <th>Quilts Shipped</th>
+                                    <th>Quilts Received</th>
+                                    <th>Ship Date</th>
+                                    <th>Receive Date</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="text-center cursor" *ngFor="let data of fullShipmentTable">
+                                    <ng-container>
+                                        <td *ngIf="particularTableID" (click)="openOrderModal(data['shipmentId'])">
+                                            {{data['orderNumber'] || '--'}}
+                                        </td>
+                                        <td (click)="openOrderModal(data['shipmentId'])">
+                                            {{data['shipmentNumber'] || '--'}}
+                                        </td>
+                                        <td (click)="openOrderModal(data['shipmentId'])">{{data['shipmentTypeName'] ||
+                                            '--'}}</td>
+                                        <td (click)="openOrderModal(data['shipmentId'])">
+                                            {{data['originName'] || '--'}}
+                                        </td>
+                                        <td (click)="openOrderModal(data['shipmentId'])">
+                                            {{data['destinationName'] || '--'}}
+                                        </td>
+                                        <td (click)="openOrderModal(data['shipmentId'])">
+                                            {{data['quiltsShipped'] || '--'}}
+                                        </td>
+                                        <td (click)="openOrderModal(data['shipmentId'])">
+                                            {{data['quiltsReceived'] || '--'}}
+                                        </td>
+                                        <td (click)="openOrderModal(data['shipmentId'])">
+                                            {{data['shipDate'] ? (data['shipDate'] |date: 'MM/dd/yyyy') : '--'}}
+                                        </td>
+                                        <td (click)="openOrderModal(data['shipmentId'])">
+                                            {{data['receiveDate'] ? (data['receiveDate'] |date: 'MM/dd/yyyy') : '--' }}
+                                        </td>
+                                    </ng-container>
+                                    <!-- <td *ngIf="(data['originId'] == this.locationId) && !(data['quiltsReceived'])">
+                                        <img class="cursor lg-w-20" src="../../../../assets/logos/DeleteP.svg"
+                                            (click)="openConfirmDeleteModal(data['shipmentId'])">
+                                    </td> -->
+                                    <td
+                                        *ngIf="data['allowDelete']">
+
+                                        <img class="cursor lg-w-20" src="../../../../assets/logos/DeleteP.svg"
+                                            (click)="openConfirmDeleteModal(data['shipmentId'])">
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <mat-paginator [length]="this.totalShipmentByCustomerId"
+                            [pageIndex]="formValues?.pageNumber - 1"
+                            [pageSize]="viewShipmentForm.controls.pageSize.value"
+                            [pageSizeOptions]="pageSizeMoreOptions" (page)="paginator($event)" showFirstLastButtons
+                            aria-label="Select page">
+                        </mat-paginator>
+                    </div>
+                </ng-container>
+                <ng-template #noData>
+                    <div class="card res-card py-3 mt-3">
+                        <div class="col-12 text-center">
+                            <span class="mb-0 main-color font-w-600 fs-24">No Data Found</span>
+                        </div>
+                    </div>
+                </ng-template>
+            </ng-container>
+        </div>
+    </ng-template>
+
+</div>

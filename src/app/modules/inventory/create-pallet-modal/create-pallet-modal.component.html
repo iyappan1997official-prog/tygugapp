@@ -1,0 +1,82 @@
+<div class="row bg-light">
+  <div class="col-12 bg-modal text-center text-white py-2">
+    <h2 class="mb-0">Create Pallet</h2>
+  </div>
+  <div class="cardwidth mx-auto mt-4">
+    <ng-container *ngIf="!masterUsers">
+      <div [hidden]="(detailsBySerialNumber.value) || this.newQuilts.length">
+        <h2 class="my-2 main-color">Quilts Quantity</h2>
+        <div>
+          <mat-form-field appearance="outline" class="formwidth">
+            <input matInput [formControl]="quiltsQuantity" placeholder="Enter Quilts Quantity" integers>
+            <mat-error>
+              <show-error [formControlErr]="quiltsQuantity"
+                maxValueMsg="Please check the entered quamtity, it seems too high"
+                minValueMsg="Please enter a value that is not zero or negative"></show-error>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="text-center my-2 main-color fw-bold"
+        [hidden]="quiltsQuantity.value || detailsBySerialNumber.value || this.newQuilts.length">Or
+      </div>
+    </ng-container>
+    <div [hidden]="quiltsQuantity.value">
+      <h2 class="my-2 main-color">Quilt Serial Numbers</h2>
+      <div>
+        <mat-form-field appearance="outline" class="formwidth">
+          <input matInput [formControl]="detailsBySerialNumber">
+          <mat-hint align="start" class="hintMessage">
+            <img src="../../../../assets/logos/Info.svg">
+            &nbsp; <span class="hint-text">To add multiple items at
+              once, separate them by a comma. Must click blue button to add quilt(s) to shipping queue.</span>
+          </mat-hint>
+        </mat-form-field>
+      </div>
+      <div class="d-inline-block">
+        <div fxLayout="row" class="mb-3">
+          <div fxFlex="35%"></div>
+          <div class="error" *ngIf="this.arrowErrorShow">
+            Please add atleast one Quilt.
+          </div>
+          <div class="error"
+            *ngIf="!this.arrowErrorShow && this.shipErrorShow && (!this.detailsBySerialNumber.value && !this.newPallets.length && !this.newQuilts.length)">
+            Please add at least one quilt number to queue by clicking the blue button with the arrow.
+          </div>
+          <div class="error" *ngIf="!this.arrowErrorShow && this.shipErrorShow && this.detailsBySerialNumber.value">
+            Please click blue button to add quilt(s) to shipping queue.
+          </div>
+        </div>
+        <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3 w-100">
+          <div class="fs-16 fw-600" fxFlex="100%">
+            <img class="cursor" src="../../../../assets/logos/Next.svg" (click)="getDetailsBySerialNumber()">
+
+            <span class="mx-2"> Or click here to scan QR </span>
+            <img class="cursor" (click)="openScannerModal()" src="../../../../assets/logos/QR.svg">
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-container *ngFor="let serial of newQuilts; let i = index">
+      <div class="d-inline-flex justify-content-start" style="flex-wrap: wrap;">
+        <span class="q-number text-center m-2 text-white">{{serial['serialNumber']}}
+          <img class="cursor mb-1" src="../../../../assets/logos/crossS.svg" (click)="removeSerialNumber(newQuilts, i)">
+        </span> &nbsp;
+      </div>
+    </ng-container>
+
+  </div>
+  <div class="cardwidth mx-auto mt-4" *ngIf="showError">
+<div class="mat-error" >
+  Please enter quilt quantity or quilt serial number to create pallet.
+</div>
+
+</div>
+  <div class="col-6 text-end mb-5 mt-3">
+    <button class="btn btn-newPrimary p-12 btncolor" (click)="createMockPallet()">Create Pallet</button>
+  </div>
+
+  <div class="col-6  mb-5 mt-3">
+    <button class="btn p-12 btnborder" (click)="modal.dismiss()">Discard</button>
+  </div>
+</div>

@@ -1,0 +1,810 @@
+<div class="pt-3 ox-none">
+  <ng-container *ngIf="![this.roleEnum.customerManager].includes(loggedInUserRole)">
+    <form [formGroup]="
+        ([this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(
+          loggedInUserRole
+        ) &&
+          this.tabIndex == 0) ||
+        ([this.roleEnum.customerAdmin, this.roleEnum.globalAdmin].includes(
+          loggedInUserRole
+        ) &&
+          this.tabIndex == 3)
+          ? consignListForm
+          : inventoryForm
+      ">
+      <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutAlign="space-between center">
+        <div fxLayout="row" fxLayoutGap="10px" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+          <ng-container *ngIf="
+              !(
+                [
+                  this.roleEnum.consignAdmin,
+                  this.roleEnum.consignManager
+                ].includes(loggedInUserRole) && this.tabIndex == 0
+              ) &&
+              !(
+                [
+                  this.roleEnum.customerAdmin,
+                  this.roleEnum.globalAdmin
+                ].includes(loggedInUserRole) && this.tabIndex == 3
+              )
+            ">
+            <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mat-w-160">
+              <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+              <input matInput formControlName="customerNumber" placeholder="Customer Number" trim />
+            </mat-form-field>
+          </ng-container>
+          <ng-container *ngIf="
+              !(
+                [
+                  this.roleEnum.customerAdmin,
+                  this.roleEnum.globalAdmin
+                ].includes(loggedInUserRole) && this.tabIndex == 3
+              )
+            ">
+            <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mat-w-160">
+              <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+              <input matInput formControlName="customerName" placeholder="Customer Name" trim />
+            </mat-form-field>
+          </ng-container>
+          <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mat-w-160">
+            <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+            <input matInput formControlName="orderNumber" placeholder="Order Number" trim />
+            <!-- <mat-icon  matSuffix class="sub-prefix cursor">clear</mat-icon> -->
+          </mat-form-field>
+        </div>
+        <div class="mb-0 d-flex justify-content-end w-100 pe-xxl-2">
+          <h3 class="text-color cursor mb-0 d-flex pe-xxl-2" (click)="isCollapsed = !isCollapsed"
+            [attr.aria-expanded]="!isCollapsed" aria-controls="collapseExample">
+            <span class="d-inline-flex align-items-center" *ngIf="isCollapsed">More <i
+                class="fa-solid fa-chevron-down mx-2"></i></span>
+            <span class="d-inline-flex align-items-center" *ngIf="!isCollapsed">Less <i
+                class="fa-solid fa-chevron-up cursor mx-2"></i></span>
+          </h3>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="20px" class="border-left ps-3">
+          <ng-container *ngIf="
+              (this.loggedInUserRole === this.roleEnum.customerAdmin ||
+                this.loggedInUserRole === this.roleEnum.globalAdmin) &&
+                this.tabIndex == 3;
+              else oldSearch
+            ">
+            <button class="btn btn-newPrimary btncolor p-12 mb-xl-0 mb-3" (click)="searchFilter = true; search()">
+              Search
+            </button>
+          </ng-container>
+          <ng-template #oldSearch>
+            <button class="btn btn-newPrimary btncolor p-12 mb-xl-0 mb-3" (click)="applyFilters.emit()">
+              Search
+            </button>
+          </ng-template>
+          <ng-container *ngIf="
+              ([
+                this.roleEnum.consignAdmin,
+                this.roleEnum.consignManager
+              ].includes(loggedInUserRole) &&
+                this.tabIndex == 0) ||
+                ((this.loggedInUserRole === this.roleEnum.customerAdmin ||
+                  this.loggedInUserRole === this.roleEnum.globalAdmin) &&
+                  this.tabIndex == 3);
+              else oldReset
+            ">
+            <button class="btn btnborder p-12 mb-xl-0 mb-3" (click)="searchFilter = false; reset()"
+              [disabled]="searchFilter === false">
+              Reset
+            </button>
+          </ng-container>
+          <ng-template #oldReset>
+            <button class="btn btnborder p-12 mb-xl-0 mb-3" (click)="searchFilter = false; resetFilters.emit()"
+              [disabled]="searchFilter === false">
+              Reset
+            </button>
+          </ng-template>
+        </div>
+        <!-- <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="20px" class="border-left ps-3" *ngIf="[this.roleEnum.customerAdmin, this.roleEnum.customerManager].includes(loggedInUserRole)">
+        <button class="btn btn-newPrimary btncolor p-12 mb-xl-0 mb-3"
+          (click)="search()">Search</button>
+        <button class="btn btnborder p-12 mb-xl-0 mb-3" (click)="reset();"
+        [disabled]="searchFilterUserRole===false">Reset</button>
+      </div> -->
+      </div>
+      <div class="card bg-color px-4 py-4 mt-3" id="collapseExample" [ngbCollapse]="isCollapsed">
+        <div fxLayout="row" fxLayoutGap="50px" fxLayoutGap.lt-xl="10px" fxLayout.lt-lg="column" fxLayoutAlign=" center">
+          <!-- <div class="searchWrapper">
+          <span><img src="../../../../assets/logos/SearchSvg.svg" alt="Search"></span>
+          <input placeholder="Quilt serial number" formControlName="quiltSerialNumber" class="w-100  p-0">
+        </div> -->
+
+          <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox col-xxl-2">
+            <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+            <input matInput formControlName="quiltSerialNumber" placeholder="Quilt serial number" trim />
+            <!-- <mat-icon  matSuffix class="sub-prefix cursor">clear</mat-icon> -->
+          </mat-form-field>
+
+          <!-- <div class="searchWrapper">
+          <span><img src="../../../../assets/logos/SearchSvg.svg" alt="Search"></span> -->
+          <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox col-xxl-2">
+            <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+            <mat-select formControlName="quiltStatusId" placeholder="Quilt status" class="w-100 p-0"
+              style="border: none">
+              <!-- <mat-option value="0" disabled>
+              Select Quilt Status
+            </mat-option> -->
+              <mat-option value="0"> All </mat-option>
+              <ng-container *ngFor="let status of allStatus">
+                <mat-option *ngIf="[1, 2, 3].includes(status.id)" [value]="status.id">
+                  {{ status.name }}
+                </mat-option>
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
+          <!-- </div> -->
+          <!-- <div class="searchWrapper">
+          <span><img src="../../../../assets/logos/SearchSvg.svg" alt="Search"></span> -->
+          <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox"
+            *ngIf="![this.roleEnum.consignManager].includes(loggedInUserRole)">
+            <!-- <mat-label class="labelcolor">Quilt Type</mat-label> -->
+            <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+            <mat-select formControlName="locationId" [placeholder]="
+                ![
+                  this.roleEnum.consignAdmin,
+                  this.roleEnum.consignManager,
+                  this.roleEnum.customerAdmin
+                ].includes(loggedInUserRole)
+                  ? 'Current location'
+                  : 'Location'
+              " class="w-100 form-control p-0" style="border: none">
+              <!-- <mat-option value="0" disabled>
+              Select Location
+            </mat-option> -->
+              <mat-option>
+                <ngx-mat-select-search [(ngModel)]="searchText" [ngModelOptions]="{ standalone: true }"
+                  placeholderLabel="Search..." noEntriesFoundLabel="No matching option found.">
+                </ngx-mat-select-search>
+              </mat-option>
+              <mat-option value="0"> All </mat-option>
+              <mat-option *ngFor="
+                  let location of allLocations
+                    | stringFilterBy : searchText : 'name'
+                " [value]="location.id">
+                {{ location.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <!-- <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox col-xxl-2">
+          <mat-icon matPrefix class="sub-prefix mt-2">search</mat-icon>
+          <mat-select formControlName="locationId" placeholder="Current location" class="w-100  p-0"
+            style="border:none;">
+            <mat-option value="0" disabled>
+              Select Location
+            </mat-option>
+
+            <mat-option *ngFor="let location of allLocations" [value]="location.id">
+              {{location.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field> -->
+          <!-- </div> -->
+          <!-- <div class="searchWrapper">
+          <span><img src="../../../../assets/logos/SearchSvg.svg" alt="Search"></span>
+          <input placeholder="Pallet Serial Number" formControlName="palletSerialNumber" class="w-100  p-0">
+        </div> -->
+          <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox col-xxl-2">
+            <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+            <input matInput formControlName="palletSerialNumber" placeholder="Pallet Number" trim>
+            <!-- <mat-icon  matSuffix class="sub-prefix cursor">clear</mat-icon> -->
+          </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="50px" fxLayoutGap.lt-xl="10px" fxLayout.lt-lg="column" fxLayoutAlign=" center"
+          class="mt-4">
+          <mat-form-field appearance="outline" class="half-width input-pdt searchBox fs-16 col-xxl-2">
+            <input matInput placeholder="Ship Date" formControlName="shipDate" [matDatepicker]="picker" />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="half-width input-pdt searchBox fs-16 col-xxl-2">
+            <input matInput placeholder="Receive Date" formControlName="receiveDate" [matDatepicker]="picker1" />
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </ng-container>
+
+  <!-- <ng-container
+    *ngIf="([this.roleEnum.customerAdmin].includes(loggedInUserRole) && [1,2].includes(this.tabIndex)) || [ this.roleEnum.customerManager].includes(loggedInUserRole)">
+    <form [formGroup]="inventoryFormUserRole">
+      <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutAlign="space-between center">
+        <div fxLayout="row" fxLayoutGap="10px" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+          
+          <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+            <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+            <input matInput formControlName="quiltSerialNumber" placeholder="Quilt serial number" trim>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+            <mat-icon matPrefix class="sub-prefix mt-2">search</mat-icon>
+            <mat-select formControlName="quiltStatusId" placeholder="Quilt status" class="w-100 p-0"
+              style="border:none;">
+              
+              <mat-option value="0">
+                All
+              </mat-option>
+              <ng-container *ngFor="let status of allStatus">
+                <mat-option
+                  *ngIf="[this.roleEnum.customerAdmin,this.roleEnum.globalAdmin].includes(loggedInUserRole) ? [1, 2, 3,6,7,8,12].includes(status.id) : [1, 2, 3,12].includes(status.id)"
+                  [value]="status.id">
+                  {{status.name}}
+                </mat-option>
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+            <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+            <input matInput formControlName="palletSerialNumber" placeholder="Pallet Serial Number" trim>
+          </mat-form-field>
+
+
+
+        </div>
+
+        <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="20px" class="border-left ps-3">
+          <button class="btn btn-newPrimary btncolor p-12 mb-xl-0 mb-3" (click)="search()">Search</button>
+          <button class="btn btnborder p-12 mb-xl-0 mb-3" [disabled]="searchFilterUserRole===false"
+            (click)="reset()">Reset</button>
+        </div>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="space-between center">
+
+        <div fxLayout="row" fxLayoutGap="10px" fxLayoutGap.lt-xl="10px" fxLayout.lt-lg="column" class="mt-2" fxFlex>
+          <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+            <mat-icon matPrefix class="sub-prefix mt-2">search</mat-icon>
+            <mat-select formControlName="locationId" placeholder="Current location" class="w-100 p-0"
+              style="border:none;">
+              <mat-option value="0">
+                All
+              </mat-option>
+              <mat-option value="1">
+                Warehouse</mat-option>
+              <mat-option *ngFor="let location of allLocations" [value]="location.id">
+                {{location.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+
+          <mat-form-field appearance="outline" class="width-input searchBox input-pdt fs-16">
+            <input matInput placeholder="Ship Date" formControlName="shipDate" [matDatepicker]="picker">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="width-input searchBox input-pdt fs-16">
+            <input matInput placeholder="Receive Date" formControlName="receiveDate" [matDatepicker]="picker1">
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div fxFlex fxLayoutAlign="end center">
+          <button
+            *ngIf="![this.roleEnum.customerManager].includes(loggedInUserRole) && !([this.roleEnum.customerAdmin,this.roleEnum.globalAdmin].includes(loggedInUserRole) && this.tabIndex == 3)"
+            class="btn btn-newPrimary btncolor p-12 me-3" (click)="updateStatus()">Update Quilt
+            Status</button>
+          <button class="btn btn-newPrimary btncolor p-12" (click)="createPallet()">Create Pallet</button>
+        </div>
+      </div>
+    </form>
+  </ng-container> -->
+  <div [class]="
+      isCollapsed
+        ? 'scroll innerContentWrapper mt-3'
+        : 'scroll collapseInnerScroller mt-3'
+    ">
+    <div class="row me-0">
+      <ng-container *ngIf="
+          ![
+            this.roleEnum.customerAdmin,
+            this.roleEnum.customerManager
+          ].includes(loggedInUserRole) &&
+          ([this.roleEnum.masterAdmin, this.roleEnum.serviceManager].includes(
+            loggedInUserRole
+          ) ||
+            ([
+              this.roleEnum.consignAdmin,
+              this.roleEnum.consignManager,
+              this.roleEnum.globalAdmin
+            ].includes(loggedInUserRole) &&
+              this.tabIndex == 1))
+        ">
+        <ng-container *ngIf="inventory && inventory.length > 0; else noData">
+          <!-- <div class="col-xl-6" *ngFor="let company of inventory"> -->
+          <div class="mt-3" [ngClass]="inventory.length === 1 ? 'col-xl-12' : 'col-xl-6'"
+            *ngFor="let company of inventory">
+            <div class="card responsive-card hovertable mb-3 h-100">
+              <div class="p-relative">
+                <h2 class="text-left mb-2 main-color font-w-600 fs-24">
+                  {{ company["customerName"] || "--" }}
+                  <span class="fs-16 font-w-600">({{ company["customerNumber"] || "--" }})</span>
+                </h2>
+                <!-- <span *ngIf="
+                    [
+                      this.roleEnum.masterAdmin,
+                      this.roleEnum.serviceManager,
+                      this.roleEnum.serviceUser
+                    ].includes(loggedInUserRole) &&
+                    this.tabIndex == 1 &&
+                    company['orderTypeId'] === 3
+                  " class="tag-style">Consigned</span> -->
+              </div>
+              <div class="row mt-1" *ngIf="inventory.length !== 1; else col">
+                <div *ngIf="
+                    ![
+                      this.roleEnum.consignAdmin,
+                      this.roleEnum.consignManager
+                    ].includes(loggedInUserRole)
+                  " class="col-md-5">
+                  <span class="sub-head-color font-w-600 fs-18">Quilts Assigned: </span><span
+                    class="main-color font-w-600 fs-18">{{
+                    company["quiltsAssigned"] || "0"
+                    }}</span>
+                </div>
+                <div class="col-md-6">
+                  <span class="sub-head-color font-w-600 fs-18">Order Number:
+                  </span>
+                  <span class="main-color font-w-600 fs-18">{{
+                    company["orderNumber"] || "--"
+                    }}</span>
+                </div>
+                <!-- consign card filters for card -->
+                <ng-container *ngIf="
+                    [
+                      this.roleEnum.consignAdmin,
+                      this.roleEnum.consignManager
+                    ].includes(loggedInUserRole)
+                  ">
+                  <div [ngClass]="
+                      inventory.length === 1 ? 'col-xl-12' : 'col-md-6'
+                    ">
+                    <div class="row" *ngFor="let orderDetails of company['orderDetailsModels']">
+                      <div class="col-6 mb-2">
+                        <span class="sub-head-color font-w-600 fs-18">Part Number:
+                        </span>
+                        <span class="main-color font-w-600 fs-18">{{
+                          orderDetails["partNumber"] || "0"
+                          }}</span>
+                      </div>
+                      <div class="col-6 mb-2">
+                        <span class="sub-head-color font-w-600 fs-18">Quilts Shipped:
+                        </span>
+                        <span class="main-color font-w-600 fs-18">{{
+                          orderDetails["quiltsShipped"] || "0"
+                          }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+                <!-- consign card filters for card -->
+                <div *ngIf="
+                    ![
+                      this.roleEnum.consignAdmin,
+                      this.roleEnum.consignManager
+                    ].includes(loggedInUserRole)
+                  " class="col-md-5 mt-2">
+                  <span class="sub-head-color font-w-600 fs-18">Active Quilt:
+                  </span>
+                  <span class="main-color font-w-600 fs-18">{{
+                    company["activeQuilts"] || "0"
+                    }}</span>
+                </div>
+              </div>
+              <ng-template #col>
+                <div class="row mt-1">
+                  <div class="col-md-4 text-center">
+                    <span class="sub-head-color font-w-600 fs-18">Quilts Assigned: </span><span
+                      class="main-color font-w-600 fs-18">{{
+                      company["quiltsAssigned"] || "--"
+                      }}</span>
+                  </div>
+                  <div class="col-md-4 text-center">
+                    <span class="sub-head-color font-w-600 fs-18">Order Number:
+                    </span>
+                    <span class="main-color font-w-600 fs-18">{{
+                      company["orderNumber"] || "--"
+                      }}</span>
+                  </div>
+                  <div class="col-md-4 text-center">
+                    <span class="sub-head-color font-w-600 fs-18">Active Quilt:
+                    </span>
+                    <span class="main-color font-w-600 fs-18">{{
+                      company["activeQuilts"] || 0
+                      }}</span>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-container *ngIf="
+                  ![
+                    this.roleEnum.consignAdmin,
+                    this.roleEnum.consignManager
+                  ].includes(loggedInUserRole) &&
+                  company['quiltsAssigned'] === 0
+                ">
+                <h2 class="font-w-600 m-auto">No quilts assigned to order</h2>
+              </ng-container>
+              <ng-container *ngIf="company['quiltsAssigned'] !== 0">
+                <div class="table-responsive pt-3">
+                  <table class="table">
+                    <thead>
+                      <tr class="tablelight text-center">
+                        <th>Quilt Serial No.</th>
+                        <th>Quilt Status</th>
+                        <th>
+                          {{
+                          ![
+                          this.roleEnum.consignAdmin,
+                          this.roleEnum.consignManager
+                          ].includes(loggedInUserRole)
+                          ? "Location"
+                          : "Current Location"
+                          }}
+                        </th>
+                        <th>
+                          {{
+                          ![
+                          this.roleEnum.consignAdmin,
+                          this.roleEnum.consignManager
+                          ].includes(loggedInUserRole)
+                          ? "Pallet Number"
+                          : "Transfer
+                          Order No."
+                          }}
+                        </th>
+                        <th>Ship Date</th>
+                        <th>Receive Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="text-center" *ngFor="let data of company['inventories'] || '--'">
+                        <td class="cursor">
+                          {{ data.quiltSerialNumber || "--" }}
+                        </td>
+                        <td>{{ data.quiltStatus || "--" }}</td>
+                        <td>
+                          {{ data.location || "--" }}
+                        </td>
+                        <td>
+                          {{
+                          ![
+                          this.roleEnum.consignAdmin,
+                          this.roleEnum.consignManager
+                          ].includes(loggedInUserRole)
+                          ? data.palletNumber
+                          : data.transferOrderNumber || "--"
+                          }}
+                        </td>
+                        <td>
+                          {{
+                          data.shipDate
+                          ? (data["shipDate"] | date : "MM/dd/yyyy")
+                          : "--"
+                          }}
+                        </td>
+                        <td>
+                          {{
+                          data.receiveDate
+                          ? (data["receiveDate"] | date : "MM/dd/yyyy")
+                          : "--"
+                          }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </ng-container>
+              <div class="text-end text-primary cursor mt-3 fs-14 font-w-600" *ngIf="company['quiltsAssigned'] !== 0"
+                style="position: absolute; bottom: 2%; right: 2%" (click)="
+                  navigateToFullTableView(
+                    company['orderId'],
+                    company['orderNumber'],
+                    company['customerName'],
+                    company['customerNumber'],
+                    company['activeQuilts'],
+                    company['quiltsAssigned'],
+                    this.inventoryForm.controls['quiltSerialNumber'].value,
+                    this.inventoryForm.controls['quiltStatusId'].value,
+                    this.inventoryForm.controls['palletSerialNumber'].value,
+                    this.inventoryForm.controls['locationId'].value,
+                    this.inventoryForm.controls['shipDate'].value,
+                    this.inventoryForm.controls['receiveDate'].value
+                  )
+                ">
+                View Full Table
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+      <ng-template #noData>
+        <div class="bg-white text-center mt-3 pt-3">
+          <h3>No data found</h3>
+        </div>
+      </ng-template>
+
+      <!-- <ng-container
+        *ngIf="[this.roleEnum.customerAdmin, this.roleEnum.customerManager].includes(loggedInUserRole) && this.tabIndex !== 3">
+        
+        <div class="card responsive-card hovertable mb-3">
+          <div fxLayout="row" class="mx-3" fxLayout.lt-md="column">
+            <div fxFlex fxLayout="row" fxLayoutAlign="end center" fxLayout.lt-md="column" fxLayoutGap="30px">
+              <p class="mb-0"><span class="sub-head-color font-w-600 fs-18">Inventory Scanned: </span><span
+                  class="main-color font-w-600 fs-18">{{inventoryUserRole['inventoryScanned'] || 0}}</span></p>
+              <p class="mb-0"><span class="sub-head-color font-w-600 fs-18">On Hand: </span>
+                <span class="main-color font-w-600 fs-18">{{inventoryUserRole['onHand'] || 0}}</span>
+              </p>
+            </div>
+          </div>
+          <div class="scroll tableInnerContentWrapper mt-3">
+            <div class="table-responsive pt-3">
+              <table class="table">
+                <thead>
+                  <tr class="tablelight text-center">
+                    <th>
+                      Quilt Serial Number <i class="fa fa-sort" aria-hidden="true"
+                        (click)="sortbtn('serialnumber')"></i>
+                    </th>
+                    <th>Quilt Status</th>
+                    <th>Current Location <i class="fa fa-sort" aria-hidden="true" (click)="sortbtn('location')"></i>
+                    </th>
+                    <th>Order Number</th>
+                    <th>Pallet Number</th>
+                    <th>Ship Date <i class="fa fa-sort" aria-hidden="true" (click)="sortbtn('shipdate')"></i></th>
+                    <th>Receive Date <i class="fa fa-sort" aria-hidden="true" (click)="sortbtn('shipdate')"></i></th>
+                    <th>
+                      <mat-checkbox color="primary" (change)="$event ? masterToggle($event.checked) : null"
+                        [checked]="isAllSelected"></mat-checkbox>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngIf="items1$ | async as inventoryData;">
+                    <ng-container *ngIf="inventoryData && inventoryData.length > 0; else noData1">
+                      <tr class="text-center" *ngFor="let data of inventoryData">
+                        <td class="cursor">
+                          {{data['quiltSerialNumber'] || '--'}}
+                        </td>
+                        <td>{{data['quiltStatus'] || '--'}}</td>
+                        <td>
+                          {{data['location'] || '--'}}
+                        </td>
+                        <td>
+                          {{data['orderNumber'] || '--'}}
+                        </td>
+                        <td>
+                          {{data['palletNumber'] || '--'}}
+                        </td>
+                        <td>
+                          {{data['shipDate'] ? (data['shipDate'] |date: 'MM/dd/yyyy') : '--'}}
+                        </td>
+                        <td>{{data['receiveDate'] ? (data['receiveDate'] |date: 'MM/dd/yyyy') : '--'}}
+                        </td>
+                        <td
+                          *ngIf="[this.roleEnum.customerAdmin, this.roleEnum.customerManager].includes(loggedInUserRole)">
+                          <mat-checkbox color="primary" (click)="$event.stopPropagation()"
+                            (change)="$event ? selectRows(data, $event.checked) : null"
+                            [checked]="checkStockInSelectedRows(data)">
+                          </mat-checkbox>
+                        </td>
+                      </tr>
+                    </ng-container>
+
+                    <ng-template #noData1>
+                      <tr>
+                        <td colspan="9" class="bg-white">
+                          <div class="text-center">
+                            <h3>No data found</h3>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </ng-container>
+                </tbody>
+              </table>
+              <mat-paginator [length]="totalCountUserRole" [pageIndex]="formValues1?.pageNumber - 1"
+                [pageSize]="formValues1?.pageSize" [pageSizeOptions]="pageSizeOptions" (page)="paginate1($event)"
+                showFirstLastButtons aria-label="Select page">
+              </mat-paginator>
+            </div>
+          </div>
+        </div>
+      </ng-container> -->
+
+      <ng-container *ngIf="
+          ([this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(
+            loggedInUserRole
+          ) &&
+            this.tabIndex == 0) ||
+          ([this.roleEnum.customerAdmin, this.roleEnum.globalAdmin].includes(
+            loggedInUserRole
+          ) &&
+            this.tabIndex == 3)
+        ">
+        <div fxLayout="row" fxLayoutAlign="space-between center" *ngIf="
+            !(
+              [this.roleEnum.customerAdmin, this.roleEnum.globalAdmin].includes(
+                loggedInUserRole
+              ) && this.tabIndex == 3
+            )
+          ">
+          <div fxFlex fxLayoutAlign="end center">
+            <button class="btn btn-newPrimary btncolor p-12" (click)="createPallet()">
+              Create Pallet
+            </button>
+          </div>
+        </div>
+        <div class="card px-3 pt-3 pb-0 table-responsive" [class]="
+            !(
+              [this.roleEnum.customerAdmin, this.roleEnum.globalAdmin].includes(
+                loggedInUserRole
+              ) && this.tabIndex == 3
+            )
+              ? 'mt-4'
+              : 'consignTableScroll'
+          ">
+          <table class="table">
+            <thead>
+              <tr class="tablelight text-center">
+                <th>
+                  Quilt Serial No.
+                  <i class="fa fa-sort" aria-hidden="true" (click)="sortbtn('serialnumber')"></i>
+                </th>
+                <th>Quilt Status</th>
+                <th>Order No.</th>
+                <th>Pallet No.</th>
+                <th>Part No.</th>
+                <th>
+                  Customer
+                  <i class="fa fa-sort" aria-hidden="true" (click)="sortbtn('customer')"></i>
+                </th>
+                <th>
+                  Consignment Location
+                  <i class="fa fa-sort" aria-hidden="true" (click)="sortbtn('consignedLocation')"></i>
+                </th>
+                <th>
+                  Ship Date
+                  <i class="fa fa-sort" aria-hidden="true" (click)="sortbtn('shipdate')"></i>
+                </th>
+                <th>
+                  Receive Date
+                  <i class="fa fa-sort" aria-hidden="true" (click)="sortbtn('receivedate')"></i>
+                </th>
+                <th *ngIf="
+                    !(
+                      [
+                        this.roleEnum.customerAdmin,
+                        this.roleEnum.globalAdmin
+                      ].includes(loggedInUserRole) && this.tabIndex == 3
+                    )
+                  ">
+                  <mat-checkbox color="primary" (change)="$event ? masterToggle($event.checked) : null"
+                    [checked]="isAllSelected"></mat-checkbox>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="items1$ | async as consign">
+                <ng-container *ngIf="consign && consign.length > 0; else noData">
+                  <tr class="text-center" *ngFor="let consignData of consign">
+                    <td class="cursor">
+                      {{ consignData["quiltSerialNumber"] || "--" }}
+                    </td>
+                    <td class="cursor">
+                      {{ consignData["quiltStatus"] || "--" }}
+                    </td>
+                    <td class="cursor">
+                      {{ consignData["orderNumber"] || "--" }}
+                    </td>
+                    <td class="cursor">
+                      {{ consignData["palletNumber"] || "--" }}
+                    </td>
+                    <td class="cursor">
+                      {{ consignData["partNumber"] || "--" }}
+                    </td>
+                    <td class="cursor">
+                      {{ consignData["customerName"] || "--" }}
+                    </td>
+                    <td class="cursor">
+                      {{ consignData["location"] || "--" }}
+                    </td>
+                    <td class="cursor">
+                      {{
+                      consignData["shipDate"]
+                      ? (consignData["shipDate"] | date : "MM/dd/yyyy")
+                      : "--"
+                      }}
+                    </td>
+                    <td class="cursor">
+                      {{
+                      consignData["receiveDate"]
+                      ? (consignData["receiveDate"] | date : "MM/dd/yyyy")
+                      : "--"
+                      }}
+                    </td>
+                    <td *ngIf="
+                        !(
+                          [
+                            this.roleEnum.customerAdmin,
+                            this.roleEnum.globalAdmin
+                          ].includes(loggedInUserRole) && this.tabIndex == 3
+                        )
+                      ">
+                      <mat-checkbox color="primary" (click)="$event.stopPropagation()" (change)="
+                          $event
+                            ? selectRows(consignData, $event.checked)
+                            : null
+                        " [checked]="checkStockInSelectedRows(consignData)">
+                      </mat-checkbox>
+                    </td>
+                  </tr>
+                </ng-container>
+
+                <ng-template #noData>
+                  <tr>
+                    <td colspan="9" class="bg-white">
+                      <div class="text-center">
+                        <h3>No Consign Orders found</h3>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <!-- </form> -->
+
+  <!-- <mat-paginator [length]="totalCount" [pageIndex]="formValues?.pageNumber - 1" [pageSize]="formValues?.pageSize"
+    [pageSizeOptions]="pageSizeOptions" (page)="paginate($event)" showFirstLastButtons aria-label="Select page">
+  </mat-paginator> -->
+</div>
+<ng-container *ngIf="
+    ([this.roleEnum.customerAdmin, this.roleEnum.globalAdmin].includes(
+      loggedInUserRole
+    ) &&
+      this.tabIndex == 3) ||
+    ![this.roleEnum.customerManager].includes(loggedInUserRole) ||
+    ([this.roleEnum.serviceManager].includes(loggedInUserRole) &&
+      this.tabIndex == 0)
+  ">
+  <mat-paginator [length]="
+      ([this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(
+        loggedInUserRole
+      ) &&
+        this.tabIndex == 0) ||
+      ([this.roleEnum.customerAdmin, this.roleEnum.globalAdmin].includes(
+        loggedInUserRole
+      ) &&
+        this.tabIndex == 3)
+        ? this.totalCustomers
+        : totalCount
+    " [pageIndex]="formValues?.pageNumber - 1" [pageSize]="formValues?.pageSize" [pageSizeOptions]="pageSizeOptions"
+    (page)="
+      ([this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(
+        loggedInUserRole
+      ) &&
+        this.tabIndex == 0) ||
+      ([this.roleEnum.customerAdmin, this.roleEnum.globalAdmin].includes(
+        loggedInUserRole
+      ) &&
+        this.tabIndex == 3)
+        ? paginate2($event)
+        : paginate($event)
+    " showFirstLastButtons aria-label="Select page">
+  </mat-paginator>
+</ng-container>
+<!-- <ng-container  *ngIf="[this.roleEnum.customerAdmin, this.roleEnum.customerManager].includes(loggedInUserRole)">
+  <mat-paginator [length]="totalCountUserRole" [pageIndex]="formValues1?.pageNumber - 1" [pageSize]="formValues1?.pageSize"
+  [pageSizeOptions]="pageSizeOptions" (page)="paginate1($event)" showFirstLastButtons aria-label="Select page">
+</mat-paginator>
+</ng-container> -->

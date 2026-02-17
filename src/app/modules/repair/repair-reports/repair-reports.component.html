@@ -1,0 +1,211 @@
+<div class="content-wrapper">
+
+  <!-- WHITE CARD BOX -->
+  <div class="card p-4 cardheight">
+
+    <div fxLayout="row" fxLayoutAlign="space-between center">
+      <h2 class="font-w-600 main-color fs-24">Repair Reports</h2>
+      <button type="button"
+              class="btn btn-primary p-12 text-white btncolor"
+              (click)="generateRepairSummary()">
+        Generate Report
+      </button>
+    </div>
+
+    <!-- NEW: CUSTOMER / SERVICE CENTER BUTTON TABS -->
+    <div fxLayout="row" class="mt-3 mb-3" fxLayoutGap="10px">
+
+      <button type="button"
+              class="btn p-12"
+              [ngClass]="selectedReport === 'customer' ? 'btncolor text-white' : 'btn-outline-primary'"
+              (click)="selectReport('customer')">
+        Customer Report
+      </button>
+
+      <button type="button"
+              class="btn p-12"
+              [ngClass]="selectedReport === 'service center' ? 'btncolor text-white' : 'btn-outline-primary'"
+              (click)="selectReport('service center')">
+        Service Center Report
+      </button>
+
+    </div>
+    <!-- ============================= -->
+    <!-- CUSTOMER REPORT SECTION -->
+    <!-- ============================= -->
+
+    <form [formGroup]="repairreportForm" *ngIf="showCustomerSection">
+
+      <ng-container *ngIf="!isLoading; else loader">
+
+        <!-- CUSTOMER -->
+        <div fxLayout="row" class="mb-3">
+          <div fxFlex="50%" fxFlex.lt-lg="100%"
+               fxLayout.lt-md="column"
+               fxLayoutAlign.gt-md="start center">
+
+            <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20">
+              Customer
+            </h3>
+            <div fxFlex="5%" class="font-w-600 fs-20">:</div>
+
+            <mat-form-field appearance="outline"
+                            fxFlex
+                            class="font-w-600 input-pdt fs-20">
+              <mat-select formControlName="customerId">
+                <mat-option *ngFor="let customer of allCustomers"
+                            [value]="customer.id">
+                  {{ customer.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- START DATE -->
+        <div fxLayout="row" class="mb-3">
+          <div fxFlex="50%" fxFlex.lt-lg="100%"
+               fxLayout.lt-md="column"
+               fxLayoutAlign.gt-md="start center">
+
+            <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20">
+              Start Date
+            </h3>
+            <div fxFlex="5%" class="font-w-600 fs-20">:</div>
+
+            <mat-form-field appearance="outline"
+                            fxFlex
+                            class="font-w-600 input-pdt fs-20">
+              <input matInput
+                     formControlName="startDate"
+                     [matDatepicker]="picker">
+
+              <mat-datepicker-toggle matSuffix [for]="picker">
+              </mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- END DATE -->
+        <div fxLayout="row" class="mb-3">
+          <div fxFlex="50%" fxFlex.lt-lg="100%"
+               fxLayout.lt-md="column"
+               fxLayoutAlign.gt-md="start center">
+
+            <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20">
+              End Date
+            </h3>
+            <div fxFlex="5%" class="font-w-600 fs-20">:</div>
+
+            <mat-form-field appearance="outline"
+                            fxFlex
+                            class="font-w-600 input-pdt fs-20">
+
+              <input matInput
+                     formControlName="endDate"
+                     [matDatepicker]="picker1"
+                     [min]="repairreportForm.controls['startDate'].value">
+
+              <mat-datepicker-toggle matSuffix [for]="picker1">
+              </mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+
+      </ng-container>
+
+    </form>
+
+    <!-- ============================= -->
+    <!-- SERVICE CENTER REPORT SECTION -->
+    <!-- ============================= -->
+
+    <form [formGroup]="repairreportForm" *ngIf="showServiceCenterSection">
+
+      <ng-container *ngIf="!isLoading; else loader">
+
+        <!-- SERVICE CENTER LOCATION -->
+        <div fxLayout="row" class="mb-3">
+          <div fxFlex="50%" fxFlex.lt-lg="100%"
+               fxLayout.lt-md="column"
+               fxLayoutAlign.gt-md="start center">
+            <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20">
+              Service Center Location
+            </h3>
+            <div fxFlex="5%" class="font-w-600 fs-20">:</div>
+            <mat-form-field appearance="outline"
+                            fxFlex class="font-w-600 input-pdt fs-20">
+              <mat-select formControlName="serviceCenterLocationId">
+                <mat-option *ngFor="let loc of serviceCenterLocations" [value]="loc.id">
+                  {{ loc.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- START DATE -->
+        <div fxLayout="row" class="mb-3">
+          <div fxFlex="50%" fxFlex.lt-lg="100%"
+               fxLayout.lt-md="column"
+               fxLayoutAlign.gt-md="start center">
+
+            <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20">
+              Start Date
+            </h3>
+            <div fxFlex="5%" class="font-w-600 fs-20">:</div>
+
+            <mat-form-field appearance="outline"
+                            fxFlex
+                            class="font-w-600 input-pdt fs-20">
+              <input matInput
+                     formControlName="startDate"
+                     [matDatepicker]="picker">
+
+              <mat-datepicker-toggle matSuffix [for]="picker">
+              </mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- END DATE -->
+        <div fxLayout="row" class="mb-3">
+          <div fxFlex="50%" fxFlex.lt-lg="100%"
+               fxLayout.lt-md="column"
+               fxLayoutAlign.gt-md="start center">
+
+            <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20">
+              End Date
+            </h3>
+            <div fxFlex="5%" class="font-w-600 fs-20">:</div>
+
+            <mat-form-field appearance="outline"
+                            fxFlex
+                            class="font-w-600 input-pdt fs-20">
+
+              <input matInput
+                     formControlName="endDate"
+                     [matDatepicker]="picker1"
+                     [min]="repairreportForm.controls['startDate'].value">
+
+              <mat-datepicker-toggle matSuffix [for]="picker1">
+              </mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+
+      </ng-container>
+
+    </form>
+
+    <ng-template #loader>
+      <app-loader></app-loader>
+    </ng-template>
+
+  </div> <!-- END WHITE CARD -->
+
+</div>

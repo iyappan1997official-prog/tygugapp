@@ -1,0 +1,53 @@
+.card {
+    .card_head {
+        display: inline-flex;
+        padding: 10px;
+        font-size: 16px;
+        border-bottom: 1px solid #F2F2F2;
+        justify-content: space-between;
+        align-items: center;
+
+        .chart_title {
+            font-weight: 700;
+            color: #555555;
+        }
+
+        .chart_options {
+            display: inline-flex;
+
+            mat-select {
+                color: #606060;
+                font-size: 12px;
+                text-decoration: none;
+                min-height: auto;
+
+                .mat-form-field-appearance-outline.mat-form-field-disabled,
+                .mat-form-field-outline {
+                    opacity: 0;
+                }
+            }
+        }
+    }
+}
+
+.chart_options ::ng-deep .mat-form-field-infix {
+    padding: 0 !important;
+    border-top: none;
+    width: 85px;
+}
+
+.modal-content :host ::ng-deep .mat-select-value {
+    font-size: 13px !important;
+}
+
+.chart_options ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+    color: #ffffff !important;
+}
+
+#chart {
+    margin: auto;
+}
+
+:host ::ng-deep .apexcharts-legend-text {
+    font-size: 14px !important;
+}

@@ -1,0 +1,26 @@
+<div class="bg-light">
+    <div class="col-12 bg-modal text-center text-white py-3">
+        <h2>{{title}}</h2>
+    </div>
+
+    <div class="pt-4 px-2 pb-3 main-color">
+        <p class="text-center line-ht-18">
+            {{body}}
+        </p>
+        <div *ngIf="data">
+            <ng-container *ngFor="let item of data">
+                <p class="text-center">
+                    {{item}}
+                </p>
+            </ng-container>
+        </div>
+        <p class="text-center" *ngIf="summarytext">
+            <b>{{summarytext}}</b>
+        </p>
+    </div>
+
+    <div class="pb-4 px-4" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
+        <button class="btn btn-newPrimary p-12 btncolor" (click)="confirm()">{{confirmBtnText}}</button>
+        <button class="btn p-12 btnborder" (click)="modal.dismiss()" *ngIf="showBackButton">{{cancelBtnText}}</button>
+    </div>
+</div>

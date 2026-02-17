@@ -1,0 +1,244 @@
+<div class="content-wrapper">
+  <div class="card p-4 cardheight">
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between start">
+      <div>
+        <h2 class="font-w-600 main-color fs-24">
+          <img class="cursor mb-1" src="../../../../assets/logos/arrow-backP.svg" (click)="handleRouting()">
+          &nbsp;{{componentAccessFor === 'add-customer'? 'Add ' :
+          'Edit ' }}Customer
+        </h2>
+      </div>
+      <div fxLayout="row" fxLayoutGap="20px">
+        <button class="btn btn-newPrimary text-white btncolor" (click)="addCustomer()">{{componentAccessFor ===
+          'add-customer'? 'Add Customer':'Save Changes'}}</button>
+
+        <button class="btn btnborder" (click)="resetForm()">Discard</button>
+      </div>
+    </div>
+
+    <form [formGroup]="addCustomerForm">
+      <div class="mt-2 main-color" fxLayout="column" fxFlex="50%">
+        <!-- <div *ngIf="savedUserDetails && savedUserDetails.id && savedUserDetails.id>0">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+              class="mb-0 font-w-600 fs-20">Epicor Customer
+            </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">
+              {{savedUserDetails.isEpicoreIntegrated?'Yes':'No'}}
+            </h3>
+          </div>
+        </div> -->
+        <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3 mt-3">
+          <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">Number
+          </h3>
+          <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+          <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+            <input matInput formControlName="customerNumber" trimValue required>
+
+            <mat-error>
+              <show-error [formControlErr]="addCustomerForm.controls.customerNumber"
+                requiredMsg="Please enter the customer's unique number.">
+              </show-error>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+          <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">Name </h3>
+          <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+          <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+            <input matInput formControlName="name" trimValue required>
+
+            <mat-error>
+              <show-error [formControlErr]="addCustomerForm.controls.name"
+                requiredMsg="Please enter the customer's name.">
+              </show-error>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+          <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">Phone No.
+          </h3>
+          <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+          <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+            <input matInput formControlName="phoneNumber" maxlength="15" trimValue >
+
+            <!-- <mat-error>
+              <show-error [formControlErr]="addCustomerForm.controls.phoneNumber"
+                requiredMsg="Phone Number is required or has invalid value.  Please correct."
+                patternMsg="Phone Number is required or has invalid value.  Please correct."
+                maxLengthMsg="Phone Number is required or has invalid value.  Please correct.">
+                >
+              </show-error>
+            </mat-error> -->
+          </mat-form-field>
+        </div>
+
+        <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+          <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">City </h3>
+          <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+          <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+            <input matInput formControlName="cityName" trimValue required>
+
+            <mat-error>
+              <show-error [formControlErr]="addCustomerForm.controls.cityName" requiredMsg="Please enter City.">
+              </show-error>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+          <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">Country
+          </h3>
+          <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+          
+          <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+            <!-- <input matInput formControlName="countryId" trimValue required readonly> -->
+            <!-- <input matInput formControlName="countryId" [value]="getSelectedCountryName()" trimValue required readonly> -->
+            <mat-select formControlName="countryId" (selectionChange)="resetState($event.value)" required >
+              <mat-option *ngFor="let country of allCountries" [value]="country.id" >
+                {{country.name}}
+              </mat-option>
+            </mat-select>
+
+            <mat-error>
+              <show-error [formControlErr]="addCustomerForm.controls.countryId"
+                requiredMsg="Please select a country from the dropdown option.">
+              </show-error>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+          <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">State </h3>
+          <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+          <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+            <!-- <input matInput formControlName="stateId" [value]="getSelectedStateName()" trimValue required readonly> -->
+            <mat-select formControlName="stateId" required>
+              <mat-option *ngFor="let state of allStates" [value]="state.id">
+                {{state.name}}
+              </mat-option>
+            </mat-select>
+
+            <mat-error>
+              <show-error [formControlErr]="addCustomerForm.controls.stateId"
+                requiredMsg="Please select a state from the dropdown option.">
+              </show-error>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+          <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">Customer Type </h3>
+          <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+          <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+            <mat-select formControlName="customerTypeId" required>
+              <mat-option *ngFor="let itemType of allCustomerType" [value]="itemType.id">
+                {{itemType.name}}
+              </mat-option>
+            </mat-select>
+
+            <mat-error *ngIf="addCustomerForm.controls.customerTypeId.invalid && addCustomerForm.controls.customerTypeId.touched">
+              <show-error [formControlErr]="addCustomerForm.controls.customerTypeId"
+                requiredMsg="Please select a customer type from the dropdown option.">
+              </show-error>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+          <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">Increase protected count when Autoship</h3>
+          <div class="font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+          <div fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+            <mat-checkbox formControlName="isProtectedShipment" class="font-w-600 fs-20" id="autoship-checkbox" ></mat-checkbox>
+          </div>
+        </div>
+        <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+          <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">Premium Customer </h3>
+          <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+
+          <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+            <mat-select formControlName="specialCustomer" required>
+              <mat-option [value]="true">
+                Yes
+              </mat-option>
+              <mat-option [value]="false">
+                No
+              </mat-option>
+            </mat-select>
+            <mat-error>
+              <show-error [formControlErr]="addCustomerForm.controls.specialCustomer"
+                requiredMsg="Please select a status from the dropdown option">
+              </show-error>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <ng-container *ngIf="addCustomerForm.controls.specialCustomer.value">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+              class="mb-0 font-w-600 fs-20">EOL </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <input matInput formControlName="eol" trimValue>
+
+              <mat-error>
+                <show-error [formControlErr]="addCustomerForm.controls.eol" requiredMsg="Please enter EOL.">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+              class="mb-0 font-w-600 fs-20">Message </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <input matInput formControlName="message" trimValue>
+
+              <mat-error>
+                <show-error [formControlErr]="addCustomerForm.controls.message" requiredMsg="Please enter City.">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          
+          
+          
+        </ng-container>
+        <!-- <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+          <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+            class="mb-0 font-w-600 fs-20">Allow Reverse </h3>
+          <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+
+          <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+            <mat-select formControlName="allowReverse" >
+              <mat-option [value]="true">
+                Yes
+              </mat-option>
+              <mat-option [value]="false">
+                No
+              </mat-option>
+            </mat-select>
+            <mat-error>
+              <show-error [formControlErr]="addCustomerForm.controls.allowReverse"
+                requiredMsg="Please select a status from the dropdown option">
+              </show-error>
+            </mat-error>
+          </mat-form-field>          
+        </div> -->
+
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,87 @@
+<div class="row bg-light">
+    <div class="col-12 bg-modal text-center text-white py-2">
+        <h2>Assign {{componentAccessFor ==='Quilts' ? 'Quilts' : 'Pallets'}}</h2>
+    </div>
+
+    <div [formGroup]="assignQuiltsForm" fxLayout="column" class="px-5 pt-4">
+        <h2 class="my-2 main-color">Customer Name</h2>
+        <mat-form-field appearance="outline" class="formwidth">
+            <mat-select formControlName="customerId" required>
+                <mat-option (click)="getOrdersByCustomerId(customer)" *ngFor="let customer of allCustomers"
+                    [value]="customer.id">
+                    {{customer.name}}
+                </mat-option>
+            </mat-select>
+
+            <mat-error>
+                <show-error [formControlErr]="assignQuiltsForm.controls.customerId"
+                    requiredMsg="Please choose a customer from the dropdown."></show-error>
+            </mat-error>
+        </mat-form-field>
+
+        <h2 class="my-2 main-color">Customer Number</h2>
+        <mat-form-field appearance="outline" class="formwidth">
+            <input matInput formControlName="customerNumber">
+        </mat-form-field>
+
+        <h2 class="my-2 main-color">Order Number</h2>
+        <mat-form-field appearance="outline" class="formwidth">
+            <mat-select formControlName="orderNumber" required>
+                <mat-option  *ngFor="let order of allOrders" [value]="order.orderNumber">
+                    {{order.orderNumber}}
+                </mat-option>
+            </mat-select>
+
+            <mat-error>
+                <show-error [formControlErr]="assignQuiltsForm.controls.orderNumber"
+                    requiredMsg="Please choose order number from the dropdown"></show-error>
+            </mat-error>
+        </mat-form-field>
+
+        <div class="row">
+            <div class="col-6">
+                <h2 class="my-2 main-color">Pallets Assigned</h2>
+                <mat-form-field appearance="outline" class="formwidth">
+                    <input matInput formControlName="palletsAssigned">
+                </mat-form-field>
+            </div>
+
+            <div class="col-6">
+                <h2 class="my-2 main-color">Quilts Assigned</h2>
+                <mat-form-field appearance="outline" class="formwidth">
+                    <input matInput formControlName="quiltsAssigned">
+                </mat-form-field>
+            </div>
+        </div>
+        <!-- <table class="table">
+            <thead>
+                <tr class="tablelight text-center mt-3">
+                    <th>Quilt Type</th>
+                    <th>Quilts Ordered</th>
+                    <th>Quilts Remaining</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="items$ | async as data;">
+                    <ng-container *ngIf="data && data.length > 0;">
+                        <tr class="text-center" *ngFor="let values of data; let i=index;">
+                            <td>
+                                {{values['quiltType']}}
+                            </td>
+                            <td> {{values['totalQuiltsOrdered']}}</td>
+                            <td>
+                                {{values['quiltsRemaining']}}
+                            </td>
+                        </tr>
+                    </ng-container>
+                </ng-container>
+            </tbody>
+        </table> -->
+    </div>
+
+
+    <div fxLayout="row" fxLayoutAlign="center center" class="mb-5 mt-4">
+        <button class="btn btn-newPrimary p-12 btncolor" (click)="callAssignApi()">Save Changes</button>
+        <button class="btn p-12 btnborder ms-3" (click)="modal.dismiss()">Discard</button>
+    </div>
+</div>

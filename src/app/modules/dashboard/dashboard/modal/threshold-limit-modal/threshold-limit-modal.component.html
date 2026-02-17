@@ -1,0 +1,30 @@
+<div class="row bg-light">
+    <div class="col-12 bg-modal text-center text-white py-2 p-relative">
+        <h2>Threshold Limit Exceed</h2>
+        <span><img class="cursor cross-position" src="../../../../assets/logos/crossS.svg"
+                (click)="this.modal.close()"></span>
+    </div>
+
+    <div class="pb-2 main-color">
+        <p class="text-styleOnP" *ngIf="customerFacingDescription">
+            Your stock of {{customerFacingDescription}} size at {{locationName}} has reached its
+            predetermined threshold. By
+            clicking "Accept" below, a
+            replenishment order of QTY. {{thresholdQuantity}} will be prepared for delivery.
+        </p>
+        <p class="text-styleOnP" *ngIf="!customerFacingDescription">
+            Your stock of {{partNumber}} quilts at {{locationName}} has reached its
+            predetermined threshold. By
+            clicking "Accept" below, a
+            replenishment order of QTY. {{thresholdQuantity}} will be prepared for delivery.
+        </p>
+
+    </div>
+
+    <div class="col-12 text-center mt-3 mb-5">
+        <button class="btn p-12 btn-newPrimary me-3" (click)="requestBtn('accept')">Accept</button>
+        <button class="btn p-12 btn-danger" (click)="requestBtn('reject')">Reject</button>
+    </div>
+
+
+</div>

@@ -1,0 +1,182 @@
+<div class="px-3 py-4 bg-color">
+  <div class="text-center main-color fs-18 fw-600 mb-2">
+    Order Number : {{ orderDetails?.orderNumber }}
+  </div>
+
+  <div class="text-center main-color fs-18 fw-600 mb-3">
+    Shipment Number : {{ orderDetails?.shipmentNumber }}
+  </div>
+
+  <div class="py-2" fxLayout="row" fxLayoutAlign="space-evenly center">
+    <p class="mb-0 main-color fs-16">
+      Origin : <span class="fw-600">{{ orderDetails?.origin }}</span>
+    </p>
+    <p class="mb-0 main-color fs-16">
+      Destination : <span class="fw-600">{{ orderDetails?.destination }}</span>
+    </p>
+  </div>
+
+  <!-- ================= LOADER ================= -->
+  <ng-container *ngIf="!isLoading; else loader">
+
+    <!-- ================= PALLET DRILLDOWN TABLE ================= -->
+    <ng-container *ngIf="(groupedShipmentDetails?.length > 0) || (unassignedQuilts?.length > 0); else noData ">
+      <div *ngIf="groupedShipmentDetails.length > 0" class="table-responsive mt-3">
+        <table class="table pallet-table">
+          <colgroup>
+            <col style="width: 40%">
+            <col style="width: 20%">
+            <col style="width: 20%">
+            <col style="width: 20%">
+          </colgroup>
+          <thead>
+            <tr class="tablehead text-center">
+              <th (click)="sortPalletSerial('palletSerialNumber')" class="cursor">
+                <div class="list-palletSerialNumber-header text-center">
+                  Pallet Serial Number
+                  <i class="fa fa-sort ms-2" aria-hidden="true"></i>
+                </div>
+              </th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Quilt Count</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <ng-container *ngFor="let pallet of groupedShipmentDetails; let i = index">
+
+              <!-- ===== Pallet Row ===== -->
+              <tr class="text-center">
+                <td class="p-relative">
+                  <span class="cursor-pointer me-2"
+                        (click)="togglePallet(i)">
+                    <img *ngIf="!pallet.isExpanded"
+                         src="../../../../assets/logos/rightarrowS.svg"
+                         class="ht-16 w-16">
+                    <img *ngIf="pallet.isExpanded"
+                         src="../../../../assets/logos/downarrowS.svg"
+                         class="ht-16 w-16">
+                  </span>
+                  {{ pallet.palletSerialNumber }}
+                </td>
+                <td class="fw-bold text-uppercase"
+                    [class.text-green]="pallet.status === 'Received'">
+                    <span class="muted-value">
+                      {{ pallet.status || '--' }}
+                    </span>
+                </td>
+
+                <td>
+                  <span class="muted-value">
+                    {{ pallet.date ? (pallet.date | date:'MM/dd/yyyy') : '--' }}
+                  </span>
+                </td>
+                <td>{{ pallet.quilts.length }}</td>
+              </tr>
+
+              <!-- ===== Quilt List (Expanded) ===== -->
+              <tr *ngIf="pallet.isExpanded">
+                <td colspan="4" class="p-0 sub-table-cell">
+                  <table class="table table-sm table-borderless mb-0 sub-table">
+                    <colgroup>
+                      <col style="width: 40%">
+                      <col style="width: 30%">
+                      <col style="width: 30%">
+                    </colgroup>
+                    <thead>
+                      <tr class="text-center tablelight">
+                        <th>Quilt Serial Number</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <tr *ngFor="let q of pallet.quilts" class="text-center">
+                        <td>{{ q.serialNumber }}</td>
+                        <td class="fw-bold text-uppercase"
+                            [class.text-green]="q.status === 'Received'">
+                          {{ q.status }}
+                        </td>
+                        <td>
+                          <span class="muted-value">
+                            {{ q.date ? (q.date | date:'MM/dd/yyyy') : '--' }}
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ================= UNASSIGNED QUILTS ================= -->
+      <div *ngIf="unassignedQuilts?.length > 0" class="mt-4">
+        <!---h5 class="main-color fw-600 mb-2">
+          Quilts without Pallet
+        </h5>-->
+
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr class="tablehead text-center">
+                <th>Quilt Serial Number</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let q of unassignedQuilts" class="text-center">
+                <td>{{ q.serialNumber }}</td>
+                <td class="fw-bold text-uppercase"
+                    [class.text-green]="q.status === 'Received'">
+                  {{ q.status }}
+                </td>
+                <td>
+                  <span class="muted-value">
+                    {{ q.date ? (q.date | date:'MM/dd/yyyy') : '--' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </ng-container>
+
+    <!-- ================= NO DATA ================= -->
+    <ng-template #noData>
+      <div class="text-center text-muted py-4">
+        No shipment details available
+      </div>
+    </ng-template>
+
+    <div class="text-center main-color fs-16 fw-600 mt-3">
+      Additional Notes : {{ orderDetails?.additionalNotes }}
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="space-evenly center" class="mt-3">
+      <button class="btn okcolor p-12" (click)="modal.dismiss()">
+        Ok
+      </button>
+      <button class="btn btnborder p-12" (click)="getBillOfLading()">
+        Bill of Lading
+      </button>
+    </div>
+
+  </ng-container>
+
+  <!-- ================= LOADER TEMPLATE ================= -->
+  <ng-template #loader>
+    <app-loader></app-loader>
+  </ng-template>
+
+</div>
+

@@ -1,0 +1,102 @@
+<div class="card py-4 cardheight">
+  <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between start">
+    <div>
+      <h2 class="font-w-600 main-color fs-24">
+        <img class="cursor mb-1" src="../../../../assets/logos/arrow-backP.svg" (click)="navigateToThresholdListing()">
+        &nbsp;{{componentAccessFor==='add-threshold'?'Add ':'Edit '}} Threshold Limit
+      </h2>
+    </div>
+    <div fxLayout="row" fxLayoutGap="20px">
+      <button class="btn btn-newPrimary text-white btncolor"
+        (click)="addThreshold()">{{componentAccessFor==='add-threshold'?'Add Threshold Limit': 'Save Changes'}}</button>
+      <!-- <button class="btn btnborder" (click)="resetForm()">Discard</button> -->
+    </div>
+  </div>
+  <div class="mt-2 main-color" [formGroup]="addThresholdForm">
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px">
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">Location </h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <mat-select formControlName="locationId" required (selectionChange)="locationFilter($event.value)">
+            <mat-option *ngFor="let location of allLocations " [value]="location.id">
+              {{location.name}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="allLocations.length">
+            <show-error [formControlErr]="addThresholdForm.controls.locationId"
+              requiredMsg="Please select a location from the dropdown option.">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px">
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">Part Number </h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <mat-select [formControl]="partNumberId" required (selectionChange)="partNumberSelect($event.value)"
+            [disabled]="!this.addThresholdForm.controls.locationId.value && componentAccessFor==='add-threshold'">
+            <mat-option *ngFor="let item of savedDetails" [value]="item.inventoryId">
+              {{item.partNumber}}
+            </mat-option>
+          </mat-select>
+          <!-- <mat-error *ngIf="savedDetails.length">
+            <show-error [formControlErr]="this.partNumberId"
+              requiredMsg="Please select a location from the dropdown option.">
+            </show-error>
+          </mat-error> -->
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px">
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">Customer Facing Description </h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <mat-select [formControl]="customerFacing" required [disabled]="true">
+            <mat-option *ngFor="let obj of savedDetails" [value]="obj.inventoryId">
+              {{obj.customerFacingDescription}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px">
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">Quantity </h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <input matInput formControlName="quantity" trimValue required type="number">
+
+          <mat-error>
+            <show-error requiredMsg="Please enter the quantity." [formControlErr]="addThresholdForm.controls.quantity">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px">
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">Threshold Limit </h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <input matInput formControlName="thresholdValue" trimValue required type="number">
+
+          <mat-error>
+            <show-error requiredMsg="Please enter the threshold."
+              [formControlErr]="addThresholdForm.controls.thresholdValue">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+</div>

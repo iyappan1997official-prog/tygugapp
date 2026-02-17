@@ -1,0 +1,128 @@
+<!-- <input type="checkbox" name="" id="check"> -->
+<div class="container" #sideNav [ngClass]="{'sideWrapper': !sideNavVisible}">
+    <!-- <label for="check">
+        <span class="pi pi-times" id="times"></span>
+        <span class="pi pi-bars" id="bars"></span>
+    </label> -->
+    <div class="head pb-0">
+        <p><img src="../../../../assets/logos/LogoS.svg" width="200"></p>
+    </div>
+    <!-- <div class="d-flex justify-content-end me-3 mt-4">
+        <button class="btn" (click)="handleSideNav()">
+            <i class="fa-solid" [class]="!sideNavVisible ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+        </button>
+    </div> -->
+    <ol class="menu-nav">
+      <li class="menu-item cursor" aria-haspopup="true" routerLinkActive="menu-item-active">
+        <a routerLink="/dashboard"
+           routerLinkActive="active">
+          <img src="../../../../assets/logos/HomeS.svg">
+          <!-- <i class="fa-solid fa-house"></i> -->
+          <div>Home</div>
+        </a>
+      </li>
+      <li class="menu-item cursor" aria-haspopup="true" routerLinkActive="menu-item-active">
+        <a (click)="handleNavigation()" routerLink="/inventory" routerLinkActive="active">
+          <img src="../../../../assets/logos/InventoryS.svg">
+          <!-- <i class="fas fa-archive"></i> -->
+          <div>Inventory</div>
+        </a>
+      </li>
+      <li class="menu-item cursor" aria-haspopup="true" routerLinkActive="menu-item-active">
+        <a routerLink="/shipments/track-shipments" routerLinkActive="active">
+          <img src="../../../../assets/logos/ShipmentsS.svg">
+          <!-- <i
+      class="fas fa-truck-moving"></i> -->
+          <div>Shipments</div>
+        </a>
+      </li>
+      <li class="menu-item cursor"
+          *ngIf="[this.roleEnum.masterAdmin,this.roleEnum.customerAdmin,this.roleEnum.globalAdmin,this.roleEnum.consignAdmin, this.roleEnum.consignManager, this.roleEnum.serviceManager, this.roleEnum.serviceUser].includes(userRole)"
+          aria-haspopup="true" routerLinkActive="menu-item-active">
+        <a routerLink="/customers"
+           [ngClass]="currentUrl?.includes('orders') || currentUrl?.includes('customers') ? 'active' : '' ">
+          <img src="../../../../assets/logos/CustomersS.svg">
+          <!-- <i
+      class="fas fa-users"></i> -->
+          <div *ngIf="[this.roleEnum.masterAdmin, this.roleEnum.consignAdmin, this.roleEnum.consignManager, this.roleEnum.serviceManager, this.roleEnum.serviceUser,this.roleEnum.globalAdmin].includes(userRole)">
+            Customers
+          </div>
+          <div *ngIf="[this.roleEnum.customerAdmin].includes(userRole)">Order</div>
+        </a>
+      </li>
+      <li class="menu-item cursor" *ngIf="[this.roleEnum.masterAdmin].includes(userRole)" aria-haspopup="true"
+          routerLinkActive="menu-item-active">
+        <a routerLink="/global-customer" routerLinkActive="active">
+          <img src="../../../../assets/logos/CustomersS.svg">
+          <!-- <i class="fa-solid fa-bars"></i> -->
+          <div>Global Customer</div>
+        </a>
+      </li>
+      <li class="menu-item cursor"
+          *ngIf="[this.roleEnum.masterAdmin,this.roleEnum.customerAdmin,this.roleEnum.globalAdmin,this.roleEnum.customerManager,this.roleEnum.consignManager,this.roleEnum.consignAdmin, this.roleEnum.serviceManager].includes(userRole)"
+          aria-haspopup="true" routerLinkActive="menu-item-active">
+        <a routerLink="/users" routerLinkActive="active">
+          <img src="../../../../assets/logos/UsersS.svg">
+          <!-- <i class="fas fa-user"></i> -->
+          <div>Users</div>
+        </a>
+      </li>
+      <li class="menu-item cursor" *ngIf="[this.roleEnum.masterAdmin].includes(userRole)" aria-haspopup="true"
+          routerLinkActive="menu-item-active">
+        <a routerLink="/location" routerLinkActive="active">
+          <i class="fa-solid fa-location-dot"></i>
+          <!-- <i class="fas fa-user"></i> -->
+          <div>Service Centers</div>
+        </a>
+      </li>
+      <li class="menu-item cursor" aria-haspopup="true" routerLinkActive="menu-item-active">
+        <a routerLink="/reports"
+           routerLinkActive="active">
+          <img src="../../../../assets/logos/ReportsS.svg">
+          <!-- <i class="fas fa-chart-pie"></i> -->
+          <div>Reports</div>
+        </a>
+      </li>
+      <li class="menu-item cursor" aria-haspopup="true" routerLinkActive="menu-item-active">
+        <a routerLink="/repair/repair-reports"
+           routerLinkActive="active">
+          <img src="../../../../assets/logos/RepairS.svg">
+          <div>Repair Reports</div>
+        </a>
+      </li>
+
+      <li class="menu-item cursor"
+          *ngIf="[this.roleEnum.masterAdmin,this.roleEnum.warehouseUser, this.roleEnum.customerAdmin,this.roleEnum.globalAdmin].includes(userRole)"
+          aria-haspopup="true" routerLinkActive="menu-item-active">
+        <a routerLink="/distribution-list"
+           routerLinkActive="active">
+          <img src="../../../../assets/logos/DistributionS.svg">
+          <!-- <i class="fa-solid fa-bars"></i> -->
+          <div>Distribution List</div>
+        </a>
+      </li>
+      <li class="menu-item cursor" aria-haspopup="true" routerLinkActive="menu-item-active">
+        <a routerLink="/help"
+           routerLinkActive="active">
+          <img src="../../../../assets/logos/HelpS.svg">
+          <!-- <i 
+      class="fa-solid fa-circle-question"></i> -->
+          <div>Help</div>
+        </a>
+      </li>
+    </ol>
+    <!-- <div class="row pl-3 color text-lg text-white mt-1 sm-numberDiv font-w-600">
+        <div class="col-7 py-xxl-3 py-2 titlefont text-center">Total number of Quilts</div>
+        <div class="col-5 py-xxl-3 py-2 valuefont">{{quiltData['totalNumberOfQuilts']}}</div>
+        <div class="col-7 py-xxl-3 py-2 titlefont text-center">Number of Quilts
+            {{[this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(this.userRole) ? 'Consigned' :
+            'Leased'}}</div>
+        <div class="col-5 py-xxl-3 py-2 valuefont">{{ quiltData['numberOfLeasedQuilts']}}</div>
+        <div class="col-7 py-xxl-3 py-2 titlefont text-center">Number of Quilts Purchased</div>
+        <div class="col-5 py-xxl-3 py-2 valuefont">{{quiltData['numberOfPurchasedQuilts']}}</div>
+    </div> -->
+</div>
+
+<!-- <section [ngClass]="{'sideWrapper': !sideNavVisible}">
+    <toolbar></toolbar>
+</section> -->

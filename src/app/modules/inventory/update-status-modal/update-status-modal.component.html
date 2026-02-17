@@ -1,0 +1,159 @@
+<div class="row bg-light pb-4">
+  <div class="col-12 bg-modal text-center text-white py-2">
+    <h2>Update Status</h2>
+  </div>
+
+  <div fxLayout="column" class="px-5 pt-4">
+    <!-- Repair Type -->
+    <h2 class="mt-3 mb-0 main-color pb-2 fs-18">Repair Type</h2>
+    <mat-form-field appearance="outline" class="pb-4">
+      <mat-select multiple placeholder="Select Repair Type"
+                  [value]="selectedRepairTypes"
+                  (selectionChange)="repairTypeSelect($event.value)">
+        <mat-optgroup *ngFor="let group of groupedRepairTypes" [label]="group.category">
+
+          <mat-option *ngFor="let type of group.items"
+                      [value]="type.repairTypeId">
+
+            {{ type.repairTypeName }}
+
+          </mat-option>
+
+        </mat-optgroup>
+      </mat-select>
+    </mat-form-field>
+    <!-- Status -->
+    <h2 class="mt-3 mb-0 main-color pb-2 fs-18">Status</h2>
+    <mat-form-field appearance="outline" class="pb-4">
+      <mat-select [formControl]="quiltStatusId" placeholder="Select Status"
+                  (selectionChange)="itemSelect($event.value)">
+
+        <ng-container *ngFor="let status of filteredStatus">
+          <mat-option *ngIf="(!serviceRole && ![1, 2, 3, 8, 10, 13].includes(status.id))
+          || (serviceRole && !fromPallet && ![1, 2, 3, 10, 12, 13].includes(status.id))
+          || (serviceRole && fromPallet && ![1, 2, 3, 7, 8, 10, 12, 13].includes(status.id))"
+                      [value]="status.id">
+
+            {{ status.name }}
+          </mat-option>
+        </ng-container>
+
+      </mat-select>
+
+      <mat-error>
+        <show-error [formControlErr]="quiltStatusId"
+                    requiredMsg="Choose a status from the dropdown."></show-error>
+      </mat-error>
+    </mat-form-field>
+    <!-- Retired Sub-Status -->
+    <ng-container *ngIf="retiredSelected">
+      <h2 class="mt-3 mb-0 main-color pb-2 fs-18">Retired Reason</h2>
+
+      <mat-form-field appearance="outline" class="pb-4">
+        <mat-select [formControl]="retiredStatusId" required placeholder="Select Retired Reason">
+
+          <ng-container *ngFor="let status of allStatus">
+            <mat-option *ngIf="(!serviceRole && [10, 13].includes(status.id))
+            || (serviceRole && [13].includes(status.id))"
+                        [value]="status.id">
+
+              {{ status.name }}
+            </mat-option>
+          </ng-container>
+
+        </mat-select>
+
+        <mat-error>
+          <show-error [formControlErr]="retiredStatusId"
+                      requiredMsg="Choose a retired reason."></show-error>
+        </mat-error>
+      </mat-form-field>
+    </ng-container>
+    <!-- Buttons -->
+    <div fxLayout="row" fxLayoutAlign="center center" class="pt-3 mb-3">
+      <button class="btn btn-newPrimary p-12 btncolor" (click)="callUpdateStatus()">Save Changes</button>
+      <button class="btn p-12 btnborder ms-3" (click)="modal.dismiss()">Discard</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!--<div class="row bg-light pb-4">
+  <div class="col-12 bg-modal text-center text-white py-2">
+    <h2>Update Status</h2>
+  </div>
+
+  <div fxLayout="column" class="px-5 pt-4">-->
+<!-- Status -->
+<!--<h2 class="mt-3 mb-0 main-color pb-2 fs-18">Status</h2>
+<mat-form-field appearance="outline" class="pb-4">
+  <mat-select [formControl]="quiltStatusId" placeholder="Select Status"
+              (selectionChange)="itemSelect($event.value)">
+
+    <ng-container *ngFor="let status of filteredStatus">
+      <mat-option *ngIf="(!serviceRole && ![1, 2, 3, 8, 10, 13].includes(status.id))
+      || (serviceRole && !fromPallet && ![1, 2, 3, 10, 12, 13].includes(status.id))
+      || (serviceRole && fromPallet && ![1, 2, 3, 7, 8, 10, 12, 13].includes(status.id))"
+                  [value]="status.id">
+
+        {{ status.name }}
+      </mat-option>
+    </ng-container>
+
+  </mat-select>
+
+  <mat-error>
+    <show-error [formControlErr]="quiltStatusId"
+                requiredMsg="Choose a status from the dropdown."></show-error>
+  </mat-error>
+</mat-form-field>-->
+<!-- Repair Type -->
+<!--<h2 class="mt-3 mb-0 main-color pb-2 fs-18">Repair Type</h2>
+<mat-form-field appearance="outline" class="pb-4">
+  <mat-select multiple placeholder="Select Repair Type"
+              [value]="selectedRepairTypes"
+              (selectionChange)="repairTypeSelect($event.value)">
+    <mat-optgroup *ngFor="let group of groupedRepairTypes" [label]="group.category">
+
+      <mat-option *ngFor="let type of group.items"
+                  [value]="type.repairTypeId">
+
+        {{ type.repairTypeName }}
+
+      </mat-option>
+
+    </mat-optgroup>
+  </mat-select>
+</mat-form-field>-->
+<!-- Retired Sub-Status -->
+<!--<ng-container *ngIf="retiredSelected">
+  <h2 class="mt-3 mb-0 main-color pb-2 fs-18">Retired Reason</h2>
+
+  <mat-form-field appearance="outline" class="pb-4">
+    <mat-select [formControl]="retiredStatusId" required placeholder="Select Retired Reason">
+
+      <ng-container *ngFor="let status of allStatus">
+        <mat-option *ngIf="(!serviceRole && [10, 13].includes(status.id))
+    || (serviceRole && [13].includes(status.id))"
+                    [value]="status.id">
+
+          {{ status.name }}
+        </mat-option>
+      </ng-container>
+
+    </mat-select>
+
+    <mat-error>
+      <show-error [formControlErr]="retiredStatusId"
+                  requiredMsg="Choose a retired reason."></show-error>
+    </mat-error>
+  </mat-form-field>
+</ng-container>-->
+<!-- Buttons -->
+<!--<div fxLayout="row" fxLayoutAlign="center center" class="pt-3 mb-3">
+      <button class="btn btn-newPrimary p-12 btncolor" (click)="callUpdateStatus()">Save Changes</button>
+      <button class="btn p-12 btnborder ms-3" (click)="modal.dismiss()">Discard</button>
+    </div>
+  </div>
+</div>-->

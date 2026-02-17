@@ -1,0 +1,42 @@
+.cont { position: relative;}
+.cont img { display: block;}
+.cont .icon { position: absolute; bottom:33%; right:20%;  }
+.edit-button{
+    height: 40px;
+    position: absolute;
+    bottom: 1%;
+    right: 17%;
+}
+.ht-330{
+    height: 330px;
+}
+.image-border{
+    border-radius: 50%;;
+}
+:host ::ng-deep .mat-form-field-wrapper{
+    padding-bottom: 0;
+}
+
+:host ::ng-deep .mat-form-field-type-mat-native-select.mat-form-field-disabled .mat-form-field-infix::after, .mat-input-element:disabled {
+
+    font-size: 20px !important;
+  }
+
+
+  @media only screen and(max-width:1440px){
+    :host ::ng-deep .mat-form-field-type-mat-native-select.mat-form-field-disabled .mat-form-field-infix::after, .mat-input-element:disabled {
+
+        font-size: 18px !important;
+      }
+  }
+
+
+@media only screen and (max-width:1279px){
+    .cont .icon { right:10%;  }
+}
+
+
+@media only screen and (min-width:800px) and (max-width:837px){
+    .cont .icon { right:18%;  }
+}
+

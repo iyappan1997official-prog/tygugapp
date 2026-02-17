@@ -1,0 +1,42 @@
+<div class="row bg-light" [formGroup]="quiltsMovementForm">
+    <div class="col-12 bg-modal text-center text-white py-2">
+        <h2>Filter by Customer</h2>
+    </div>
+    <div class="searchWrapper mx-auto my-4" style="width:80%;">
+        <span><img src="../../../../../../assets/logos/SearchSvg.svg" alt="Search"></span>
+        <input placeholder="Search" formControlName="searchBy" class="w-100 form-control mx-auto">
+        <!-- <mat-form-field appearance="outline" class="w-25 input-pdt fs-16 searchBox">
+            <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+            <input matInput placeholder="Search" formControlName="searchBy" trim>
+        </mat-form-field> -->
+    </div>
+    <div class="py-2 px-5 main-color mx-2">
+        <ng-container *ngFor="let item of allCustomers">
+            <ng-container
+                *ngIf="[this.roleEnum.consignAdmin, this.roleEnum.consignManager].includes(this.loggedInUserRole) && (this.tab === 'consignment' || !this.tab); else allOptions">
+                <ng-container *ngIf="item.isConsignedCustomer">
+                    <section class="py-2">
+                        <mat-checkbox color="primary" formControlName="checkbox" class="circle-checkbox"
+                            [checked]="!item.id" (click)="toggle(item.id, item.name)">{{item.name}}</mat-checkbox>
+                    </section>
+                </ng-container>
+            </ng-container>
+            <ng-template #allOptions>
+                <section class="py-2">
+                    <mat-checkbox color="primary" formControlName="checkbox" class="circle-checkbox"
+                        [checked]="!item.id" (click)="toggle(item.id, item.name)">{{item.name}}</mat-checkbox>
+                </section>
+            </ng-template>
+        </ng-container>
+
+    </div>
+    <div class="col-2"></div>
+    <div class="col-4 text-center my-5">
+        <button class="btn p-12 btn-newPrimary" (click)="applyFilter()">Apply</button>
+    </div>
+
+    <div class="col-4 text-center my-5">
+        <button class="btn btnborder p-12 mb-xl-0 mb-3t" (click)="resetFunction()">Clear All</button>
+    </div>
+    <div class="col-2"></div>
+</div>

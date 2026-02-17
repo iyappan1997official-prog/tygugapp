@@ -1,0 +1,241 @@
+<div class="card mt-4 px-4 py-4">
+  <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center" fxLayoutAlign.lt-md="start start"
+    class="mx-3">
+    <h2 class="main-color font-w-600 fs-24">Quilt Tracker Support Ticket</h2>
+    <button class="btn btn-newPrimary p-12 text-white" (click)="onSubmit()">Submit</button>
+  </div>
+  <div class="px-3 mt-5" [formGroup]="feedback">
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px" class="mx-3">
+      <div fxFlex fxLayout="column">
+        <div class="inline-block">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Project</h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <input matInput [disabled]="true" placeholder="Enter your project" value="QTS" />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="inline-block">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Issue Type
+            </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <mat-select formControlName="issueType">
+                <mat-option *ngFor="let issueTypeitem of issueTypeList" [value]="issueTypeitem.jiraId">
+                  {{issueTypeitem.name}}
+                </mat-option>
+              </mat-select>
+
+              <mat-error>
+                <show-error [formControlErr]="feedback.controls.issueType"
+                  requiredMsg="Please select the type of the issue.">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="inline-block">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Summary</h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+
+              <textarea matInput formControlName="summary" placeholder="Enter your text"
+                (input)="wordLimit('text', $event)"></textarea>
+
+              <mat-error *ngIf="feedback.controls.summary">
+                <show-error [formControlErr]="feedback.controls.summary" requiredMsg="Summary required.">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="inline-block">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Severity</h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <mat-select formControlName="priority" required>
+                <mat-option *ngFor="let severityitem of severityList" [value]="severityitem.jiraId">
+                  {{severityitem.name}}
+                </mat-option>
+              </mat-select>
+
+              <mat-error>
+                <show-error [formControlErr]="feedback.controls.priority" requiredMsg="Please select from the options.">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="inline-block">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Description</h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <textarea matInput formControlName="description" placeholder="Enter the description"
+                (input)="wordLimit('textbox', $event)"></textarea>
+
+              <mat-error>
+                <show-error [formControlErr]="feedback.controls.description" requiredMsg="Description is required.">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="inline-block">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Application Mode
+            </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <mat-select formControlName="appMode" (selectionChange)="onModeSelect($event.value)" required>
+                <mat-option *ngFor="let item of appModeList" [value]="item.jiraId">
+                  {{item.name}}
+                </mat-option>
+              </mat-select>
+              <mat-error>
+                <show-error [formControlErr]="feedback.controls.appMode"
+                  requiredMsg="Please select the mode of application.">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="inline-block" *ngIf="this.feedback.controls.appMode.value == '10539'">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Mobile Platform
+            </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <mat-select formControlName="mobilePlatform">
+                <mat-option *ngFor="let data of mobileList" [value]="data.jiraId">
+                  {{ data.name }}
+                </mat-option>
+              </mat-select>
+
+              <mat-error>
+                <show-error [formControlErr]="feedback.controls.mobilePlatform"
+                  requiredMsg="Please select the mobile platform.">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="inline-block" *ngIf="this.feedback.controls.appMode.value == '10506'">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Browser Used
+            </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <mat-select formControlName="browserUsed">
+                <mat-option *ngFor="let browseritem of browserList" [value]="browseritem.jiraId">
+                  {{ browseritem.name }}
+                </mat-option>
+              </mat-select>
+
+              <mat-error>
+                <show-error [formControlErr]="feedback.controls.browserUsed" requiredMsg="Please select the browser.">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="inline-block"
+          *ngIf="this.feedback.controls.browserUsed.value == '-1' && this.feedback.controls.appMode.value == '10506'">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Other Browser
+            </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <div fxFlex="55%" fxLayout="column">
+              <mat-form-field appearance="outline" class="font-w-600 fs-20 input-pdt">
+                <input matInput required formControlName="otherBrowser" id="OtherBrowser" placeholder="Other Browser">
+                <mat-error>
+                  <show-error [formControlErr]="feedback.controls.otherBrowser" requiredMsg="Browser name required.">
+                  </show-error>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="inline-block">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Contact Number
+            </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <div fxFlex="55%" fxLayout="column">
+              <mat-form-field appearance="outline" class="font-w-600 fs-20 input-pdt">
+                <input matInput required formControlName="contact" type="tel" id="contact"
+                  placeholder="Enter your contact number" maxlength="10" minlength="10" class="noarrowInput"
+                  title="Please enter a valid contact number.">
+                <mat-error>
+                  <show-error [formControlErr]="feedback.controls.contact"
+                    requiredMsg="Please enter valid contact number."
+                    patternMsg="Phone Number has invalid value. Please correct."
+                    maxLengthMsg="Phone Number has exceed 10 digits. Please correct.">
+                  </show-error>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div class="inline-block">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Issue Date
+            </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <input matInput formControlName="date" [matDatepicker]="picker" [value]="feedback.controls['date'].value">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <!-- <mat-error>
+                <show-error [formControlErr]="addShipForm.controls.Date"
+                  requiredMsg="Please select shipment date.">
+                </show-error>
+              </mat-error> -->
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="inline-block">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Attachment
+            </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <div class="card px-4 py-2 py-4 w-50" fxFlex="55%" (click)="selectFile.click()">
+              <input type="file" #selectFile
+                accept="application/pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/*"
+                hidden (change)="onFileChange($event)">
+              <div class="main-color font-w-400">
+                <img src="../../../../assets/logos/upload.svg" class="lg-w-20">
+                <span class="fw-bold fs-18 ms-3 cursor">Upload File</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-container *ngIf="uploadFileStack.length > 0">
+          <ng-container *ngFor="let files of uploadFileStack; let i=index">
+            <div class="card card-border mb-3 px-4 py-2 py-4 w-50" fxFlex fxLayoutAlign="space-between center">
+              <div class="main-color fs-18 font-w-400 w-75">
+                <div class="max-w-14">{{files['name']}}</div>
+              </div>
+              <div class="d-inline-flex justify-content-end min-w-7 w-25">
+                <img class="cursor w-1rem" src="../../../../assets/logos/DeleteP.svg"
+                  (click)="deletFile(uploadFileStack, i)">
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+<ng-container
+    *ngIf="this.companyRoles.includes(this.userRole) || [this.roleEnum.globalAdmin].includes(this.userRole); else listForMaster">
+    <div class="mt-4" [formGroup]="feedForm">
+        <div class="row mb-3">
+            <h2 class="pt-2 main-color font-w-600 fs-24 w-50 mb-0">Please share your feedback with us (if any)</h2>
+            <div class="w-25 d-flex justify-content-end">
+                <button class="btn btn-newPrimary p-12" (click)="addFeedback()">Submit</button>
+            </div>
+        </div>
+        <div class="card py-4 cardheight w-75">
+            <mat-form-field appearance="outline" fxFlex class="font-w-500 fs-18 input-pdt">
+                <textarea id="" cols="10" rows="2" formControlName="description" matInput required></textarea>
+                <mat-error>
+                    <show-error [formControlErr]="feedForm.controls.description" requiredMsg="Please write a feedback.">
+                    </show-error>
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+</ng-container>
+
+<ng-template #listForMaster>
+    <div class="mt-3" [formGroup]="feedbackList">
+        <h2 class="pt-2 main-color font-w-600 fs-24">Customer Feedback</h2>
+
+        <div fxLayout="row" fxLayoutGap="20px" fxLayoutGap.lt-xl="10px" fxLayout.lt-lg="column" fxLayoutAlign="end"
+            class="mt-4 align-items-center mb-3">
+            <mat-form-field appearance="outline" class="input-pdt searchBox fs-16 col-2 ">
+                <mat-select formControlName="custGroupId" placeholder="Company Name">
+                    <mat-option *ngFor="let customer of allCustomers" [value]="customer.id">
+                        {{customer.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="input-pdt searchBox fs-16 col-2">
+                <input matInput placeholder="Start Date" formControlName="startDate" [matDatepicker]="picker">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="input-pdt searchBox fs-16 col-2">
+                <input matInput placeholder="End Date" formControlName="endDate" [matDatepicker]="picker1">
+                <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+
+            <div><button class="btn btn-newPrimary btncolor p-12" (click)="onSearchByValueChange()">Search</button>
+            </div>
+            <div><button class="btn btnborder p-12" [disabled]="searchFilter===false"
+                    (click)="searchReset()">Reset</button></div>
+        </div>
+        <ng-container *ngIf="items$ | async as feed;">
+            <ng-container *ngIf="feed && feed.length > 0; else noFeed">
+                <ng-container *ngFor="let data of feed; let i = index">
+                    <div class="card py-4 cardheight mb-3">
+                        <div class="row">
+                            <div class="col-10 d-flex align-items-center">
+                                <!-- <h2 class="mb-0 font-w-600">{{data['location']}}</h2>
+                                <span class="font-w-500 fs-16">({{data['customer']}})</span> -->
+                                <h2 class="mb-0 font-w-600">{{data['customer']}}</h2>
+                            </div>
+                            <div class="col-2 d-flex justify-content-end">
+                                {{(data['createdDate'] |date: 'MM/dd/yyyy')}}
+                            </div>
+                            <div class="col-12 mt-3 fs-18">
+                                {{data['description']}}
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+                <mat-paginator [length]="this.totalFeed" [pageSize]="feedbackList.controls.pageSize.value"
+                    [pageSizeOptions]="pageSizeMoreOptions" (page)="paginator($event)" showFirstLastButtons
+                    aria-label="Select page">
+                </mat-paginator>
+            </ng-container>
+            <ng-template #noFeed>
+                <div class="card py-4 cardheight mb-3">
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-end">
+                            No Feedback
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </ng-container>
+    </div>
+</ng-template>

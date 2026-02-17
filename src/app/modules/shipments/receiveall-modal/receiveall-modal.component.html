@@ -1,0 +1,40 @@
+<div class="row bg-light">
+    <div class="col-12 bg-modal text-center text-white py-2">
+        <h2>Confirmation</h2>
+    </div>
+
+    <form [formGroup]="receiveAllForm">
+        <h2 class="mt-3 mb-0 main-color pb-2 fs-18">Protected Count</h2>
+        <ng-container>
+            <mat-form-field appearance="outline">
+            <input matInput formControlName="protectedCount">
+            <!-- Error message for protectedCount -->
+            <mat-error *ngIf="hasError('protectedCount', 'required')">Protected Count is required.</mat-error>
+            </mat-form-field>
+
+            <!-- <h2 class="mt-3 mb-0 main-color pb-2 fs-18">Source Location</h2>
+            <mat-form-field appearance="outline">
+                <mat-select required placeholder="Select Location">
+                    <mat-option value="1">Option 1</mat-option>
+                    <mat-option value="2">Option 2</mat-option>
+                </mat-select>
+            </mat-form-field> -->
+
+            <h2 class="mt-3 mb-0 main-color pb-2 fs-18">Source Location</h2>
+            <div class="custom-select">
+                <select formControlName="autoshipSourceLocationId">
+                    <option disabled></option>
+                    <option *ngFor="let locationName of sourceLocation" [value]="locationName.id">{{ locationName.name }}</option>
+                </select>
+                <!-- Error message for source location -->
+                <div *ngIf="hasError('autoshipSourceLocationId', 'required')" class="text-danger">
+                    Source Location is required.
+                </div>
+            </div>
+        </ng-container>
+
+        <div fxLayout="row" fxLayoutAlign="center center" class="pt-3 mb-3">
+            <button mat-button class="btn btn-newPrimary p-12 btncolor"  [disabled]="receiveAllForm.invalid" (click)="onSubmit()">Save Changes</button>
+        </div>
+    </form>
+</div>

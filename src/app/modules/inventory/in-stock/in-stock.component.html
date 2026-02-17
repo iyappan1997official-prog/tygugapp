@@ -1,0 +1,219 @@
+<ng-container
+  *ngIf="masterAdminRoles.includes(loggedInUserRole) || consignmantRoles.includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(loggedInUserRole); else palletsTableView">
+  <div class="lg-pt-2 pt-3 ox-none">
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutAlign="space-between center" class="pb-2 lg-pb-0">
+      <!-- [formGroup]="([this.roleEnum.consignAdmin].includes(loggedInUserRole)) ? consignStockDataForm : stocksDataForm" -->
+      <form [formGroup]="stocksDataForm">
+        <div fxLayout="row" fxLayoutGap="20px" fxLayout.lt-md="column" fxLayoutAlign="space-between center"
+          *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(loggedInUserRole)">
+          <!-- <div class="searchWrapper">
+            <span><img src="../../../../assets/logos/SearchSvg.svg" alt="Search"></span>
+            <input [placeholder]="!tabIndex ? 'Quilt Serial Number' : 'Pallet Serial Number'"
+              class="w-100 form-control p-0 input-pdt" formControlName="searchBy">
+          </div> -->
+
+          <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mat-w-160 mw-160">
+            <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+            <input matInput formControlName="searchBy"
+              [placeholder]="(!tabIndex || tabIndex === 2) ? 'Quilt Number' : 'Pallet Number'" trim>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mat-w-160 mw-160"
+            *ngIf="!(!tabIndex || tabIndex === 2)">
+            <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+            <input matInput formControlName="quiltSerialNumber" placeholder="Quilt Number" trim>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="selectFilter mw-160">
+            <mat-label class="labelcolor">Quilt Type</mat-label>
+            <mat-select formControlName="quiltTypeId">
+              <mat-option>
+                <ngx-mat-select-search [(ngModel)]="searchText" [ngModelOptions]="{ standalone: true }"
+                  placeholderLabel="Search..." noEntriesFoundLabel="No matching option found.">
+                </ngx-mat-select-search>
+              </mat-option>
+              <ng-container *ngIf="alltypes?.length">
+                <mat-option [value]="0">All</mat-option>
+                <mat-option *ngFor="let type of alltypes | stringFilterBy: searchText : 'name'" [value]="type.id">
+                  {{type.name}}
+                </mat-option>
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="selectFilter mw-160">
+            <mat-label class="labelcolor">{{!tabIndex ? 'Quilt Status' : tabIndex == 2 ? 'Status' : 'Pallet
+              Status'}}</mat-label>
+            <mat-select formControlName="inventoryStatusId" (selectionChange)="inactiveSelect($event)">
+              <mat-option [value]="0">All</mat-option>
+              <ng-container *ngFor="let status of allStatus">
+                <mat-option
+                  *ngIf="[this.roleEnum.serviceManager].includes(loggedInUserRole) && ![1, 2, 3,7,8,10,11, 12,13].includes(status.id) ; else otherOptions"
+                  [value]="status.id">
+                  {{status.name}}
+                </mat-option>
+                <ng-template #otherOptions>
+                  <ng-container
+                    *ngIf="tabIndex == 2 && [this.roleEnum.masterAdmin].includes(loggedInUserRole) && ![1, 2, 3,4,5,6,9].includes(status.id); else activeOptions">
+                    <mat-option [value]="status.id">
+                      {{status.name}}</mat-option>
+                  </ng-container>
+                  <ng-template #activeOptions>
+                    <mat-option
+                      *ngIf="![this.roleEnum.serviceManager].includes(loggedInUserRole) && tabIndex !== 2 &&
+                    (([this.roleEnum.masterAdmin,this.roleEnum.customerAdmin].includes(loggedInUserRole) && ![1, 2, 3,7,8,10,12,13].includes(status.id))) || (![this.roleEnum.masterAdmin,this.roleEnum.customerAdmin,this.roleEnum.serviceManager].includes(loggedInUserRole) && ![1, 2, 3, 12].includes(status.id))"
+                      [value]="status.id">
+                      {{status.name}}</mat-option>
+                  </ng-template>
+                </ng-template>
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="20px" fxLayout.lt-md="column" fxLayoutAlign="space-between center"
+          *ngIf="[this.roleEnum.consignAdmin].includes(loggedInUserRole)">
+
+          <mat-form-field appearance="outline" class="selectFilter mw-160">
+            <mat-label class="labelcolor">Location</mat-label>
+            <mat-select formControlName="locationId">
+              <mat-option [value]="0">All</mat-option>
+              <mat-option *ngFor="let data of allConsignLocations" [value]="data.id">
+                {{data.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        </div>
+      </form>
+      <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="20px" class="border-left ps-3"
+        *ngIf="![this.roleEnum.consignManager].includes(loggedInUserRole)">
+        <button class="btn btn-newPrimary btncolor p-12  mb-xl-0 mb-3" (click)="searchAppliedFlters()">Search</button>
+        <button class="btn btnborder p-12  mb-xl-0 mb-3" [disabled]="searchFilter===false"
+          [ngClass]="searchFilter===false ? 'disabledColor' : ''" (click)="resetFilters()">Reset</button>
+      </div>
+    </div>
+    <div class="p-relative">
+      <ng-container *ngIf="tabIndex !== 2; else tabInactive">
+        <div fxLayout="row" fxLayoutGap="20px" fxLayout.lt-md="column" fxLayoutAlign="end center" class="btn-align">
+          <ng-container *ngIf="masterAdminRoles.includes(loggedInUserRole)">
+            <button class="btn btn-success btn-color-green p-12  mt-xl-0 mt-3" (click)="assignQuilt()">Assign to
+              Customer</button>
+          </ng-container>
+          <div fxLayout="row" fxLayoutGap="20px" class="border-left ps-3">
+            <ng-container *ngIf="masterAdminRoles.includes(loggedInUserRole) || [this.roleEnum.serviceManager].includes(loggedInUserRole)">
+              <!--<button class="btn btn-newPrimary btncolor p-12  mt-xl-0 mt-3" (click)="updateStatus()">{{!tabIndex ?'Update Quilt Status' : 'Update Pallet Status'}}</button>-->
+              <button *ngIf="tabIndex !== 1"
+                      class="btn btn-newPrimary btncolor p-12 mt-xl-0 mt-3"
+                      (click)="updateStatus()">
+                {{!tabIndex ? 'Update Quilt Status' : 'Update Pallet Status'}}
+              </button>
+            </ng-container>
+            <!-- Consignment to be add button  -->
+            <ng-container *ngIf="![this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole)">
+              <ng-container *ngIf="!tabIndex ;else reprintQRCode">
+                <button class="btn btnborder p-12  mt-xl-0 mt-3" (click)="createPallet()">Create Pallet</button>
+              </ng-container>
+              <!-- Consignment to be add button  -->
+              <ng-template #reprintQRCode>
+                <button class="btn btnborder p-12  mt-xl-0 mt-3" (click)="palletInStockComponent.printQrCodes()">Reprint
+                  QR
+                  Code</button>
+              </ng-template>
+            </ng-container>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #tabInactive>
+        <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="end center" class="btn-align">
+          <button class="btn btn-newPrimary btncolor p-12  mt-xl-0 mt-3" (click)="updateStatus()">Restore</button>
+        </div>
+      </ng-template>
+      <ng-container
+        *ngIf="![this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole); else consignTable">
+        <mat-tab-group [selectedIndex]="tabIndex" (focusChange)="selectedTabChanged($event)">
+          <mat-tab label="Individual">
+            <individual-in-stock [individualStocks]="individualStocks" [loggedInUserRole]="loggedInUserRole"
+              [allQuiltsStatus]="allStatus" [pageNumber]="formValues?.pageNumber - 1" [pageSize]="formValues?.pageSize"
+              (paginate)="paginator($event)" (createMockPallet)="callMockPalletApi($event)"
+              (updateStatus)="updateQuiltStatusApi($event)" (assignQuilts)="callAssignQuiltsApi($event)"
+              (sortbtn)="sortbtn($event)">
+            </individual-in-stock>
+          </mat-tab>
+          <mat-tab label="Pallet">
+            <pallet-in-stock [pallets]="pallets" [palletLength]="palletLength"
+              (refreshData)="[this.roleEnum.serviceManager].includes(loggedInUserRole) ? getPalletForService() :  getPalletStockData()"
+              [loggedInUserRole]="loggedInUserRole" [pageNumber]="formValues?.pageNumber - 1"
+              [pageSize]="formValues?.pageSize" [allPalletsStatus]="allStatus" (paginate)="paginator($event)"
+              (updateStatus)="updatePalletStatusApi($event)" (assignQuilts)="callAssignPalletsApi($event)">
+            </pallet-in-stock>
+          </mat-tab>
+          <mat-tab label="Inactive" *ngIf="![this.roleEnum.serviceManager].includes(loggedInUserRole)">
+            <app-inactive-stock [inActiveStocks]="inActiveStocks" [loggedInUserRole]="loggedInUserRole"
+              [pageNumber]="formValues?.pageNumber - 1" [pageSize]="formValues?.pageSize" (paginate)="paginator($event)"
+              (updateStatus)="updateQuiltStatusApi($event)" (sortbtn)="sortbtn($event)">
+            </app-inactive-stock>
+          </mat-tab>
+        </mat-tab-group>
+      </ng-container>
+      <ng-template #consignTable>
+        <div class="card mt-3 pt-3 px-3 py-0 table-responsive scroll innerContentWrapper">
+          <table class="table">
+            <thead>
+              <tr class="tablelight text-center">
+                <th width="20%">
+                  Location</th>
+                <th width="20%">Part Number</th>
+                <th width="20%">Size</th>
+                <th width="20%">Quilts Quantity
+                </th>
+                <th width="20%"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="this.consignStocks as consignStock;">
+                <ng-container *ngIf="consignStock && consignStock.length > 0; else noDataForConsign">
+                  <tr class="text-center" *ngFor="let data of consignStocks; let i=index;">
+                    <td>{{data['location'] || '--'}}</td>
+                    <td>{{data['partNumber'] || '--'}}</td>
+                    <td>{{data['size'] || '--'}}</td>
+                    <td>{{data['quantity']}}</td>
+                    <td>
+                      <div class="color-primary cursor font-w-600 fs-14"
+                        (click)="navToConsign(data['locationId'], data['partNumber'])">View Quilts</div>
+                    </td>
+                  </tr>
+                </ng-container>
+                <ng-template #noDataForConsign>
+                  <tr *ngIf="!consignStock.length">
+                    <td colspan="9" class="bg-white">
+                      <div class="text-center">
+                        <h3>No Stocks found</h3>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+
+
+              </ng-container>
+            </tbody>
+          </table>
+          <mat-paginator [length]="totalStock" [pageIndex]="formValues?.pageNumber - 1"
+            [pageSize]="formValues?.pageSize" [pageSizeOptions]="pageSizeOptions" (page)="paginator($event)"
+            showFirstLastButtons aria-label="Select page">
+          </mat-paginator>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #palletsTableView>
+  <!-- <pallet-table-view [inventoryForm]="stocksDataForm" [searchFilter]="searchFilter" [pallets]="pallets"
+    [allLocations]="allLocations" [palletLength]="palletLength" [pageNumber]="formValues?.pageNumber - 1"
+    [pageSize]="formValues?.pageSize" (paginate)="paginator($event)" (refreshData)="getPalletStockData()"
+    (applyFilters)="searchAppliedFlters()" (resetFilters)="resetFilters()"
+    (deletePallet)="palletInStockComponent.openConfirmDeleteModal($event)">
+  </pallet-table-view> -->
+  <pallet-table-view>
+  </pallet-table-view>
+</ng-template>

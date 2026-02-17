@@ -1,0 +1,48 @@
+// :host mat-select ::ng-deep .mat-select-arrow {
+//   display: none;
+// }
+
+// ::ng-deep .mat-form-field.mat-focused.mat-primary .mat-select-arrow {
+//   display: none;
+// }
+
+// .mat-paginator  {
+//     font-size: 15px!important;
+//     color:#000;
+// }
+
+// .mat-position{
+//     transform: translateY(11px);
+//     }
+.user-btn {
+  margin-top: -0.4rem;
+}
+
+.searchBox ::ng-deep .mat-form-field-infix {
+  padding: 1.3em 0 1.05em !important;
+  border-top: none;
+
+  @media screen and (max-width: 1440px) {
+    padding: 1.4em 0 1.15em !important;
+  }
+}
+
+:host ::ng-deep input.mat-input-element {
+  height: auto;
+}
+
+:host ::ng-deep .mat-position .mat-form-field-infix {
+  padding: .4em 0 .9em !important;
+  border-top: 13px solid transparent;
+}
+/* Make all sort icons black */
+th .fa-sort {
+  color: #000 !important;
+  opacity: 1 !important;
+  font-size: 14px; /* optional: same size as your screenshot */
+}
+
+/* Also ensure hover does NOT change color */
+th .fa-sort:hover {
+  color: #000 !important;
+}

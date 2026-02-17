@@ -1,0 +1,240 @@
+<div class="card py-4 cardheight">
+  <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between start">
+    <div>
+      <h2 class="font-w-600 main-color fs-24">
+        <img class="cursor mb-1" src="../../../../assets/logos/arrow-backP.svg" (click)="navigateToLocationsListing()">
+        &nbsp;{{componentAccessFor==='add-location'?'Add ':'Edit '}} Location
+      </h2>
+    </div>
+    <div fxLayout="row" fxLayoutGap="20px">
+      <button class="btn btn-newPrimary text-white btncolor"
+        (click)="addLocation()">{{componentAccessFor==='add-location'?'Add Location': 'Save Changes'}}</button>
+      <button class="btn btnborder" (click)="resetForm()">Discard</button>
+    </div>
+  </div>
+  <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between start"
+    *ngIf="![this.roleEnum.customerAdmin].includes(loggedInUserRole)">
+    <div>
+      <h2 class="font-w-600 main-color fs-24">
+        {{ this.customerNameFromList }}<span class="fs-16 font-w-600">({{this.customerNumberFromList}})</span>
+      </h2>
+    </div>
+  </div>
+  <div class="mt-2 main-color" [formGroup]="addLocationForm">
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px">
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">Name </h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <input matInput formControlName="name" trimValue required>
+          <mat-error>
+            <show-error requiredMsg="Please enter the name." [formControlErr]="addLocationForm.controls.name">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">Type </h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <mat-select formControlName="locationTypeId" required [disabled]="componentAccessFor!=='add-location'">
+            <ng-container *ngFor="let type of allTypes">
+              <mat-option *ngIf="[1,2,4].includes(type.id) && componentAccessFor==='add-location'" [value]="type.id">
+                {{type.name}}
+              </mat-option>
+              <ng-container *ngIf="componentAccessFor!=='add-location'">
+                <mat-option [value]="type.id">
+                  {{type.name}}
+                </mat-option>
+              </ng-container>
+            </ng-container>
+          </mat-select>
+
+          <mat-error *ngIf="allTypes.length">
+            <show-error [formControlErr]="addLocationForm.controls.locationTypeId"
+              requiredMsg="Please select a type from the dropdown option.">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px" ngClass.lt-md="mt-1">
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">NickName</h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <input matInput formControlName="nickName" trimValue >
+
+          <mat-error>
+            <show-error requiredMsg="Please enter the NickName." [formControlErr]="addLocationForm.controls.nickname">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">Address</h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <input matInput formControlName="address" trimValue required>
+
+          <mat-error>
+            <show-error requiredMsg="Please enter the address." [formControlErr]="addLocationForm.controls.address">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px" ngClass.lt-md="mt-1">
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">Country
+        </h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <mat-select formControlName="countryId" (selectionChange)="resetState($event.value)" required>
+            <mat-option *ngFor="let country of allCountries" [value]="country.id">
+              {{country.name}}
+            </mat-option>
+          </mat-select>
+          <!-- <mat-select formControlName="countryId" (selectionChange)="fetchAllStates()" required>
+            <mat-option *ngFor="let country of allCountries" [value]="country.id">
+              {{country.name}}
+            </mat-option>
+          </mat-select> -->
+
+          <mat-error>
+            <show-error [formControlErr]="addLocationForm.controls.countryId"
+              requiredMsg="Please select a country from the dropdown option.">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">City </h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <input matInput formControlName="city" trimValue required>
+
+          <mat-error>
+            <show-error requiredMsg="Please enter the city." [formControlErr]="addLocationForm.controls.city">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px" ngClass.lt-md="mt-1">
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">State </h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <mat-select formControlName="stateId">
+            <mat-option *ngFor="let state of allStates" [value]="state.id">
+              {{state.name}}
+            </mat-option>
+          </mat-select>
+
+          <mat-error *ngIf="allStates.length">
+            <show-error [formControlErr]="addLocationForm.controls.stateId"
+              requiredMsg="Please select a state from the dropdown option.">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">Zip</h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <input matInput formControlName="zip" trimValue required>
+          <mat-error>
+            <show-error [formControlErr]="addLocationForm.controls.zip"
+              requiredMsg="Zip Code is required or has invalid value.  Please correct."
+              patternMsg="Zip Code is required or has invalid value.  Please correct.">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px" ngClass.lt-md="mt-1">
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">Phone No. </h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <input matInput formControlName="phoneNumber" matInput maxlength="15" trimValue required>
+
+          <mat-error>
+            <show-error [formControlErr]="addLocationForm.controls.phoneNumber"
+              requiredMsg="Phone No. is required or has an invalid value. Please correct."
+              maxLengthMsg="Phone Number is required or has invalid value.  Please correct."
+              patternMsg="Phone No. is required or has an invalid value. Please correct.">
+            </show-error>
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <!-- <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">Phone No. </h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <input matInput formControlName="phoneNumber" matInput maxlength="15" trimValue required>
+
+          <mat-error>
+            <show-error [formControlErr]="addLocationForm.controls.phoneNumber"
+              requiredMsg="Phone No. is required or has an invalid value. Please correct."
+              maxLengthMsg="Phone Number is required or has invalid value.  Please correct."
+              patternMsg="Phone No. is required or has an invalid value. Please correct.">
+            </show-error>
+          </mat-error>
+        </mat-form-field> -->
+      </div>
+    </div>
+
+    <h2 class="pt-4 pb-3 mb-2 font-w-600 fs-24">Responsible Party</h2>
+    <div formGroupName="locationPartyModel" fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px"
+      fxLayoutGap.lt-lg="2px" ngClass.lt-md="mt-1">
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">Name </h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <input matInput formControlName="name" trimValue>
+          <!-- <mat-error>
+            <show-error requiredMsg="Please enter the responsible party's name."
+              [formControlErr]="addLocationForm.controls.locationPartyModel.get('name')">
+            </show-error>
+          </mat-error> -->
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start" class="mb-3">
+        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" ngClass="form-heading-position"
+          class="mb-0 font-w-600 fs-20">Phone No. </h3>
+        <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="form-heading-dot-position">:</div>
+        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+          <input matInput formControlName="phoneNumber" matInput maxlength="15" trimValue>
+          <!-- <mat-error>
+            <show-error [formControlErr]="addLocationForm.controls.locationPartyModel.get('phoneNumber')"
+              requiredMsg="Phone No. is required or has an invalid value. Please correct."
+              maxLengthMsg="Phone Number is required or has invalid value.  Please correct."
+              patternMsg="Phone No. is required or has an invalid value. Please correct.">
+            </show-error>
+          </mat-error> -->
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+</div>

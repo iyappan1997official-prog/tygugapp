@@ -1,0 +1,37 @@
+.btn-archive{
+    background-color: #EC3535;
+    border:1px solid white;
+   }
+
+   .btn:disabled {
+    // background-color: white !important;
+    border: 1px solid #757272 !important;
+    background: #00000012 !important;
+    color: #757272 !important;
+}
+
+.logo-img  {
+    filter: invert(1);
+    position: relative;
+    right:0;
+    top:0;
+  }
+
+  .num-cross {
+    background-color: #8FABC9;
+    color: white;
+    border-radius: 5px;
+    padding: 5px 15px;
+    display: inline-block;
+}
+
+.scannerSize{
+  min-height:90%;
+  min-width:50%;
+  margin-right: auto;
+  }
+
+  .scanSize{
+    min-height:90%;
+    min-width:50%;
+  }

@@ -1,0 +1,30 @@
+<!-- <div class="error"> -->
+<ng-container *ngIf="formControlErr?.errors?.required">
+    {{requiredMsg}}
+</ng-container>
+
+<ng-container
+    *ngIf="formControlErr?.errors?.pattern && !formControlErr?.errors?.required && !formControlErr?.errors?.minlength">
+    {{patternMsg}}
+</ng-container>
+
+
+<ng-container *ngIf="formControlErr?.errors?.minlength">
+    {{minLengthMsg? minLengthMsg : "Minimum " + formControlErr?.errors?.minlength?.requiredLength + " characters."}}
+</ng-container>
+
+<ng-container *ngIf="formControlErr?.errors?.maxlength && !formControlErr?.errors?.pattern">
+    {{maxLengthMsg ? maxLengthMsg : "Maximum " + formControlErr?.errors?.maxlength?.requiredLength + "
+    characters."}}
+</ng-container>
+
+<ng-container *ngIf="formControlErr?.errors?.min">
+
+    {{minValueMsg ? minValueMsg : "The quantity you entered should be atleast " + formControlErr?.errors?.min?.min}}
+</ng-container>
+
+<ng-container *ngIf="formControlErr?.errors?.max">
+
+    {{maxValueMsg ? maxValueMsg : "It should not be more than " + formControlErr?.errors?.max?.max}}
+</ng-container>
+<!-- </div> -->

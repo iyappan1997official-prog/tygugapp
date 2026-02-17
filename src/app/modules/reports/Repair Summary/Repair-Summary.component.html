@@ -1,0 +1,74 @@
+<div class="report-container">
+  <div class="report-card">
+    <!-- Header -->
+    <div class="header">
+      <h2>Repair Summary Report</h2>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <div class="filter-group">
+        <label for="location">Location</label>
+        <select id="location" name="location" [(ngModel)]="selectedLocation">
+          <option value=""></option>
+          <option *ngFor="let location of locations" [value]="location.id">
+            {{ location.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="quiltStatus">Quilt Status</label>
+        <select id="quiltStatus" name="quiltStatus" [(ngModel)]="selectedStatus">
+          <option value="all">All</option>
+          <option value="cleaned">Cleaned</option>
+          <option value="retired">Retired</option>
+          <option value="repaired">Repaired</option>
+        </select>
+      </div>
+
+      <button class="btn-search" (click)="onSearch()">
+        Search
+      </button>
+      <button class="btn-reset" (click)="onReset()">
+        Reset
+      </button>
+    </div>
+
+    <!-- Export Button -->
+    <div class="export-section">
+      <button class="btn-export" (click)="onExport()">
+        Export
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Location</th>
+            <th>Cleaned Count</th>
+            <th>Repaired Count</th>
+            <th>Retired Count</th>
+            <th>Total Returned</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="reportData.length === 0">
+            <td colspan="5" class="no-data">
+              No data available
+            </td>
+          </tr>
+          <tr *ngFor="let item of reportData">
+            <td>{{ item.location }}</td>
+            <td>{{ item.cleanedCount }}</td>
+            <td>{{ item.repairedCount }}</td>
+            <td>{{ item.retiredCount }}</td>
+            <td>{{ item.totalReturned }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

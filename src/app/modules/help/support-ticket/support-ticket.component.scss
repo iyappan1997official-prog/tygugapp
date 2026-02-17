@@ -1,0 +1,27 @@
+.card-border {
+    border: 1px solid #407ec9;
+}
+
+input.noarrowInput::-webkit-outer-spin-button,
+input.noarrowInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number].noarrowInput {
+    -moz-appearance: textfield;
+}
+
+.card {
+    border: 2px solid transparent;
+    padding: 1.85rem 1.2rem;
+    border-radius: 12px;
+    overflow-x: auto !important;
+}
+
+.card.card-border {
+    overflow: visible !important;
+    max-width: 35% !important;
+    border: 1px solid #407ec9;
+}

@@ -1,0 +1,31 @@
+  .tablelight {
+    background-color: #F4F7FC;
+    border: 1px solid #ffffff;
+    border-radius: 9px;
+  }
+
+/* Make all sort icons black */
+ th .fa-sort {
+  color: #000 !important;
+  opacity: 1 !important;
+  font-size: 14px; /* optional: same size as your screenshot */
+ }
+
+/* Also ensure hover does NOT change color */
+ th .fa-sort:hover {
+  color: #000 !important;
+ }
+
+  :host ::ng-deep .mat-form-field-infix {
+    padding: 1.22em 0 0.89em !important;
+    border-top: none;
+  }
+
+  :host ::ng-deep .input-pdt.mat-form-field-appearance-outline .mat-form-field-prefix,
+  :host ::ng-deep .input-pdt.mat-form-field-appearance-outline .mat-form-field-suffix {
+    top: 0.22em !important;
+
+    @media screen and (max-width: 1440px) {
+      top: 0 !important;
+    }
+  }

@@ -1,0 +1,45 @@
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+
+.table-overflow {
+    overflow-y: auto;
+    height: 37.2rem;
+    display: block;
+}
+
+tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.head-position {
+    transform: translateY(1.4rem);
+}
+
+.head-dot-position {
+    transform: translateY(1.6rem);
+}
+
+:host ::ng-deep .mat-select-disabled .mat-select-value {
+    color: rgb(128 128 128) !important;
+}
+
+:host ::ng-deep .mat-select-value,
+:host ::ng-deep .mat-select-panel,
+.mat-fs-18 {
+    font-size: 18px !important;
+}
+
+:host ::ng-deep .mat-form-field-infix {
+    padding-top: 1.28em !important;
+    border-top: 0;
+}

@@ -1,0 +1,15 @@
+<div class="content-wrapper pb-4">
+    <mat-tab-group [selectedIndex]="tabIndex" (selectedTabChange)="selectedTabChanged($event)" class="row">
+        <mat-tab label="View">
+            <view-shipment></view-shipment>
+        </mat-tab>
+
+        <mat-tab label="Ship">
+            <ship></ship>
+        </mat-tab>
+
+        <mat-tab label="Receive">
+            <receive></receive>
+        </mat-tab>
+    </mat-tab-group>
+</div>

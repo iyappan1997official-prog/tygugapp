@@ -1,0 +1,179 @@
+<div class="mx-4 content-wrapper" [formGroup]="palletDetailsForm">
+    <div class="mt-3" fxLayout="row" fxLayout.lt-lg="column" fxLayoutAlign="space-between center">
+        <div>
+            <h2 class="main-color fs-24 font-w-600">
+                <img class="cursor mb-1" src="../../../../assets/logos/arrow-backP.svg" (click)="handleRouting()">
+                &nbsp;{{ componentHeading }}
+            </h2>
+        </div>
+        <div fxLayout="row" fxLayoutGap="15px" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+            <button class="btn btn-newPrimary btncolor p-12 mt-xl-0 mt-3"
+                (click)="editPalletDetailsById()">Save</button>
+            <ng-container *ngIf="!['merge-pallet','create-pallet'].includes(componentAccessFor)">
+                <button class="btn btnborder p-12 mt-xl-0 mt-3"
+                    (click)="generatePdfService.rePrintQrCodeBySerialNumber([this.savedPalletDetails?.serialNumber])">Reprint
+                    QR Code</button>
+            </ng-container>
+        </div>
+    </div>
+
+    <div class=" mt-4 px-5" [ngClass]="componentAccessFor === 'merge-pallet' ? 'card-merge' : 'card'">
+        <div class=" main-color" fxLayout="column" fxLayoutAlign="center">
+            <h3 *ngIf="componentAccessFor!='create-pallet'" class="font-w-600 font-size-18">Pallet Serial Number :
+                &nbsp;
+                <span class="fs-20 font-w-700">{{componentAccessFor === 'merge-pallet' ? serialNumber:
+                    savedPalletDetails.serialNumber}}</span>
+            </h3>
+            <ng-container *ngIf="savedPalletDetails?.isMockPallet">
+                <ng-container *ngIf="componentAccessFor === 'edit-pallet'">
+                    <h3 class="font-size-18 font-w-600">Total Quilts :</h3>
+                    <mat-form-field appearance="outline" class="total-wid font-size-18 font-w-600 input-pdt mb-3"
+                        fxFlex>
+                        <input matInput formControlName="totalQuilts" integers>
+                    </mat-form-field>
+                </ng-container>
+            </ng-container>
+            <ng-container *ngIf="componentAccessFor === 'edit-pallet'">
+                <h3 class="font-size-18 font-w-600">Description :</h3>
+                <mat-form-field appearance="outline" class="desc-box font-size-18 font-w-600 input-pdt mb-3" fxFlex>
+                    <textarea autosize matInput [maxLength]="80" formControlName="description"></textarea>
+                    <!-- <input matInput formControlName="description" required>
+                    <mat-error>
+                        <show-error [formControlErr]="palletDetailsForm.controls.description"
+                            requiredMsg="Please enter description."></show-error>
+                    </mat-error> -->
+                </mat-form-field>
+            </ng-container>
+            <ng-container *ngIf="componentAccessFor === 'create-pallet'">
+                <h3 class="font-size-18 font-w-600">Description :</h3>
+                <mat-form-field appearance="outline" class="desc-box font-size-18 font-w-600 input-pdt mb-3" fxFlex>
+                    <textarea autosize matInput [maxLength]="80" formControlName="description"></textarea>
+                    <!-- <mat-error>
+                        <show-error [formControlErr]="palletDetailsForm.controls.description"
+                            requiredMsg="Please enter description."></show-error>
+                    </mat-error> -->
+                </mat-form-field>
+            </ng-container>
+
+            <!-- <ng-container *ngIf="!savedPalletDetails.isMockPallet"> -->
+            <ng-container *ngIf="!savedPalletDetails?.isMockPallet">
+                <h3 class="font-size-18 font-w-600">Quilts Number </h3>
+                <div fxLayout="column" [class]="componentAccessFor === 'merge-pallet'? '': 'sm-palletScroll'">
+                    <div fxLayout="row wrap" fxLayoutAlign="start" fxLayoutGap="10px">
+                        <ng-container
+                            *ngIf="savedPalletDetails?.quilts?.length || newQuilts.length || newPallets.length; else addQuiltMsg">
+                            <ng-container *ngFor="let serial of savedPalletDetails?.quilts; let i = index">
+                                <h3 class="num-cross text-center font-w-600 font-size-16 ">{{serial['serialNumber']
+                                    || serial['quiltSerialNumber']}}
+                                    <img class="cursor mb-1" src="../../../../assets/logos/crossS.svg"
+                                        (click)="removeSerialNumber(savedPalletDetails?.quilts, i)">
+                                </h3>&nbsp;
+                            </ng-container>
+
+                            <ng-container *ngIf="newQuilts.length || newPallets.length">
+                                <!-- <mat-divider></mat-divider> -->
+                                <div fxLayout="column">
+                                    <div fxFlex fxLayout="row wrap" fxLayoutAlign="start" fxLayoutGap="10px">
+                                        <ng-container *ngFor="let serial of newQuilts; let i = index">
+                                            <h3 class="num-cross text-center font-w-600 font-size-16 ">
+                                                {{serial['serialNumber']}}
+                                                <img class="cursor mb-1" src="../../../../assets/logos/crossS.svg"
+                                                    (click)="removeSerialNumber(newQuilts, i)">
+                                            </h3> &nbsp;
+                                        </ng-container>
+                                    </div>
+                                </div>
+
+                                <div fxLayout="column">
+                                    <div fxFlex fxLayout="row wrap" fxLayoutAlign="start" fxLayoutGap="10px">
+                                        <ng-container *ngFor="let pallet of newPallets; let indexParentArray = index">
+                                            <ng-container *ngIf="pallet.quilts.length">
+                                                <div class="border-blue px-3 mt-2">
+                                                    <h2 class="mb-0 pt-3"
+                                                        style="display:flex; justify-content: space-between;">Pallet
+                                                        Number
+                                                        : {{pallet['serialNumber']}}
+                                                        <img class="cursor mb-1 logo-img"
+                                                            style="position: relative; right: 0;"
+                                                            src="../../../../assets/logos/crossS.svg"
+                                                            (click)="removeSerialNumber(newPallets, indexParentArray)">
+                                                    </h2>
+                                                    <ng-container *ngFor="let serial of pallet.quilts; let i = index">
+                                                        <h3 class="num-cross text-center font-w-600 font-size-16">
+                                                            {{serial['serialNumber']}}
+                                                            <img class="cursor mb-1"
+                                                                src="../../../../assets/logos/crossS.svg"
+                                                                (click)="removeSerialNumber(pallet.quilts, i, indexParentArray)">
+                                                        </h3> &nbsp;
+                                                    </ng-container>
+                                                </div>
+                                            </ng-container>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+
+                        <ng-template #addQuiltMsg>
+                            <div class="error" *ngIf="palletDetailsForm?.dirty">
+                                Please add atleast one Quilt.
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+            </ng-container>
+            <!-- </ng-container> -->
+        </div>
+    </div>
+    <div>
+        <div class="bg-modal px-5 py-5" fxLayout="column" fxLayoutAlign="center start"
+            *ngIf="componentAccessFor === 'merge-pallet'">
+            <h3 class="text-white font-size-18 font-w-600">Enter Quilt/Pallet Number</h3>
+            <mat-form-field appearance="outline" class="input-pdt font-w-400 fs-18 pallet-wid" fxFlex>
+                <textarea autosize class="form-rounded" matInput [formControl]="detailsBySerialNumber"
+                    placeholder="Enter Serial Number(s)"></textarea>
+                <!-- <mat-hint align="start" style="max-width:100%;  
+                overflow: hidden;
+                white-space: nowrap;">
+                    <img src="../../../../assets/logos/Info.svg" class="img-white"> &nbsp;
+                    <span class="text-white font-w-400 fs-12"><em>To add multiple items at once, separate them by a
+                            comma</em></span>
+                </mat-hint> -->
+                <mat-error class="error-color">
+                    <show-error requiredMsg="Pallet/Quilt no. is required or has an invalid pattern. Please correct."
+                        [formControlErr]="detailsBySerialNumber"
+                        patternMsg="Paleet/Quilt no. is required or has an invalid pattern. Please correct.">
+                    </show-error>
+                </mat-error>
+            </mat-form-field>
+            <mat-hint align="start" style="max-width:100%;  
+                overflow: hidden;
+                white-space: nowrap;">
+                <img src="../../../../assets/logos/Info.svg" class="img-white"> &nbsp;
+                <span class="text-white font-w-400 fs-12"><em>To add multiple items at once, separate them by a
+                        comma</em></span>
+            </mat-hint>
+
+            <div fxFlex fxLayout="row" fxLayoutAlign.gt-md="start center">
+                <h3 class="mt-4" fxFlex>
+                    <!-- <p>{{ output }}</p> -->
+                    <!-- <p *ngIf="action.isLoading">Loading...</p>
+                        <div class="scannerSize">
+                            <ngx-scanner-qrcode #action="scanner" (data)="output = $event" (error)="onError($event)">
+                    </ngx-scanner-qrcode> 
+                    </div> -->
+                    <!-- <img class="cursor" src="../../../../assets/logos/Next.svg" (click)="getDetailsBySerialNumber()"> -->
+                    <button class="btn btn-white" (click)="getDetailsBySerialNumber()">Add</button>
+                    &nbsp; <span class="font-w-600 fs-14 text-white me-2">Or click here to scan QR </span>
+                    <!-- <img class="cursor img-white" [class.btn-info]="!action.isStart" [class.btn-warning]="action.isStart"  (click)="action.start()" src="../../../../assets/logos/QR.svg">{{action.isStart ? 'Stop' : 'Start'}} -->
+                    <img class="cursor img-white" (click)="openScannerModal()" src="../../../../assets/logos/QR.svg">
+                    <!-- <img class="cursor img-white" [class.btn-info]="!action.isStart" [class.btn-warning]="action.isStart"  (click)="handle(action, 'start')" src="../../../../assets/logos/QR.svg"> -->
+                    <!-- <button *ngIf="action.isStart" class="btn mx-2" [class.btn-white]="!action.isStart" [class.btn-newPrimary]="action.isStart" [disabled]="action.isLoading" (click)="handle(action, 'stop')">Stop</button> -->
+                    <!-- <button class="btn" [class.btn-info]="!action.isStart" [class.btn-warning]="action.isStart" [disabled]="action.isLoading" (click)="handle(action, 'play')">Play</button>
+                    <button class="btn" [class.btn-info]="!action.isStart" [class.btn-warning]="action.isStart" [disabled]="action.isLoading" (click)="handle(action, 'pause')">Pause</button> -->
+                </h3>
+            </div>
+
+        </div>
+    </div>
+    <!-- </div> -->

@@ -1,0 +1,94 @@
+<div class="py-4 content-wrapper">
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+        <div fxFlex="50%" fxLayoutAlign.lt-md="start center">
+            <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+                <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                <input matInput [formControl]="getSearchByControl()" placeholder="Search Location" trimValue>
+                <mat-icon *ngIf="locationListForm?.controls?.searchBy?.value?.length > 0" matSuffix
+                    class="sub-prefix cursor" (click)="searchReset()">clear</mat-icon>
+            </mat-form-field>
+        </div>
+        <div fxFlex fxLayout="row" fxLayoutAlign="end center" fxLayoutAlign.lt-md="start center"
+            fxLayout.lt-sm="column">
+            <button class="btn btn-newPrimary p-12 text-white btncolor" routerLink="/location/add-location"
+                [queryParams]="{locationId}">Add
+                New Location</button>
+        </div>
+    </div>
+
+    <div class="card mt-4 pt-3  px-3 py-0 table-responsive">
+        <table class="table">
+            <thead>
+                <tr class="tablelight text-center">
+                    <th>
+                        Sr. No.
+                    </th>
+                    <th (click)="sort('name')" class="cursor">
+                      <div class="list-name-header text-center">
+                        Name
+                        <i class="fa fa-sort ms-2" aria-hidden="true"></i>
+                      </div>
+                    </th>
+                    <th>Type</th>
+                    <!-- <th>Region</th> -->
+                    <th>Address</th>
+                    <th (click)="sort('city')" class="cursor">
+                      <div class="list-city-header text-center">
+                        City
+                        <i class="fa fa-sort ms-2" aria-hidden="true"></i>
+                      </div>
+                    </th>
+                    <th (click)="sort('state')" class="cursor">
+                      <div class="list-state-header text-center">
+                        State
+                        <i class="fa fa-sort ms-2" aria-hidden="true"></i>
+                      </div>
+                    </th>
+                    <th>Zip</th>
+                    <th>Phone No.</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="items$ | async as locations;">
+                    <ng-container *ngIf="locations && locations.length > 0; else noData">
+                        <tr class="text-center" *ngFor="let location of locations; let i = index;">
+                            <td>{{locationListForm.controls.pageSize.value *
+                                (locationListForm?.getRawValue()?.pageNumber - 1) + i + 1}}</td>
+                            <td>{{location['name'] || '--'}}</td>
+                            <td>{{location['locationType'] || '--'}}</td>
+                            <!-- <td>{{location['region'] || '--'}}</td> -->
+                            <td>{{location['address'] || '--'}}
+                            </td>
+                            <td>{{location['city'] || '--'}}</td>
+                            <td>{{location['state'] || '--'}}</td>
+                            <td>{{location['zip'] || '--'}}</td>
+                            <td>
+                                {{location['phoneNumber'] || '--'}}
+                            </td>
+                            <td><img class="cursor lg-w-20" src="../../../../assets/logos/EditP.svg"
+                                    [routerLink]="['/location/edit-location',location['id']]"
+                                    [queryParams]="{locationId}">
+                                &nbsp; <img class="cursor lg-w-20" src="../../../../assets/logos/DeleteP.svg"
+                                    (click)="openConfirmDeleteModal(location['id'])"></td>
+                        </tr>
+                    </ng-container>
+
+                    <ng-template #noData>
+                        <tr>
+                            <td colspan="9" class="bg-white">
+                                <div class="text-center">
+                                    <h3>No locations found</h3>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </ng-container>
+            </tbody>
+        </table>
+        <mat-paginator [length]="totalLocations" [pageIndex]="locationListForm?.getRawValue()?.pageNumber - 1"
+            [pageSize]="locationListForm.controls.pageSize.value" [pageSizeOptions]="pageSizeOptions"
+            (page)="paginator($event)" showFirstLastButtons aria-label="Select page">
+        </mat-paginator>
+    </div>
+</div>

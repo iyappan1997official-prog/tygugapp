@@ -1,0 +1,139 @@
+:host ::ng-deep .mat-form-field-wrapper {
+    padding-bottom: 0;
+}
+
+:host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding-top: 1em;
+}
+
+:host ::ng-deep .mat-select-arrow-wrapper {
+    transform: none !important;
+}
+
+:host ::ng-deep .mat-form-field-type-mat-native-select.mat-form-field-disabled .mat-form-field-infix::after,
+.mat-input-element:disabled {
+
+    font-size: 20px !important;
+}
+
+
+@media only screen and(max-width:1440px) {
+
+    :host ::ng-deep .mat-form-field-type-mat-native-select.mat-form-field-disabled .mat-form-field-infix::after,
+    .mat-input-element:disabled {
+
+        font-size: 18px !important;
+    }
+}
+
+
+.card {
+    border: 1px solid white;
+    border-radius: 9px;
+}
+
+// .cardheight{
+//     position: relative;
+//     height:600px;
+// }
+
+
+.label-position {
+    transform: translateY(15px);
+}
+
+// .example-full-width {
+//     width: 50%;
+//   }
+
+//   mat-form-field.mat-form-field {
+//     font-size: 16px;
+//     color: red;
+// }
+
+:host ::ng-deep .mat-select-value {
+    color: #444444 !important;
+}
+
+:host ::ng-deep .mat-select-disabled .mat-select-value {
+    color: grey !important;
+}
+
+.hint-text {
+    color: #000000d6;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+:host ::ng-deep .mat-form-field-subscript-wrapper {
+    padding: 0 !important;
+
+    .hintMessage {
+        display: flex;
+        align-items: start;
+    }
+}
+
+.iconPosition {
+    position: absolute;
+    right: 5%;
+    top: 28%;
+}
+.change-password-box {
+  border: 1px solid #e0e6ed;
+  border-radius: 10px;
+  background: #f9fbff;
+  padding: 16px;
+}
+
+.password-rules {
+  margin: 8px 0;
+  padding-left: 18px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.password-rules li.valid {
+  color: #16a34a;
+  font-weight: 500;
+}
+
+.popup-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 999;
+}
+
+.popup-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 520px;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 12px;
+  z-index: 1000;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+  overflow: hidden;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.popup-body {
+  padding: 20px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 26px;
+  cursor: pointer;
+  line-height: 1;
+}

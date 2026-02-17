@@ -1,0 +1,37 @@
+.cardwidth {
+    width: 70%;
+}
+
+.formwidth {
+    width: 100%;
+}
+
+:host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding-top: 1em !important;
+}
+
+:host ::ng-deep .mat-form-field-appearance-outline .mat-select-arrow-wrapper {
+    transform: inherit;
+}
+
+:host ::ng-deep .mat-select-value,
+:host ::ng-deep .mat-select-panel {
+    font-size: 18px !important;
+
+    @media screen and (max-width: 1440px) {
+        font-size: 16px !important;
+    }
+}
+
+:host ::ng-deep .mat-input-element,
+:host ::ng-deep .mat-input-element:disabled {
+    @media screen and (max-width: 1440px) {
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 1440px) {
+    h2 {
+        font-size: 18px !important;
+    }
+}

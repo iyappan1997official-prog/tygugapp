@@ -1,0 +1,27 @@
+<div class="content-wrapper pb-7">
+  <mat-tab-group [selectedIndex]="tabIndex" (selectedTabChange)="selectedTabChanged($event)" class="row">
+    <mat-tab label="FAQs">
+      <app-faqs [userRole]="loggedInUserRole"></app-faqs>
+    </mat-tab>
+
+    <mat-tab label="User Guide">
+      <app-user-guide [userRole]="loggedInUserRole"></app-user-guide>
+    </mat-tab>
+    <ng-container *ngIf="
+        ![
+          this.roleEnum.consignAdmin,
+          this.roleEnum.consignManager,
+          this.roleEnum.serviceManager
+        ].includes(loggedInUserRole)
+      ">
+      <mat-tab label="Feedback">
+        <app-feedback [userRole]="loggedInUserRole"></app-feedback>
+      </mat-tab>
+    </ng-container>
+    <ng-container *ngIf="checkisvalidUser()">
+      <mat-tab label="Support">
+        <app-support-ticket [userRole]="loggedInUserRole"></app-support-ticket>
+      </mat-tab>
+    </ng-container>
+  </mat-tab-group>
+</div>

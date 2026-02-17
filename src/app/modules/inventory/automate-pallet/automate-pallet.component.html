@@ -1,0 +1,114 @@
+<!-- <div class="content-wrapper"> -->
+<div class="card py-4 mt-3">
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center" fxLayoutAlign.lt-md="start start">
+        <h2 class="font-w-600 main-color fs-24 mb-0">Create Pallet</h2>
+        <div fxLayout="row" fxLayoutGap="20px">
+            <button class="btn btn-newPrimary p-12" (click)="savePallet(action)">Save and Print</button>
+
+            <button class="btn  p-12" [disabled]="!startScan" [hidden]="this.output.length"
+                (click)="action.isStart ? action.stop() : action.start()"
+                [ngClass]="!action.isStart ? 'btn-newPrimary' : 'btn-danger' ">{{action.isStart ? 'Stop' :
+                'Start'}}</button>
+
+            <button class="btn  p-12" [hidden]="!this.output.length"
+                (click)="action.isStart ? action.stop() : action.start()"
+                [ngClass]="!action.isStart ? 'btn-warning' : 'btn-danger' ">{{action.isStart ? 'Stop' :
+                'Resume'}}</button>
+
+            <button class="btn btn-danger p-12" [hidden]="!this.output.length"
+                (click)="discardAction(action)">Discard</button>
+
+        </div>
+    </div>
+    <div fxLayout="column" class="mt-4">
+        <div fxLayout="row">
+            <!-- Part number -->
+            <div fxLayout="column" fxFlex="55%" fxFlex.lt-lg="60%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start"
+                class="mb-3" [formGroup]="automatePalletForm">
+                <div>
+                    <h3 fxFlex="30%" class="mb-0 font-w-600 fs-20" ngClass="head-position">Part Number</h3>
+                    <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+                    <div fxFlex fxLayout="column">
+                        <mat-form-field appearance="outline" fxFlex class="font-w-600 input-pdt fs-20">
+                            <mat-select (selectionChange)="partNumberSelected($event.value)" required>
+                                <mat-option>
+                                    <ngx-mat-select-search [(ngModel)]="searchText"
+                                        [ngModelOptions]="{ standalone: true }" placeholderLabel="Search..."
+                                        noEntriesFoundLabel="No matching option found.">
+                                    </ngx-mat-select-search>
+                                </mat-option>
+                                <mat-option *ngFor="let partNo of allPartNumbers | stringFilterBy: searchText : 'name'"
+                                    [value]="partNo.id">
+                                    {{ partNo.name }}
+                                </mat-option>
+
+                                <!-- <mat-option [value]="0">New</mat-option> -->
+                            </mat-select>
+
+                            <!-- <mat-error>
+                            <show-error [formControlErr]="generateSerialNoForm.controls.partNumberId"
+                                requiredMsg="The part number is empty or has an invalid value. Please correct.">
+                            </show-error>
+                        </mat-error> -->
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            <!-- Part Number -->
+            <div fxLayout="column" fxFlex="45%"></div>
+        </div>
+
+        <div fxLayout="row" *ngIf="this.maxQuiltNo">
+            <div fxFlex="60%" class="p-3">
+                <div class="row">
+                    <div class="col-6">
+                        <p fxFlex="55%" class="mb-0 font-w-600 fs-18">Max Quilt</p>
+                        <div class=" font-w-600 fs-18" fxFlex="5%">:</div>
+
+                        <span fxFlex="35%" class="font-w-600 input-pdt fs-18">{{maxQuiltNo}}</span>
+                    </div>
+                    <div class="col-6" *ngIf="output.length">
+                        <p fxFlex="55%" class="mb-0 font-w-600 fs-18">Quilt Scanned</p>
+                        <div class=" font-w-600 fs-18" fxFlex="5%">:</div>
+
+                        <span fxFlex="35%" class="font-w-600 input-pdt fs-18">{{output.length}}</span>
+                    </div>
+                </div>
+            </div>
+            <div fxFlex="40%"></div>
+        </div>
+        <!-- errors -->
+        <!-- <div *ngIf="this.hasError" class="msg error">{{this.errorMessage}}</div>
+            <div *ngIf="this.hadQuilt" class="error">{{this.errorMessage}}</div>
+            <div *ngIf="this.output.length >= this.maxQuiltNo" class="msg success">{{this.errorMessage}}</div> -->
+        <!-- errors -->
+        <!-- camera -->
+        <div fxLayout="row">
+            <div fxFlex="30%" class="p-3">
+                <ngx-scanner-qrcode #action="scanner" (data)="startAdding($event, action)" (error)="onError($event)">
+                </ngx-scanner-qrcode>
+            </div>
+            <div fxFlex="40%"></div>
+        </div>
+        <!-- camera -->
+
+        <!-- Quilt serial numbers -->
+        <div fxLayout="row" fxLayoutGap="15%" fxFlex="100%">
+            <div fxFlex *ngIf="output.length > 0">
+                <div fxLayout="column" style="max-height:255px; overflow-y: auto;" class="pt-2 ps-4">
+                    <div fxFlex fxLayout="row wrap" fxLayoutAlign="start" fxLayoutGap="5px">
+                        <ng-container *ngFor="let data of output; let indexParentArray = index">
+                            <h2 class="num-cross filterClass text-center font-w-600 font-size-16 mt-2">{{data}}
+                                <img class="cursor mb-1" src="../../../../assets/logos/crossS.svg"
+                                    (click)="removeSerialNumber(output, indexParentArray)">
+                            </h2>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Quilt serial numbers -->
+
+    </div>
+</div>
+<!-- </div> -->

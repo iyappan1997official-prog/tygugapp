@@ -1,0 +1,61 @@
+<div class="card mt-3 pt-3 px-3 py-0 table-responsive">
+  <div class="scroll stickyContentWrapper">
+    <table class="table">
+      <thead>
+        <tr class="tablelight text-center">
+          <th width="16%">
+            Quilt Serial Number <i class="fa fa-sort" aria-hidden="true" (click)="sortbtn.emit('serial_number')"></i>
+          </th>
+          <th width="12%">Quilt Type</th>
+          <th width="12%" *ngIf="[this.roleEnum.masterAdmin].includes(loggedInUserRole)">Current Location</th>
+          <th width="12%">Status</th>
+          <th width="16%">Last Assignment <i class="fa fa-sort" aria-hidden="true"
+              (click)="sortbtn.emit('assigned_date')"></i>
+          </th>
+          <th width="16%">Private To Customer</th>
+          <th width="12%">Protected Count</th>
+          <th width="12%">
+            <mat-checkbox color="primary" (change)="$event ? masterToggle($event.checked) : null"
+              [checked]="isAllSelected"></mat-checkbox>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="items$ | async as stocks;">
+          <ng-container *ngIf="stocks && stocks.length > 0; else noData">
+            <tr class="text-center" *ngFor="let stock of stocks; let i=index;">
+              <td>{{stock['serialNumber'] || '--'}}</td>
+              <td>{{stock['quiltType'] || '--'}}</td>
+              <td *ngIf="[this.roleEnum.masterAdmin].includes(loggedInUserRole)">{{stock['locationName'] || '--'}}</td>
+              <td *ngIf="stock['retiredStatus']">{{stock['quiltStatus']}} - {{stock['retiredStatus']}}
+              </td>
+              <td *ngIf="!stock['retiredStatus']">{{ stock['quiltStatus'] || '--'}}</td>
+              <td>{{stock['assignedDate'] ? (stock['assignedDate'] |date: 'MM/dd/yyyy') : '--'}}</td>
+              <td>{{stock['privateToCustomer'] || '--'}}</td>
+              <td>{{stock['protectedCount'] || '--'}}</td>
+              <td>
+                <mat-checkbox color="primary" (click)="$event.stopPropagation()"
+                  (change)="$event ? selectRows(stock, $event.checked) : null"
+                  [checked]="checkStockInSelectedRows(stock)">
+                </mat-checkbox>
+              </td>
+            </tr>
+          </ng-container>
+
+          <ng-template #noData>
+            <tr *ngIf="!stocks.length">
+              <td colspan="9" class="bg-white">
+                <div class="text-center">
+                  <h3>No Individual Stocks found</h3>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </ng-container>
+      </tbody>
+    </table>
+    <mat-paginator [length]="length" [pageIndex]="pageNumber" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+      (page)="paginate.emit($event)" showFirstLastButtons aria-label="Select page">
+    </mat-paginator>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+<div class="card py-4 cardheight scroll noFilterContentScroller" [formGroup]="quiltOutboundForm" id="comp">
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+        <div fxFlex="50%" fxLayoutAlign.lt-md="start center">
+            <h2 class="mb-0 main-color font-w-600 fs-24">
+                <img class="cursor mb-1 doNotPrint" src="../../../../assets/logos/arrow-backP.svg"
+                    (click)="navigatePages()">
+                &nbsp;Quilts Outbound <span class="font-w-500">({{this.customerName}})</span>
+            </h2>
+        </div>
+
+        <!-- <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox doNotPrint">
+            <mat-icon matPrefix class="sub-prefix mt-2">search</mat-icon>
+            <mat-select formControlName="orderType" placeholder="Order Type" class="w-100 p-0" style="border:none;">
+                <mat-option value="0">
+                    All
+                </mat-option>
+                <ng-container *ngFor="let ordertype of allOrderType">
+                    <mat-option *ngIf="[1, 2].includes(ordertype.id)" [value]="ordertype.id">
+                        {{ordertype.name}}
+                    </mat-option>
+                </ng-container>
+            </mat-select>
+        </mat-form-field> -->
+
+        <div class="doNotPrint" fxFlex fxLayout="row" fxLayoutAlign="end center" fxLayout.lt-md="column">
+            <!-- <button class="btn btn-newPrimary btncolor p-12 mx-3" (click)="searchAppliedFlters()">Search</button> -->
+            <button class="btn btn-newPrimary p-12 text-white btncolor" [useExistingCss]="true" printSectionId="comp"
+                ngxPrint>Print</button>
+        </div>
+    </div>
+    <div class="table-responsive pt-3">
+        <table class="table">
+            <thead>
+                <tr class="tablelight text-center">
+                    <th width="25%">Serial Number</th>
+                    <th width="25%">Quilt Type</th>
+                    <th width="25%">Last Known Location</th>
+                    <th width="25%">Destination</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="items$ | async as quiltOutboundForm;">
+                    <ng-container *ngIf="quiltOutboundForm && quiltOutboundForm.length > 0; else noData">
+                        <tr class="text-center" *ngFor="let data of quiltOutboundForm;let i = index">
+                            <td>
+                                {{data['serialNumber'] || '--'}}
+                            </td>
+                            <td>{{data['quiltType']}}</td>
+
+                            <td>
+                                {{data['location'] || '--'}}
+                            </td>
+                            <td>
+                                {{data['location2'] || '--'}}
+                            </td>
+                        </tr>
+                    </ng-container>
+
+                    <ng-template #noData>
+                        <tr>
+                            <td colspan="9" class="bg-white">
+                                <div class="text-center">
+                                    <h3>No data found</h3>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </ng-container>
+            </tbody>
+        </table>
+        <div class="doNotPrint">
+            <mat-paginator [length]="length" [pageIndex]="quiltOutboundForm?.getRawValue()?.pageNumber - 1"
+                [pageSize]="quiltOutboundForm.controls.pageSize.value" [pageSizeOptions]="pageSizeOptions"
+                (page)="paginator($event)" showFirstLastButtons aria-label="Select page">
+            </mat-paginator>
+        </div>
+    </div>
+</div>

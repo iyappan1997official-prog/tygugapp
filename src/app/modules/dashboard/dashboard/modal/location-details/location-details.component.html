@@ -1,0 +1,76 @@
+<div class="row bg-light">
+    <div class="col-12 bg-modal text-center text-white py-2">
+        <h2>Quilt Lookup</h2>
+    </div>
+    <div class="col-1"></div>
+    <div class="col-5 mt-5 text-start font-w-600 fs-18 main-color">Quilt Serial Number</div>
+    <div class="col-5 mt-5 text-end font-w-400 fs-18 main-color">{{quiltsData['quiltSerialNumber'] || '--'}}</div>
+    <div class="col-1"></div>
+    <div class="col-1"></div>
+    <div class="col-5 text-start mt-3 font-w-600 fs-18 main-color">Quilt Type</div>
+    <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color">{{quiltsData['quiltType'] || '--'}}</div>
+    <div class="col-1"></div>
+    <div class="col-1"></div>
+    <div class="col-5 text-start mt-3 font-w-600 fs-18 main-color">Pallet Serial Number</div>
+    <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color">{{quiltsData['palletSerialNumber'] || '--'}}</div>
+    <div class="col-1"></div>
+    <!-- <div class="col-2"></div>
+    <div class="col-4 text-start mt-3 font-w-600 fs-18 main-color">QR Code</div>
+    <div class="col-4 text-end mt-3 font-w-400 fs-18 main-color">RM2783TVW</div>
+    <div class="col-2"></div> -->
+    <div class="col-1"></div>
+    <div class="col-5 text-start mt-3 font-w-600 fs-18 main-color">Quilt Status</div>
+    <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color" *ngIf="quiltsData['retiredStatus']">{{
+        quiltsData['quiltStatus']}} - {{quiltsData['retiredStatus']}}</div>
+    <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color" *ngIf="!quiltsData['retiredStatus']">{{
+        quiltsData['quiltStatus'] || '--'}}</div>
+    <div class="col-1"></div>
+    <div class="col-1"></div>
+    <div class="col-5 text-start mt-3 font-w-600 fs-18 main-color">Current Location</div>
+    <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color">{{quiltsData['currentLocation'] || '--'}}</div>
+    <div class="col-1"></div>
+    <div class="col-1"></div>
+    <div class="col-5 text-start mt-3 font-w-600 fs-18 main-color">Origin</div>
+    <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color">{{quiltsData['origin'] || '--'}}</div>
+    <div class="col-1"></div>
+    <div class="col-1"></div>
+    <div class="col-5 text-start mt-3 font-w-600 fs-18 main-color">Destination</div>
+    <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color">{{quiltsData['destination'] || '--'}}</div>
+    <div class="col-1"></div>
+    <div class="col-1"></div>
+    <div class="col-5 text-start mt-3 font-w-600 fs-18 main-color">Last Known Location</div>
+    <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color">{{quiltsData['lastKnownLocation'] || '--'}}</div>
+    <div class="col-1"></div>
+    <div class="col-1"></div>
+    <div class="col-5 text-start mt-3 font-w-600 fs-18 main-color">Used</div>
+    <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color">{{(quiltsData['isUsed']) ? 'Yes' : 'No'}}</div>
+    <div class="col-1"></div>
+    <div class="col-1"></div>
+    <div class="col-5 text-start mt-3 font-w-600 fs-18 main-color">Counter</div>
+    <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color">{{quiltsData['counter']}}</div>
+    <!-- <div class="col-1"></div>
+    <div class="col-1"></div>
+    <div class="col-5 text-start mt-3 font-w-600 fs-18 main-color">Consigned</div>
+    <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color">{{(quiltsData['isConsigned']) ? 'Yes' : 'No'}}</div> -->
+    <ng-container
+        *ngIf="[this.roleEnum.customerAdmin,this.roleEnum.customerManager].includes(loggedInUserRole) && quiltsData['orderNickName']">
+        <div class="col-1"></div>
+        <div class="col-1"></div>
+        <div class="col-5 text-start mt-3 font-w-600 fs-18 main-color">Order Name</div>
+        <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color">{{quiltsData['orderNickName'] || '--'}}</div>
+    </ng-container>
+    <div class="col-1"></div>
+    <div class="col-1"></div>
+    <!-- <div class="col-5 text-start mt-3 font-w-600 fs-18 main-color">Order No.</div>
+    <div class="col-5 text-end mt-3 font-w-400 fs-18 main-color">{{quiltsData['transferOrderNumber'] || '--'}}</div>
+    <div class="col-1"></div>
+    <div class="col-1"></div> -->
+    <div class="col-5 text-center my-5">
+        <button class="btn p-12 btn-newPrimary" (click)="modal.dismiss()">Ok</button>
+    </div>
+
+    <div class="col-5 text-center my-5">
+        <button class="btn btnborder p-12 mb-xl-0 mb-3t" (click)="printQrCodes()">Reprint QR Code</button>
+    </div>
+    <div class="col-1"></div>
+</div>

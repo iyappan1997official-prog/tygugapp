@@ -1,0 +1,56 @@
+/* Make selected value bold */
+:host ::ng-deep .bold-select .mat-select-value-text {
+  font-weight: 600; /* or 700 for extra bold */
+}
+
+/* Optional: make dropdown options bold too */
+:host ::ng-deep .bold-select .mat-option-text {
+  font-weight: 600;
+}
+//::ng-deep .mat-select-trigger .mat-select-value-text {
+//  font-weight: bold !important;
+//}
+.selected-bold {
+  font-weight: 600; /* make it bold */
+  font-size: 18px; /* match customer field size */
+  color: #000000; /* dark black like Customer */
+}
+/* Make selected value inside mat-select bold & same size as Customer field */
+::ng-deep .mat-select-trigger .mat-select-value-text {
+  font-weight: 600 !important; /* same as customer */
+  font-size: 18px !important; /* match your UI */
+  color: #000000 !important; /* dark black */
+}
+
+/* Make selected option inside dropdown also bold */
+::ng-deep .mat-option.mat-selected .mat-option-text {
+  font-weight: 600 !important;
+}
+
+.btncolor {
+  background-color: #1E88E5; /* your project blue */
+  border-color: #1E88E5;
+}
+
+///* Make hover same blue as btncolor */
+//.btn-outline-primary:hover {
+//  background-color: #1E88E5 !important; /* same blue as btncolor */
+//  border-color: #1E88E5 !important;
+//  color: white !important;
+//}
+
+/* Make unselected button look like the "Leased" tab (inner outline) */
+.btn-outline-primary {
+  background: #ffffff; /* white background like Leased */
+  color: #8FABC9; /* same grey/blue text as Leased */
+  border: 1px solid #8FABC9; /* outer light border */
+  box-shadow: inset 0 0 0 1px #8FABC9; /* <-- THIS creates the inner outline */
+  border-radius: 6px; /* same soft corners as tab */
+}
+
+/* Keep your existing hover (turn full blue) */
+.btn-outline-primary:hover {
+  background-color: #1E88E5 !important;
+  border-color: #1E88E5 !important;
+  color: white !important;
+}

@@ -1,0 +1,43 @@
+<div class="row bg-light pb-4">
+    <div class="col-12 bg-modal text-center text-white py-2">
+        <h2>Add Order Name</h2>
+    </div>
+
+    <div fxLayout="column" class="px-5 pt-4">
+        <h2 class="mt-3 mb-0 main-color pb-2 fs-18">Nick Names</h2>
+
+        <mat-form-field appearance="outline" class="pb-4">
+            <mat-select [formControl]="nickNameId" required placeholder="Select Name"
+                (selectionChange)="itemSelect($event.value)">
+                <!-- <ng-container *ngIf="orderNames?.length"> -->
+                <mat-option [value]="0">Other</mat-option>
+                <mat-option *ngFor="let data of orderNames" [value]="data.id">
+                    {{data.name}}
+                </mat-option>
+                <!-- </ng-container> -->
+            </mat-select>
+
+            <mat-error>
+                <show-error [formControlErr]="nickNameId" requiredMsg="
+                Choose a name from the dropdown."></show-error>
+            </mat-error>
+        </mat-form-field>
+
+        <ng-container *ngIf="addName">
+            <mat-form-field appearance="outline" class="pb-4">
+                <mat-label class="labelcolor">Other Name</mat-label>
+                <input [formControl]="nickName" required matInput placeholder="Enter Nick Name.">
+                <mat-error>
+                    <show-error [formControlErr]="nickName" requiredMsg="
+                    Name is required."></show-error>
+                </mat-error>
+            </mat-form-field>
+        </ng-container>
+
+
+        <div fxLayout="row" fxLayoutAlign="center center" class="pt-3 mb-3">
+            <button class="btn btn-newPrimary p-12 btncolor" (click)="callNameUpdate()">Save Changes</button>
+            <button class="btn p-12 btnborder ms-3" (click)="modal.dismiss()">Discard</button>
+        </div>
+    </div>
+</div>

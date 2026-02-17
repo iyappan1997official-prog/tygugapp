@@ -1,0 +1,70 @@
+<div class="content-wrapper">
+    <div class="card py-4 cardheight">
+        <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+            <div>
+                <h2 class="font-w-600 main-color fs-24"><img class="cursor mb-1"
+                        src="../../../../assets/logos/arrow-backP.svg" routerLink="/global-customer">
+                    &nbsp;Global Customer Admin</h2>
+            </div>
+            <div fxLayout="row" fxLayoutGap="20px">
+                <button class="btn btn-newPrimary p-12 text-white btncolor"
+                    (click)="addGlobalList()">{{componentAccessFor
+                    ==='add-global-customer'?'Add Customer':'Save Changes'}}</button> &nbsp;
+                &nbsp;
+                <button class="btn  p-12 btnborder" (click)="resetForm()"> Discard</button>
+            </div>
+        </div>
+        <form [formGroup]="addCustomerList">
+            <div class="mt-2 main-color">
+                <div fxLayout="row">
+                    <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start">
+                        <h3 fxFlex="30%" class="mb-0 pt-4 fs-20 font-w-600">Customer Group Name </h3>
+                        <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+                        <mat-form-field appearance="outline" fxFlex="55%" class="input-pdt font-w-600 fs-20">
+                            <input formControlName="custGroupName" matInput required>
+
+                            <mat-error>
+                                <show-error requiredMsg="Please enter customer group Name."
+                                    [formControlErr]="addCustomerList.controls.custGroupName">
+                                </show-error>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div fxLayout="row">
+                    <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start">
+                        <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position"
+                            class="mb-0 pt-4 fs-20 font-w-600">
+                            Customer
+                        </h3>
+                        <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+                        <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 input-pdt fs-20">
+                            <mat-select formControlName="custGroupIds" multiple>
+                                <mat-option>
+                                    <ngx-mat-select-search [(ngModel)]="searchText"
+                                        [ngModelOptions]="{ standalone: true }" placeholderLabel="Search..."
+                                        noEntriesFoundLabel="No matching option found.">
+                                    </ngx-mat-select-search>
+                                </mat-option>
+                                <mat-option *ngIf="!allCustomers?.length" disabled>
+                                    No Customer Available.
+                                </mat-option>
+
+                                <mat-option *ngFor="let customer of allCustomers | stringFilterBy: searchText : 'name'"
+                                    [value]="customer.id">
+                                    {{customer.name}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error>
+                                <show-error [formControlErr]="addCustomerList.controls.custGroupIds"
+                                    requiredMsg="Please select a company from the dropdown option.">
+                                </show-error>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

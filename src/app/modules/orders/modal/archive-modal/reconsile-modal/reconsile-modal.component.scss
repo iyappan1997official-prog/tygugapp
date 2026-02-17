@@ -1,0 +1,28 @@
+.bg-color {
+  background-color: #F4F7FC;
+  border: 1px solid #F4F7FC;
+  border-radius: 10px;
+}
+
+.tablehead {
+  background-color: #8FABC9;
+  border: 1px solid #8FABC9;
+  border-radius: 9px;
+  color: white;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0 10px;
+  overflow-x: auto;
+  border-color: #D2E7F1;
+}
+
+:host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+  padding: 0 0 .6em 0;
+  border-top: 0.84375em solid transparent;
+}
+
+:host ::ng-deep .mat-form-field-appearance-outline .mat-select-arrow-wrapper {
+  transform: translateY(0%);
+}

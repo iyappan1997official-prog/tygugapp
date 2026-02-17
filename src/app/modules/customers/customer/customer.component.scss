@@ -1,0 +1,21 @@
+.mat-form-field-wrapper {
+    padding-bottom: 0;
+}
+/* Make all sort icons black */
+th .fa-sort {
+  color: #000 !important;
+  opacity: 1 !important;
+  font-size: 14px; /* optional: same size as your screenshot */
+}
+
+/* Also ensure hover does NOT change color */
+th .fa-sort:hover {
+  color: #000 !important;
+}
+// @media screen and (min-width:1920px) {
+
+//     .btn-newPrimary,
+//     .btnborder {
+//         padding: 12px !important;
+//     }
+// }

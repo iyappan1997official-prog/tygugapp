@@ -1,0 +1,20 @@
+<div class="row bg-light">
+    <div class="col-12 bg-modal text-center text-white py-2">
+        <h2>Close Order</h2>
+    </div>
+    <div class="col-12 py-4 text-center">
+        <h2 class="main-color">Are you sure you want to close this order?</h2>
+        <div fxLayout="row" fxLayoutAlign="center center" class="mt-4">
+            <div class="col-6 me-5" fxLayoutAlign="end">
+                <button class="btn btn-newPrimary p-12" (click)="passToClose()">
+                    Yes
+                </button>
+            </div>
+            <div class="col-6" fxLayoutAlign="start">
+                <button class="btn btnborder p-12 " (click)="modal.dismiss()">
+                    No
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+<div class="mt-3">
+    <div>
+        <h2 class="main-color font-w-600 fs-24">User Guide</h2>
+    </div>
+
+    <div fxLayout="column" fxLayoutGap="13px">
+        <div class="card px-4 py-2 py-4 w-50" fxFlex (click)="selectFile.click()" [formGroup]="userGuide"
+            *ngIf="[this.roleEnum.masterAdmin].includes(this.userRole)">
+            <input type="file" #selectFile
+                accept="application/pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,video/*"
+                hidden (change)="uploadUserGuide($event)">
+            <div class="main-color font-w-400">
+                <img src="../../../../assets/logos/upload.svg" class="lg-w-20">
+                <span class="fw-bold fs-18 ms-3 cursor">Upload File</span>
+            </div>
+        </div>
+        <ng-container *ngIf="items$ | async as uploadedGuideFiles;">
+            <ng-container *ngIf="uploadedGuideFiles && uploadedGuideFiles.length > 0">
+                <ng-container *ngFor="let data of uploadedGuideFiles; let i=index">
+                    <div class="card px-4 py-2 py-4 w-50" fxFlex fxLayoutAlign="space-between center">
+                        <div class="d-flex align-items-center main-color fs-18 font-w-400 w-75">
+                            <img src="../../../../assets/logos/PDF.svg"
+                                *ngIf="data['documentType'] === 'application/pdf'">
+                            <img src="../../../../assets/logos/mp4-file.svg"
+                                *ngIf="data['documentType'] === 'video/mp4'" class="w-60">
+                            <img src="../../../../assets/logos/doc-img.png"
+                                *ngIf="data['documentType'] === 'application/msword' || data['documentType'] === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'"
+                                class="w-60">
+                            <div class="max-w-14">{{data['originalFileName']}}</div>
+                        </div>
+                        <div class="d-inline-flex justify-content-end min-w-7 w-25">
+                            <span class="cursor w-1rem me-3" (click)="viewUserGuide(data['documentPath'])"><i
+                                    class="fa-solid fa-eye fs-24" style="color: #3a7cca;"></i></span>
+                            <img class="cursor w-1rem me-3" src="../../../../assets/logos/download-solid.svg"
+                                (click)="downloadFile(data['id'],data['originalFileName'], data['documentType'])">
+                            <img *ngIf="[this.roleEnum.masterAdmin].includes(this.userRole)" class="cursor w-1rem"
+                                src="../../../../assets/logos/DeleteP.svg" (click)="openConfirmDeleteModal(data['id'])">
+                        </div>
+                    </div>
+                </ng-container>
+            </ng-container>
+        </ng-container>
+    </div>
+</div>

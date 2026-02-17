@@ -1,0 +1,123 @@
+<form class="my-4" [formGroup]="filterForm">
+  <!--  -->
+  <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutAlign="space-between center">
+    <div fxLayout="row" fxLayoutGap="10px" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+      <!-- <div class="searchWrapper">
+          <span><img src="../../../../assets/logos/SearchSvg.svg" alt="Search"></span>
+          <input placeholder="Order Number" class="w-100 form-control p-0" fo>
+        </div> -->
+      <!-- <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox mat-w-160">
+          <input matInput formControlName="orderNumber" placeholder="Order Number" trim>
+        </mat-form-field> -->
+
+      <mat-form-field appearance="outline" class="selectFilter"
+        *ngIf="![this.roleEnum.customerManager].includes(this.loggedInUserRole)">
+        <mat-label class="labelcolor">Locations</mat-label>
+        <mat-select formControlName="locationId" class="w-100 form-control p-0" style="border:none;">
+          <mat-option [value]="0">
+            All Locations
+          </mat-option>
+          <mat-option *ngFor="let location of allLocations" [value]="location.id">
+            {{location.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="selectFilter">
+        <mat-label class="labelcolor">PartNumbers</mat-label>
+        <mat-select formControlName="partNumberId" class="w-100 form-control p-0" style="border:none;">
+          <mat-option value="">
+            All PartNumbers
+          </mat-option>
+          <mat-option *ngFor="let partNumber of allPartNumbers" [value]="partNumber.partNumber">
+            {{partNumber.partNumber}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="selectFilter"
+        *ngIf="[this.roleEnum.customerAdmin,this.roleEnum.customerManager].includes(this.loggedInUserRole) && this.tab === 'leased'">
+        <mat-label class="labelcolor">Order Name</mat-label>
+        <mat-select [formControl]="nickNameId" (selectionChange)="orderNameFilter($event.value)">
+          <ng-container *ngIf="allOrderNames?.length">
+            <mat-option [value]="0">All</mat-option>
+            <mat-option *ngFor="let data of allOrderNames" [value]="data.id">
+              {{data.name}}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="20px" class="border-left ps-3">
+      <button class="btn btn-newPrimary btncolor p-12 mb-xl-0 mb-3" (click)="filterInventory()">Search</button>
+      <button class="btn btnborder p-12 mb-xl-0 mb-3" [disabled]="searchFilter===false"
+        (click)="resetFilters()">Reset</button>
+    </div>
+  </div>
+</form>
+<div class="card-wrapper">
+  <ng-container *ngIf="items$ | async as inventoryData;else noData">
+    <ng-container *ngIf="inventoryData && inventoryData.length > 0; else noData">
+      <div class="card-row row" *ngFor="let item of inventoryData">
+        <div class="col-xl-3 col-xxl-2 ">
+          <div class="card">
+            <div class="card_head">
+              <h3>Part Number</h3>
+            </div>
+            <div class="card_body">
+              <div class="card_body-head">{{item.partNumber}}</div>
+              <div class="card_body-text">{{item.customerFacingDescription}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-xxl-2">
+          <div class="card">
+            <div class="card_head">
+              <h3>Total Quantity</h3>
+            </div>
+            <div class="card_body">
+              <div class="card_body-head">{{item.totalQuilts}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-6 col-xxl-8">
+          <div class="card">
+            <div class="card_head">
+              <h3>Location</h3>
+            </div>
+            <div class="card_body">
+              <table class="w-100">
+                <tr>
+                  <td *ngFor="let loc of item.locationDetails">
+                    <div class="card_body-text">{{loc.locationName}}</div>
+                    <span class="cursor view-text-color fs-16 font-w-600 me-3"
+                      (click)="navigateToDetailView(loc.locationId)">{{loc.quiltsCount}}</span>
+                  </td>
+                </tr>
+                <!-- <tr>
+                      <td colspan="3">
+                        <div class="text-end cursor viewbtn font-w-600">
+                          View Full
+                          Table</div>
+                      </td>
+                    </tr> -->
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    
+  </ng-container>
+  <ng-template #noData>
+    <table style="width: 100%;">
+      <tr>
+        <td colspan="9" class="bg-white">
+          <div class="text-center">
+            <h3>No data found</h3>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </ng-template>
+</div>

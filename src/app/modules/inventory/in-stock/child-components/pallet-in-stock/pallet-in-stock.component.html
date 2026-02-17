@@ -1,0 +1,36 @@
+<div class="mt-3 scroll innerContentWrapper">
+  <div class="row">
+    <div class="col-xl-6" *ngFor="let details of pallets">
+      <div class="card px-4 py-4 mb-4 lg-mb-2 h-auto"
+        [ngClass]="palletIds.includes(details) ? 'card-default' : 'card-hover' " (click)="selectPallet(details)">
+        <div class="row">
+          <div class="col-12 d-flex justify-content-between align-items-baseline mb-3">
+            <h2 class="mb-0 main-color font-w-600 fs-24">Pallet Serial Number : {{details.serialNumber}}</h2>
+            <span style="display: flex; flex-wrap: nowrap;"><span class="cursor view-text-color fs-16 font-w-600 me-3"
+                (click)="navigateToViewPalletDetails(details['id'])">View</span> &nbsp; <img class="cursor mb-1 lg-w-20"
+                (click)="openConfirmDeleteModal(details['id'])" src="../../../../assets/logos/DeleteP.svg"></span>
+          </div>
+          <div class="col-12 d-flex justify-content-between">
+            <p class="mb-0 main-color font-w-400 fs-16 w-33 d-flex"><span class="text-secondary">Description :
+              </span><span class="font-w-600 desp-overflow">{{details.description || '--'}}</span></p>
+            <p class="mb-0 main-color font-w-400 fs-16 w-33 text-center"><span class="text-secondary">Total Quilts :
+              </span><span class="font-w-600">{{details.totalQuilts}}</span></p>
+            <p class="mb-0 main-color font-w-400 fs-18 w-33 text-end"><span class="text-secondary">Status :
+              </span><span class="font-w-600">{{details.palletStatus}}</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="palletLength === 0">
+      <div class="card">
+        <h3 class="text-center">No Pallets Found</h3>
+      </div>
+    </div>
+    <div class="col-12 mt-3">
+      <mat-paginator [length]="palletLength" [pageIndex]="pageNumber" [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions" (page)="paginate.emit($event)" showFirstLastButtons aria-label="Select page"
+        class="px-0">
+      </mat-paginator>
+    </div>
+  </div>
+</div>

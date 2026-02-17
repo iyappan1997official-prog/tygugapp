@@ -1,0 +1,119 @@
+<section [formGroup]="orderList">
+  <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center" fxLayoutAlign.lt-md="start start"
+    class="mx-3 my-2">
+    <h2 class="main-color font-w-600 fs-24 mt-3" *ngIf="![this.roleEnum.customerAdmin].includes(loggedInUserRole)"><img
+        class="cursor mb-1" src="../../../../assets/logos/arrow-backP.svg"
+        [routerLink]="(loggedInUserRole === this.roleEnum.masterAdmin || [this.roleEnum.serviceManager, this.roleEnum.serviceUser].includes(loggedInUserRole)) ? '/customers':'/dashboard'">
+      &nbsp;{{this.customerNameFromList}} <span class="fs-16 font-w-600">({{this.customerNumberFromList}})</span></h2>
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="20px" *ngIf="loggedInUserRole===this.roleEnum.masterAdmin">
+      <button class="btn btnborder" [routerLink]="['/orders/edit-customer',customerId]"
+        [queryParams]="{customerId:customerId,customerName: this.customerNameFromList ,customerNumber:this.customerNumberFromList}">Edit
+        Customer Details</button>
+      <button class="btn btn-newPrimary text-white btncolor" routerLink="/orders/add-order"
+        [queryParams]="{customerId:customerId,customerName: this.customerNameFromList ,customerNumber:this.customerNumberFromList}">Add
+        Order</button>
+      <button class="btn text-white btn-archive" (click)="openArchiveModal()">Archive</button>
+    </div>
+  </div>
+
+  <ng-container *ngIf="items$ | async as orders;">
+    <ng-container *ngIf="orders && orders.length > 0; else noOrder;">
+      <div class="card px-2 py-4 mb-3" *ngFor="let order of orders; let i=index">
+        <div class="mt-3 main-color">
+          <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px" class="mx-3">
+            <div fxFlex fxLayout="column">
+              <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="end center"
+                *ngIf="loggedInUserRole===this.roleEnum.masterAdmin && order['orderStatus']['status'] != 'Closed' && !order['isSaleOrder']">
+                <ng-container *ngIf="[1,2].includes(order['orderTypeId'])">
+                  <button class="btn btnborder" (click)="openReconsileModal(order['id'])">Reconcile Quilts</button>
+                  <button class="btn btn-newPrimary text-white btncolor"
+                    [routerLink]="['/orders/edit-order',order['id']]"
+                    [queryParams]="{customerId:customerId,customerName: this.customerNameFromList ,customerNumber:this.customerNumberFromList}">Edit
+                    Order</button>
+                </ng-container>
+                <button class="btn text-white btn-archive" *ngIf="order['activeQuilts'] == 0"
+                  (click)="openDeleteModal(order['id'])">Close Order</button>
+              </div>
+
+
+
+              <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="end center"
+                *ngIf="order['orderTypeId'] == 1 && [this.roleEnum.customerAdmin, this.roleEnum.customerManager].includes(loggedInUserRole)">
+                <ng-container *ngIf="!order['nickName'] else nameTag">
+                  <button class="btn btnborder" (click)="openNameModal(order['id'])">Add
+                    Nick Name</button>
+                </ng-container>
+                <ng-template #nameTag>
+                  <span class="tag-style">{{order['nickName']}}</span>
+                  <span><img class="cursor lg-w-20" src="../../../../assets/logos/EditP.svg" alt=""
+                      (click)="editModal(order['id'], order['nickNameId'])"></span>
+                </ng-template>
+              </div>
+
+
+
+              <div fxLayout="row" class="fs-20 mb-4" fxLayoutAlign="start center">
+                <div fxFlex="25%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Order Number</div>
+                <div class="fw-bold font-w-600 fs-24" fxFlex="5%">:</div>
+                <div class="fw-bold font-w-600 fs-20" fxFlex="30%">{{order['orderNumber']}}</div>
+              </div>
+              <div fxFlex fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-md="start center" class="fs-20 mb-4">
+                <div fxFlex="25%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Order Date </div>
+                <div class="fw-bold font-w-600 fs-24" fxFlex="5%">:</div>
+                <div class="fw-bold font-w-600 fs-20" fxFlex="30%">{{order['orderDate'] | date}}</div>
+              </div>
+              <div fxFlex fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-md="start center" class="fs-20 mb-4">
+                <div fxFlex="25%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Order Type </div>
+                <div class="fw-bold font-w-600 fs-24" fxFlex="5%">:</div>
+                <div class="fw-bold font-w-600 fs-20" fxFlex="30%">{{order['orderType']['type']}}</div>
+              </div>
+              <div fxFlex fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-md="start center" class="fs-20 mb-4">
+                <div fxFlex="25%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Order Status </div>
+                <div class="fw-bold font-w-600 fs-24" fxFlex="5%">:</div>
+                <div class="fw-bold font-w-600 fs-20" fxFlex="30%">{{order['orderStatus']['status']}}</div>
+              </div>
+              <!-- <div fxFlex fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-md="start center" class="fs-20 mb-4">
+                <div fxFlex="25%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Private Order</div>
+                <div class="fw-bold font-w-600 fs-24" fxFlex="5%">:</div>
+                <div class="fw-bold font-w-600 fs-20" fxFlex="30%">{{order['isPrivate'] ? 'Yes' : 'No'}}</div>
+              </div> -->
+              <div fxFlex fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-md="start center" class="fs-20 mb-4">
+                <div fxFlex="25%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Quilt Type</div>
+                <div class="fw-bold font-w-600 fs-24" fxFlex="5%">:</div>
+                <div class="fw-bold font-w-600 fs-20" fxFlex="30%">{{order['quiltTypes']}}</div>
+              </div>
+              <div fxFlex fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-md="start center" class="fs-20 mb-4">
+                <div fxFlex="25%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">No. of Quilts Ordered </div>
+                <div class="fw-bold font-w-600 fs-24" fxFlex="5%">:</div>
+                <div class="fw-bold font-w-600 fs-20" fxFlex="30%">{{order['totalQuilts']}}</div>
+              </div>
+              <div fxFlex fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-md="start center" class="fs-20 mb-4">
+                <div fxFlex="25%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Quilt Type Breakdown</div>
+                <div class="fw-bold font-w-600 fs-24" fxFlex="5%">:</div>
+                <div class="fw-bold font-w-600 fs-20" fxFlex="30%">{{order['quiltTypesBreakDown']}}</div>
+              </div>
+              <div fxFlex fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign.gt-md="start center" class="fs-20 mb-3">
+                <div fxFlex="25%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Active Quilts </div>
+                <div class="fw-bold font-w-600 fs-24" fxFlex="5%">:</div>
+                <div class="fw-bold font-w-600 fs-20" fxFlex="30%">{{order['activeQuilts']}}</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </ng-container>
+    <ng-template #noOrder>
+      <div class="card">
+        <div class="text-center">
+          <h3>No order found</h3>
+        </div>
+      </div>
+    </ng-template>
+  </ng-container>
+
+  <mat-paginator [length]="totalLists" [pageSize]="orderList.controls.pageSize.value"
+    [pageSizeOptions]="pageSizeOptions" (page)="paginator($event)" showFirstLastButtons aria-label="Select page">
+  </mat-paginator>
+</section>

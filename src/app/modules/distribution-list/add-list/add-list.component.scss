@@ -1,0 +1,84 @@
+:host ::ng-deep .mat-select-arrow-wrapper {
+  transform: none !important;
+}
+
+// .card{
+//     border:1px solid white;
+//     border-radius: 4px;
+// }
+// :host ::ng-deep .mat-select-value {
+//   color: #444444 !important;
+// }
+
+:host ::ng-deep .mat-form-field-wrapper {
+  padding-bottom: 0;
+}
+
+:host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+  padding-top: 1em;
+}
+
+:host ::ng-deep .mat-form-field-type-mat-native-select.mat-form-field-disabled .mat-form-field-infix::after,
+.mat-input-element:disabled {
+
+  font-size: 20px !important;
+}
+
+
+// .example-full-width {
+//     width: 50%;
+//   }
+
+.addicon {
+  color: white;
+  background-color: #3D7CCA;
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.filterClass {
+  background-color: #8FABC9;
+  border-radius: 6px;
+  padding: 9px;
+  color: #ffffff;
+}
+
+//   .cardheight{
+//     position: relative;
+//     height:600px;
+// }
+
+.label-position {
+  transform: translateY(15px);
+}
+
+.responsive {
+  width: 100%;
+  height: auto;
+}
+
+.font-20 {
+  font-size: 20px !important;
+}
+
+:host ::ng-deep .mat-select-value,
+:host ::ng-deep .mat-select-panel {
+  font-size: 20px !important;
+
+  @media only screen and (max-width: 1440px) {
+    font-size: 18px !important;
+  }
+}
+
+@media only screen and (max-width: 1440px) {
+  .img-small {
+    width: auto !important;
+    margin-top: 3px;
+  }
+
+  :host ::ng-deep .mat-form-field-type-mat-native-select.mat-form-field-disabled .mat-form-field-infix::after,
+  .mat-input-element:disabled {
+
+    font-size: 18px !important;
+  }
+}

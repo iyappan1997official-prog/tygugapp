@@ -1,0 +1,86 @@
+<div class="card py-4 cardheight scroll noFilterContentScroller" [formGroup]="lastLocationForm" id="comp">
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+        <div fxFlex="50%" fxLayoutAlign.lt-md="start center">
+            <h2 class="mb-0 main-color font-w-600 fs-24">
+                <img class="cursor mb-1 doNotPrint" src="../../../../assets/logos/arrow-backP.svg" routerLink="/reports">
+                &nbsp;Last Location Quilt Details <span class="fs-16 font-w-600">({{startDate}} - {{endDate}})</span>
+            </h2>
+        </div>
+        <div class="doNotPrint" fxFlex fxLayout="row" fxLayoutAlign="end center" fxLayout.lt-md="column">
+            <button class="btn btn-newPrimary p-12 text-white btncolor"  [useExistingCss]="true" printSectionId="comp" ngxPrint >Print</button>
+        </div>
+    </div>
+    <div class="table-responsive pt-3">
+        <table class="table">
+            <thead>
+                <tr class="tablelight text-center">
+                    <th>
+                        Quilt Serial No.
+                    </th>
+                    <th>Shipment No.</th>
+                    <th>Origin</th>
+                    <th>Destination</th>
+                    <th>Ship Date</th>
+                    <th>Receive Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="items$ | async as lastLocationList;">
+                    <ng-container *ngIf="lastLocationList && lastLocationList.length > 0; else noData">
+                        <tr class="text-center" *ngFor="let data of lastLocationList;let i = index">
+                            <td>
+                                {{data['quiltSerialNumber'] || '--'}}
+                            </td>
+                            <td>{{data['shipmentNumber'] || '--'}}</td>
+                            <td>
+                                {{data['origin'] || '--'}}
+                            </td>
+                            <td>
+                                {{data['destination'] || '--'}}
+                            </td>
+                            <td>
+                                <!-- {{data['shipDate'] ? (data['shipDate'] + 'Z' |date: 'MM/dd/yyyy'):'--'}} -->
+                                {{data['shipDate'] ? (data['shipDate'] | date: 'MM/dd/yyyy'): '--'}}
+                            </td>
+                            <td>
+                                <!-- {{data['recieveDate'] ? (data['recieveDate'] + 'Z' |date: 'MM/dd/yyyy'):'--'}} -->
+                                {{data['recieveDate'] ? (data['recieveDate'] | date: 'MM/dd/yyyy'): '--'}}
+                            </td>
+                        </tr>
+                    </ng-container>
+
+                    <ng-template #noData>
+                        <tr>
+                            <td colspan="9" class="bg-white">
+                                <div class="text-center">
+                                    <h3>No data found</h3>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </ng-container>
+                <!-- <tr class="text-center" *ngFor="let data of companyTableData">
+                    <td>
+                        {{data.quiltSerialNo}}
+                    </td>
+                    <td>{{data.type}}</td>
+                    <td>
+                        {{data.origin}}
+                    </td>
+                    <td>
+                        {{data.destination}}
+                    </td>
+                    <td>
+                        {{data.shipDate}}
+                    </td>
+                    <td>{{data.receiveDate}}</td>
+                </tr> -->
+            </tbody>
+        </table>
+        <div class="doNotPrint">
+        <mat-paginator [length]="length" [pageIndex]="lastLocationForm?.getRawValue()?.pageNumber - 1" [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions" (page)="paginator($event)" showFirstLastButtons
+        aria-label="Select page">
+    </mat-paginator></div>
+    </div>
+</div>

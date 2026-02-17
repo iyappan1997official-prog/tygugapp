@@ -1,0 +1,522 @@
+<div class="card mt-4 px-4 py-4">
+  <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center" fxLayoutAlign.lt-md="start start"
+    class="mx-3">
+    <h2 class="main-color font-w-600 fs-24">Shipping Details</h2>
+    <button class="btn btn-newPrimary p-12 text-white" (click)="addOrder()">Ship</button>
+  </div>
+  <ng-container *ngIf="!isLoading; else loader">
+  <div class="px-3 mt-5" [formGroup]="addShipForm">
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px" class="mx-3">
+      <div fxFlex fxLayout="column">
+        <div class="inline-block"
+          *ngIf="[this.roleEnum.customerAdmin,this.roleEnum.customerManager].includes(loggedInUserRole) && isFreightForwarder">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20"> Return to
+              Customer</h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-checkbox color="primary" (click)="$event.stopPropagation()" appearance="outline" fxFlex="55%"
+              class="font-w-600 fs-20 input-pdt" (change)="$event ? selectRows($event.checked) : null"
+              [checked]="returnCustomer">
+            </mat-checkbox>
+          </div>
+          
+        </div>
+        <p *ngIf="returnCustomer" fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            
+          <mat-hint align="start" >
+            <!-- <i class="fa-solid fa-info hint-text-icon"></i>  -->
+            <img class="" src="../../../../assets/logos/Info.svg">
+            &nbsp; <span class="hint-text">Scan atleast one quilt to populate shipment destination.</span>
+          </mat-hint>
+        </p>
+        <div class="inline-block">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Ship Type</h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <mat-select formControlName="shipmentTypeId" required (selectionChange)="shipTypeSelect($event.value)">
+                <ng-container *ngFor="let shipType of allShipmentTypes">
+                  <mat-option
+                    *ngIf="([this.roleEnum.customerAdmin,this.roleEnum.customerManager,this.roleEnum.globalAdmin,this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole) && ![4].includes(shipType.id)) || [this.roleEnum.masterAdmin, this.roleEnum.serviceManager].includes(loggedInUserRole)"
+                    [value]="shipType.id">
+                    {{shipType.name}}
+                  </mat-option>
+                </ng-container>
+              </mat-select>
+
+              <mat-error>
+                <show-error [formControlErr]="addShipForm.controls.shipmentTypeId"
+                  requiredMsg="Shipment Type is required."></show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <ng-container
+          *ngIf="[this.roleEnum.masterAdmin, this.roleEnum.warehouseUser, this.roleEnum.serviceManager, this.roleEnum.serviceUser].includes(loggedInUserRole) && !internalShip">
+          <!-- <div class="inline-block">
+            <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+              <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Origin Country
+              </h3>
+              <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+              <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+                <mat-select [formControl]="companyFilterId" (selectionChange)="updateCompanyFilters($event.value)"
+                  required>
+                  <mat-option *ngFor="let companyItems of allCompanyModels" [value]="companyItems.id">
+                    {{companyItems.name}}
+                  </mat-option>
+                </mat-select>
+
+                <mat-error>
+                  <show-error [formControlErr]="companyFilterId" requiredMsg="Company is required.">
+                  </show-error>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div> -->
+
+          <div class="inline-block">
+            <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+              <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Customer</h3>
+              <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+              <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+                <mat-select [formControl]="customerFilterId" (selectionChange)="updateCustomerFilters($event.value)"
+                  required>
+                  <mat-option>
+                    <ngx-mat-select-search [(ngModel)]="searchText" [ngModelOptions]="{ standalone: true }"
+                      placeholderLabel="Search..." noEntriesFoundLabel="No matching option found.">
+                    </ngx-mat-select-search>
+                  </mat-option>
+                  <mat-option *ngFor="let customerItem of allCustomerModels | stringFilterBy: searchText : 'name'"
+                    [value]="customerItem.id">
+                    {{customerItem.name}}
+                  </mat-option>
+                </mat-select>
+
+                <mat-error>
+                  <show-error [formControlErr]="customerFilterId" requiredMsg="Customer is required.">
+                  </show-error>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="inline-block">
+            <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+              <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Order No.</h3>
+              <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+              <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+                <mat-select formControlName="orderId" (selectionChange)="updateOrderFilters($event.value)" required>
+                  <mat-option>
+                    <ngx-mat-select-search [(ngModel)]="searchText1" [ngModelOptions]="{ standalone: true }"
+                      placeholderLabel="Search..." noEntriesFoundLabel="No matching option found.">
+                    </ngx-mat-select-search>
+                  </mat-option>
+                  <mat-option *ngFor="let orderItem of allOrdersModels | stringFilterBy: searchText1 : 'orderNumber'"
+                    [value]="orderItem.id">
+                    {{orderItem.orderNumber}}
+                  </mat-option>
+                </mat-select>
+
+                <mat-error>
+                  <show-error [formControlErr]="addShipForm.controls.orderId" requiredMsg="Order number is required.">
+                  </show-error>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          
+        </ng-container>
+
+        <ng-container
+          *ngIf="[this.roleEnum.consignAdmin, this.roleEnum.consignManager,this.roleEnum.globalAdmin].includes(loggedInUserRole)">
+          <div class="inline-block">
+            <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+              <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Customer</h3>
+              <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+              <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+                <mat-select [formControl]="customerFilterId" (selectionChange)="updateCustomerFilters($event.value)"
+                  required>
+                  <mat-option *ngFor="let customerItem of allCustomerModels" [value]="customerItem.id">
+                    {{[this.roleEnum.globalAdmin].includes(loggedInUserRole) ? customerItem.name :
+                    customerItem.customerName}}
+                  </mat-option>
+                </mat-select>
+
+                <mat-error>
+                  <show-error [formControlErr]="customerFilterId" requiredMsg="Customer is required.">
+                  </show-error>
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </ng-container>
+        <div class="inline-block">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Shipment No.
+            </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <input matInput formControlName="shipmentNumber">
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="inline-block">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Destination</h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <mat-select formControlName="locationId" (selectionChange)="findAddress($event)" required>
+                <mat-option>
+                  <ngx-mat-select-search [(ngModel)]="searchText2" [ngModelOptions]="{ standalone: true }"
+                    placeholderLabel="Search..." noEntriesFoundLabel="No matching option found.">
+                  </ngx-mat-select-search>
+                </mat-option>
+
+                <mat-option *ngFor="let destination of allDestinations | stringFilterBy: searchText2 : 'name'"
+                  [value]="destination.id">
+                  {{destination.name}}
+                </mat-option>
+              </mat-select>
+
+              <mat-error>
+                <show-error [formControlErr]="addShipForm.controls.locationId" requiredMsg="Destination is required.">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="inline-block">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">ETA</h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <mat-select formControlName="shipmentETAId">
+                <mat-option *ngFor="let eta of allShipmentETA" [value]="eta.id">
+                  {{eta.name}}
+                </mat-option>
+              </mat-select>
+
+            <!---  <mat-error>
+                <show-error [formControlErr]="addShipForm.controls.shipmentETAId" requiredMsg="ETA is required.">
+                </show-error>
+              </mat-error>  -->
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="inline-block">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Carrier</h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <div fxFlex="55%" fxLayout="column">
+              <mat-form-field appearance="outline" class="font-w-600 fs-20 input-pdt">
+                <mat-select formControlName="carrierId">
+                  <mat-option>
+                    <ngx-mat-select-search [(ngModel)]="searchText3" [ngModelOptions]="{ standalone: true }"
+                      placeholderLabel="Search..." noEntriesFoundLabel="No matching option found.">
+                    </ngx-mat-select-search>
+                  </mat-option>
+                  <mat-option *ngFor="let carrier of allCarriers | stringFilterBy: searchText3 : 'name'"
+                    [value]="carrier.id" (click)="mapCarrierName(carrier)">
+                    {{carrier.name}}
+                  </mat-option>
+                  <mat-option [value]="0">Other</mat-option>
+                  <!-- <mat-option [value]="0" *ngIf="!orderDisplay">Other</mat-option> -->
+                </mat-select>
+
+                <!--  <mat-error>
+                  <show-error [formControlErr]="addShipForm.controls.carrierId" requiredMsg="Carrier is required.">
+                  </show-error>
+                </mat-error> -->
+              </mat-form-field>
+              <div *ngIf="formValues?.carrierId === 0" fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column"
+                fxLayoutAlign.gt-md="start center" class="mb-3">
+                <mat-form-field appearance="outline" class="font-w-600 input-pdt fs-20" fxFlex>
+                  <input matInput required formControlName="carrierName">
+                </mat-form-field>
+              </div>
+
+              <!-- <div *ngIf="formValues?.carrierId === 0 && !orderDisplay" fxFlex="50%" fxFlex.lt-lg="100%"
+                fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+                <mat-form-field appearance="outline" class="font-w-600 input-pdt fs-20" fxFlex>
+                  <input matInput required formControlName="carrierName">
+                </mat-form-field>
+              </div> -->
+
+            </div>
+          </div>
+        </div>
+        <!-- <div class="inline-block">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+            <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Shipment No.
+            </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <input matInput formControlName="shipmentNumber">
+            </mat-form-field>
+          </div>
+        </div> -->
+        <div class="inline-block">
+          <div fxFlex fxLayout="column">
+            <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center">
+              <h3 fxFlex="30%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" ngClass="quilt-position"
+                class="font-w-600 fs-20">Quilt/Pallet No.</h3>
+              <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="quilt-dot-position">:</div>
+              <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+                <input matInput [formControl]="detailsBySerialNumber">
+                <mat-hint align="start" class="hintMessage">
+                  <!-- <i class="fa-solid fa-info hint-text-icon"></i>  -->
+                  <img class="" src="../../../../assets/logos/Info.svg">
+                  &nbsp; <span class="hint-text">To add multiple items at
+                    once, separate them by a comma. Must click blue button to add quilt(s) to shipping queue.</span>
+                </mat-hint>
+              </mat-form-field>
+            </div>
+            <div fxLayout="row" class="mb-3">
+              <div fxFlex="35%"></div>
+              <div class="error" *ngIf="this.arrowErrorShow">
+                Please add atleast one Quilt.
+              </div>
+              <div class="error"
+                *ngIf="!this.arrowErrorShow && this.shipErrorShow && (!this.detailsBySerialNumber.value && !this.newPallets.length && !this.newQuilts.length)">
+                Please add at least one quilt number to queue by clicking the blue button with the arrow.
+              </div>
+              <div class="error" *ngIf="!this.arrowErrorShow && this.shipErrorShow && this.detailsBySerialNumber.value">
+                Please click blue button to add quilt(s) to shipping queue.
+              </div>
+            </div>
+            <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+              <h3 fxFlex="35%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position"></h3>
+              <!-- <p *ngIf="action.isLoading">Loading...</p>
+                        <div class="scannerSize">
+                            <ngx-scanner-qrcode #action="scanner" (data)="output = $event" (error)="onError($event)">
+                    </ngx-scanner-qrcode> 
+                    </div> -->
+              <div class="fs-16 fw-600" fxFlex="55%">
+                <!-- <div class="scannerSize">
+                  <ngx-scanner-qrcode #action="scanner" (data)="output = $event" (error)="onError($event)">
+          </ngx-scanner-qrcode> 
+          </div> -->
+                <img class="cursor" src="../../../../assets/logos/Next.svg" (click)="palletNumberTags()">
+                <!-- <i class="fa-solid fa-arrow-right cursor right-arrow"></i> -->
+                <span class="mx-2"> Or click here to scan QR </span>
+                <img class="cursor" (click)="openScannerModal()" src="../../../../assets/logos/QR.svg">
+                <!-- <button *ngIf="action.isStart" class="btn mx-2 mt-2"  [class.btn-newPrimary]="action.isStart"  (click)="handle(action, 'stop')">Stop</button> -->
+                <!-- <i
+                        class="fa-solid fa-qrcode cursor"></i> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div fxFlex fxLayout="column" fxLayoutGap="20px">
+
+        <div class="mb-xl-6">
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start ">
+            <div class="w-100 mb-2">
+              <google-map [zoom]="mapZoom" [center]="mapCenter" [options]="mapOptions">
+                <map-marker #marker="mapMarker" [position]="mapCenter" [options]="markerOptions"
+                  (mapClick)="openInfoWindow(marker)">
+                </map-marker>
+                <map-info-window>{{ markerInfoContent }}</map-info-window>
+              </google-map>
+
+              <!-- <p class="mb-0">
+              Latitude: {{ locationCoords ? locationCoords?.lat() : 'N/A' }}<br>
+              Longitude: {{ locationCoords ? locationCoords?.lng() : 'N/A' }}
+            </p> -->
+              <!-- <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [disableDefaultUI]="false"
+            (mapClick)="mapClicked($event)" class="map_wrapper">
+            <agm-marker *ngFor="let m of markers; let i = index" [latitude]="m.lat" [longitude]="m.lng"
+              [label]="m.label" [markerDraggable]="m.draggable" (dragEnd)="markerDragEnd(m, $event)"></agm-marker>
+          </agm-map> -->
+            </div>
+          </div>
+        </div>
+        <div>
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center">
+            <h3 fxFlex="40%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Ship Date </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <input matInput formControlName="shippingDate" [matDatepicker]="picker"
+                [value]="addShipForm.controls['shippingDate'].value">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <mat-error>
+                <show-error [formControlErr]="addShipForm.controls.shippingDate"
+                  requiredMsg="Please select shipment date.">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div>
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center">
+            <h3 fxFlex="40%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Additional Notes
+            </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <input matInput formControlName="additionalNotes">
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div>
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center">
+            <h3 fxFlex="40%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">PRO Number
+            </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <input matInput formControlName="proNumber">
+              <!-- <mat-error>
+                <show-error [formControlErr]="addShipForm.controls.proNumber" requiredMsg="Pro Number is required.">
+                </show-error>
+              </mat-error> -->
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div>
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center">
+            <h3 fxFlex="40%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" class="font-w-600 fs-20">Air Waybill
+            </h3>
+            <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="head-dot-position">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+              <input matInput formControlName="airWayBillNo">
+              <!-- <mat-error>
+                <show-error [formControlErr]="addShipForm.controls.proNumber" requiredMsg="Pro Number is required.">
+                </show-error>
+              </mat-error> -->
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- <div>
+          <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center">
+            <p *ngIf="action.isLoading">Loading...</p>
+            <div class="scannerSize">
+                <ngx-scanner-qrcode #action="scanner" (data)="output = $event" (error)="onError($event)">
+        </ngx-scanner-qrcode> 
+        <button *ngIf="action.isStart" class="btn mx-2" [class.btn-white]="!action.isStart" [class.btn-newPrimary]="action.isStart" [disabled]="action.isLoading" (click)="handle(action, 'stop')">Stop</button>
+        </div> 
+          </div>
+        </div> -->
+
+      </div>
+    </div>
+
+    <div fxLayout="row" fxLayout.lt-lg="column" fxLayoutGap="30px" fxLayoutGap.lt-lg="2px" class="mx-3">
+      <div fxFlex fxLayout="column">
+        <!-- <div fxLayout="row">
+          <div fxFlex fxLayout="column">
+            <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center">
+              <h3 fxFlex="29%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position" ngClass="quilt-position"
+                class="font-w-600 fs-20">Quilt/Pallet No.</h3>
+              <div class=" font-w-600 fs-20" fxFlex="5%" ngClass="quilt-dot-position">:</div>
+              <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 fs-20 input-pdt">
+                <input matInput [formControl]="detailsBySerialNumber">
+                <mat-hint align="start">
+                  <img class="" src="../../../../assets/logos/Info.svg">
+                  &nbsp; <em class="hint-text">To add multiple items at
+                    once, separate them by a comma</em>
+                </mat-hint>
+              </mat-form-field>
+            </div>
+            <div fxLayout="row" class="mb-3">
+              <div fxFlex="35%"></div>
+              <div class="error"
+                *ngIf="detailsBySerialNumber.touched && (!detailsBySerialNumber.value) && !newPallets.length && !newQuilts.length">
+                Please add atleast one Quilt.
+              </div>
+            </div>
+            <div fxFlex fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start center" class="mb-3">
+              <h3 fxFlex="35%" fxFlex.lt-lg="35%" ngClass.lt-lg="label-position"></h3>
+              <div class="fs-16 fw-600" fxFlex="55%">
+                <img class="cursor" src="../../../../assets/logos/Next.svg" (click)="palletNumberTags()">
+               
+                <span class="mx-2"> Or click here to scan QR </span>
+                <img class="cursor" src="../../../../assets/logos/QR.svg">
+                
+              </div>
+            </div>
+          </div>
+          <div fxFlex fxLayout="column"></div>
+        </div> -->
+
+        <div fxFlex>
+
+          <div class="my-3" *ngIf="this.totalQuilts > 0">
+            <div class="row p-2">
+              <div class="d-flex justify-content-start" style="flex-wrap: wrap;">
+                <h3 class="q-number text-center m-2 text-white">Total Quilts: {{totalQuilts}}</h3>
+              </div>
+            </div>
+          </div>
+
+          <ng-container *ngFor="let serial of newQuilts; let i = index">
+            <div class="d-inline-flex justify-content-start" style="flex-wrap: wrap;">
+              <span class="q-number text-center m-2 text-white">{{serial['serialNumber']}}
+                <img class="cursor mb-1" src="../../../../assets/logos/crossS.svg"
+                  (click)="removeSerialNumber(newQuilts, i)">
+              </span>
+            </div>
+          </ng-container>
+
+          <ng-container *ngFor="let pallet of newPallets; let indexParentArray = index">
+            <div class="mb-2">
+              <div class="border-blue" fxFlex fxLayout="column" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start"
+                style="border:1px solid #8FABC9; border-radius:8px;">
+                <div class="p-3 pb-0 p-relative">
+                  <span class="font-w-600 fs-18">Pallet Number: {{pallet.serialNumber}}</span>
+                  <span class="pallet-cross cursor-point">
+                    <i class="fa-solid fa-xmark fs-20" (click)="removeSerialNumber(newPallets, indexParentArray)"></i>
+                    <!-- <img class="cursor mb-1" src="../../../../assets/logos/crossS.svg"
+                      (click)="removeSerialNumber(newQuilts, i)"> -->
+                  </span>
+                </div>
+                <ng-container *ngIf="pallet.quilts.length; else mockQuilt">
+                  <div class="row p-2">
+                    <div class="d-flex justify-content-start" style="flex-wrap: wrap;">
+                      <ng-container *ngFor="let serial of pallet.quilts; let i = index">
+                        <h3 class="q-number text-center m-2 text-white">{{serial['serialNumber']}}
+                          <!-- <img class="mb-1"
+                            src="../../../../assets/logos/crossS.svg"
+                            (click)="removeSerialNumber(pallet.quilts, i, indexParentArray, pallet.id)"> -->
+                        </h3>
+                      </ng-container>
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-template #mockQuilt>
+                  <div class="row p-2">
+                    <div class="d-flex justify-content-start" style="flex-wrap: wrap;">
+                      <h3 class="q-number text-center m-2 text-white">Total Quilts: {{pallet['totalQuilts']}}</h3>
+                    </div>
+                  </div>
+                </ng-template>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- <div fxFlex fxLayout="column" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start"
+        style="border:1px solid #8FABC9; border-radius:8px;" *ngFor="let item of palletArr">
+        <div class="p-3 pb-0">
+          <h3 class="font-w-600 fs-20">Pallet Number: {{item.serialNumber}}</h3>
+        </div>
+        <div class="row p-2">
+          <div class="d-flex justify-content-start" style="flex-wrap: wrap;" *ngFor="let quiltData of item.quilts">
+            <h3 class="q-number text-center m-2 text-white">{{quiltData.serialNumber}}</h3>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</ng-container>
+<ng-template #loader>
+  <app-loader></app-loader>
+</ng-template>
+</div>

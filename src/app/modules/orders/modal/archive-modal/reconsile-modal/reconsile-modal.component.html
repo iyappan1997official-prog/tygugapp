@@ -1,0 +1,83 @@
+<div class="row bg-light" [formGroup]="reconcileForm">
+    <div class="col-12 bg-modal text-center text-white py-2">
+        <h2>Reconciled Quilts</h2>
+    </div>
+    <div class="col-12 py-4 text-center">
+        <div fxLayout="row" fxLayoutAlign="space-evenly center">
+            <p class="main-color">Customer No. : <b>{{customerNo}}</b></p>
+            <p class="main-color">Order No. : <b>{{orderNo}}</b></p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr class="tablehead text-center">
+                        <th class="text-white" width="33.33%">
+                            Serial Number
+                        </th>
+                        <th class="text-white" width="33.33%">Status</th>
+                        <th class="text-white" width="33.33%">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="items$ | async as quilts;">
+                        <ng-container *ngIf="quilts && quilts.length > 0; else noData">
+                            <tr class="text-center" style="vertical-align: middle;"
+                                *ngFor="let quilt of quilts;  let i=index;">
+                                <td>
+                                    {{quilt['quiltSerialNumber'] || "--"}}
+                                </td>
+                                <td>
+
+                                    <mat-form-field appearance="outline">
+
+                                        <mat-select (selectionChange)="quiltStatusChange($event,quilt)"
+                                            [value]="quilt['quiltStatusId']" required>
+                                            <ng-container *ngFor="let status of alltypes">
+                                                <mat-option *ngIf="reconcileOption.includes(status.name)"
+                                                    [value]="status.id">
+                                                    {{status.name}}
+                                                </mat-option>
+                                            </ng-container>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <!-- <mat-form-field appearance="outline" class="example-full-width">
+                            <input matInput>
+                          </mat-form-field> -->
+                                </td>
+                                <td>
+                                    <mat-form-field appearance="outline" class="example-full-width">
+                                        <input matInput [value]="quilt['notes']"
+                                            (blur)="quiltUpdateNotes($event,quilt)">
+                                    </mat-form-field>
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                        <ng-template #noData>
+                            <tr *ngIf="!isLoading">
+                                <td colspan="9" class="bg-white">
+                                    <div class="text-center">
+                                        <h3>No Reconcile Quilts found</h3>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+        <div fxLayout="row" fxLayoutAlign="center center">
+            <div class="col-6 me-5" fxLayoutAlign="end">
+                <button class="btn btn-newPrimary p-12" (click)="saveChanges()">
+                    Save Changes
+                </button>
+            </div>
+            <div class="col-6" fxLayoutAlign="start">
+                <button class="btn btnborder p-12" (click)="modal.dismiss()">
+                    Discard
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

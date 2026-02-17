@@ -1,0 +1,80 @@
+.bg-color {
+    background-color: #F4F7FC;
+    border: 1px solid #F4F7FC;
+    border-radius: 10px;
+}
+
+
+.cancel-color {
+    background-color: #EC3535;
+    color: white;
+}
+
+.okcolor {
+    background-color: #3D7CCA;
+    color: white
+}
+
+
+.tablehead {
+    background-color: #8FABC9;
+    border: 1px solid #8FABC9;
+    border-radius: 9px;
+    color: white;
+}
+
+table {
+    border-collapse: separate;
+    border-spacing: 0 20px;
+    overflow-x: auto;
+    border-color: #D2E7F1;
+
+    th {
+        font-weight: 700;
+    }
+}
+
+.sub-table-cell {
+  padding: 0 !important;
+  background-color: #f9fbfd;
+}
+
+.sub-table {
+  width: 100%;
+  margin-left: 40px; // aligns with pallet text after arrow
+}
+
+.sub-table th {
+  font-weight: 600;
+  font-size: 14px;
+  border-bottom: 1px solid #dbe3ec;
+}
+
+.sub-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #e6eef6;
+}
+
+.pallet-table,
+.sub-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.muted-value {
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+}
+
+/* Make all sort icons black */
+th .fa-sort {
+  color: #000 !important;
+  opacity: 1 !important;
+  font-size: 14px; /* optional: same size as your screenshot */
+}
+
+/* Also ensure hover does NOT change color */
+th .fa-sort:hover {
+  color: #000 !important;
+}

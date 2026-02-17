@@ -1,0 +1,44 @@
+<div class="bg-light">
+    <div class="col-12 bg-modal text-center text-white py-5" [ngClass]="isSuccess ? 'bg-newSuccess' : 'bg-newError' ">
+        <div class="py-3"><i class="icon-style"
+                [ngClass]="isSuccess ? 'fa-sharp fa-regular fa-circle-check' : 'fa-regular fa-circle-xmark' "></i></div>
+        <h2>{{title}}</h2>
+        <div class="pt-2 main-color-modal">
+            <p class="text-center">
+                <!-- <ng-container *ngIf="body.length > 0 && !isSuccess; else simpleMsg">
+                    <ng-container *ngFor="let data of body">
+                        {{data}} <br>
+                    </ng-container>
+                    <ng-template #invalidMsg>
+                        {{body}}
+                    </ng-template>
+                </ng-container>
+                <ng-template #simpleMsg> -->
+                    {{body}}
+                <!-- </ng-template> -->
+            </p>
+            <div *ngIf="data && !errorDetails" class="space-wrap">
+                {{data}}
+            </div>
+            <div *ngIf="errorDetails">
+                <ng-container *ngFor="let item of errorDetails">
+                    <p class="text-center">
+                        {{item}}
+                    </p>
+                </ng-container>
+            </div>
+            <p class="text-center" *ngIf="summarytext">
+                <b>{{summarytext}}</b>
+            </p>
+        </div>
+    </div>
+
+
+
+    <div class="py-4 px-4" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
+        <button class="btn p-12 btncolor" [ngClass]="isSuccess ? 'btn-newSuccess' : 'btn-newError' "
+            (click)="confirm()">{{confirmBtnText}}</button>
+        <button class="btn p-12 btndangerborder" (click)="modal.dismiss()"
+            *ngIf="showBackButton">{{cancelBtnText}}</button>
+    </div>
+</div>

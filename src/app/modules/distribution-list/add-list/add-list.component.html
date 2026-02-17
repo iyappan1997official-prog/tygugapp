@@ -1,0 +1,121 @@
+<div class="content-wrapper">
+  <div class="card py-4 cardheight">
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+      <div>
+        <h2 class="font-w-600 main-color fs-24"><img class="cursor mb-1" src="../../../../assets/logos/arrow-backP.svg"
+            routerLink="/distribution-list">
+          <!-- <i class="fa-solid fa-arrow-left cursor text-dark" routerLink="/distribution-list"></i> -->
+          &nbsp;Master
+          Distribution List</h2>
+      </div>
+      <div fxLayout="row" fxLayoutGap="20px">
+        <button class="btn btn-newPrimary p-12 text-white btncolor" (click)="addList()">{{componentAccessFor
+          ==='add-list'?'Add List':'Save Changes'}}</button> &nbsp;
+        &nbsp;
+        <button class="btn p-12 btnborder" (click)="this.resetForm()"> Discard</button>
+      </div>
+    </div>
+    <form [formGroup]="addListForm">
+      <div class="mt-2 main-color">
+        <div fxLayout="row">
+          <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start">
+            <h3 fxFlex="30%" class="mb-0 pt-4 fs-20 font-w-600">List Name </h3>
+            <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="input-pdt font-w-600 fs-20">
+              <input formControlName="name" matInput required>
+
+              <mat-error>
+                <show-error requiredMsg="Please enter List Name." [formControlErr]="addListForm.controls.name">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row">
+          <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start">
+            <h3 fxFlex="30%" class="mb-0 pt-4 fs-20 font-w-600">List Owner </h3>
+            <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 input-pdt font-20">
+              <input formControlName="ownerName" matInput required>
+
+              <mat-error>
+                <show-error requiredMsg="List Owner is required." [formControlErr]="addListForm.controls.ownerName">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row">
+          <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start">
+            <h3 fxFlex="30%" fxFlex.lt-lg="45%" ngClass.lt-lg="label-position" class="mb-0 pt-4 fs-20 font-w-600">
+              Scenario
+            </h3>
+            <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+            <mat-form-field appearance="outline" fxFlex="55%" class="font-w-600 input-pdt fs-20">
+              <mat-select formControlName="emailScenarioId" required>
+                <ng-container *ngFor="let scenario of allScenarios">
+                  <mat-option
+                    *ngIf="(![6].includes(scenario.id) && [this.roleEnum.customerAdmin, this.roleEnum.globalAdmin].includes(this.loggedInUserRole)) || ![this.roleEnum.customerAdmin, this.roleEnum.globalAdmin].includes(this.loggedInUserRole)"
+                    [value]="scenario.id">
+                    {{scenario.name}}
+                  </mat-option>
+                </ng-container>
+              </mat-select>
+              <mat-error>
+                <show-error [formControlErr]="addListForm.controls.emailScenarioId"
+                  requiredMsg="Please select a Scenario from dropdown option.">
+                </show-error>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div fxLayout="row">
+          <div fxFlex="50%" fxFlex.lt-lg="100%" fxLayout.lt-md="column" fxLayoutAlign.gt-md="start">
+            <h3 fxFlex="30%" fxFlex.lt-md="50%" class="mb-0 pt-4 fs-20 font-w-600">Group Members </h3>
+            <div class="font-w-600 pt-4 fs-20" fxFlex="5%">:</div>
+            <div class="flex-column" fxFlex="63.5%">
+              <div fxLayout="row" fxLayoutGap="15px">
+                <mat-form-field appearance="outline" fxFlex class="font-w-600 input-pdt fs-20">
+                  <input type="text" aria-label="Group Member" matInput (click)="groupMembersDropDown();"
+                    [formControl]="groupMemberSearchControl" [matAutocomplete]="auto" trimValue>
+                  <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                    <ng-container *ngFor="let option of filteredOptions | async">
+                      <mat-option *ngIf="!selectedGroupMembers?.includes(option?.email)" [value]="option?.email">
+                        {{option?.email}}
+                      </mat-option>
+                    </ng-container>
+                  </mat-autocomplete>
+
+                </mat-form-field>
+
+                <div fxFlex="10%" class="label-position">
+                  <img class="cursor img-small img-fluid" style="vertical-align: middle;"
+                    src="../../../../assets/logos/Add ButtonS.svg" (click)="pushSelectedMember()">
+                  <!-- <i class="fa-solid fa-plus cursor addicon"
+                  (click)="pushSelectedMember()"></i> -->
+                </div>
+              </div>
+              <mat-error *ngIf="!selectedGroupMembers?.length && groupMemberSearchControl.touched" class="px-2">
+                Please add atleast one Group Member.
+              </mat-error>
+            </div>
+          </div>
+        </div>
+        <div fxLayout="row" fxLayout.lt-md="column">
+          <h3 fxFlex="18%" fxFlex.lt-md="50%" class="mb-0"> </h3>
+          <div fxFlex="82%" fxLayout="row" fxLayoutAlign="start" class="flex-wrap">
+            <ng-container *ngFor="let member of selectedGroupMembers; let i = index">
+              <p class="filterClass">{{member}}
+                <img class="cursor" src="../../../../assets/logos/crossS.svg" (click)="removeMember(i)">
+                <!-- <i class="fa-solid fa-xmark text-white cursor"
+                (click)="removeMember(i)"></i> -->
+              </p> &nbsp;
+            </ng-container>
+          </div>
+          <div fxFlex fxLayout="row" fxLayoutAlign="space-around center">
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

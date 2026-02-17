@@ -1,0 +1,22 @@
+<div class="content-wrapper">
+    <mat-tab-group [selectedIndex]="tabIndex" (selectedTabChange)="selectedTabChanged($event)" class="row">
+        <ng-container *ngIf="![this.roleEnum.consignAdmin,this.roleEnum.consignManager].includes(loggedInUserRole)">
+            <mat-tab label="Order">
+                <view-orders></view-orders>
+            </mat-tab>
+        </ng-container>
+
+        <mat-tab label="Location">
+            <location [customerName]="customerName" [customerNumber]="customerNumber"></location>
+        </mat-tab>
+
+        <mat-tab label="Carrier">
+            <carrier [customerName]="customerName" [customerNumber]="customerNumber"></carrier>
+        </mat-tab>
+        <ng-container *ngIf="[this.roleEnum.customerAdmin].includes(loggedInUserRole)">
+            <mat-tab label="Replenishment">
+                <app-quilt-threshold></app-quilt-threshold>
+            </mat-tab>
+        </ng-container>
+    </mat-tab-group>
+</div>

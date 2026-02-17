@@ -1,0 +1,303 @@
+<div class="card py-4 cardheight scroll noFilterContentScroller" id="comp" [formGroup]="quiltUsageForm">
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center">
+        <div fxFlex="50%" fxLayoutAlign.lt-md="start center">
+            <h2 class="mb-0 main-color font-w-600 fs-24">
+                <img class="cursor mb-1 doNotPrint" src="../../../../assets/logos/arrow-backP.svg" routerLink="/reports"
+                    (click)="resetFilters()">
+                &nbsp;Quilt Usage Report
+            </h2>
+        </div>
+    </div>
+    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutAlign="space-between center" class="mt-2">
+        <div fxLayout="row" fxLayoutGap="10px" fxLayout.lt-md="column" fxLayoutAlign="space-between center"
+            class="w-100">
+            <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+                <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                <input matInput placeholder="Quilt number" trim formControlName="quiltSerialNumber">
+            </mat-form-field>
+
+            <!-- <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+                <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                <mat-select placeholder="Customer" class="w-100 form-control p-0" style="border:none;"
+                    formControlName="companyId">
+                    <mat-option value="0">
+                        All
+                    </mat-option>
+                    <mat-option *ngFor="let cus of allCustomersOrders" [value]="cus.id">
+                        {{cus.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field> -->
+
+            <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
+                <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                <mat-select placeholder="Quilt status" class="w-100 form-control p-0" style="border:none;"
+                    formControlName="quiltStatusId">
+                    <mat-option value="0">
+                        All
+                    </mat-option>
+                    <ng-container *ngFor="let status of allStatus">
+                        <mat-option [value]="status.id">
+                            {{status.name}}
+                        </mat-option>
+                    </ng-container>
+                </mat-select>
+            </mat-form-field>
+
+            <div class="mb-0 d-flex justify-content-end w-100 pe-xxl-2">
+                <h3 class="text-color cursor mb-0 d-flex pe-xxl-2" (click)="isCollapsed = !isCollapsed"
+                    [attr.aria-expanded]="!isCollapsed" aria-controls="collapseExample"> <span
+                        class="d-inline-flex align-items-center" *ngIf="isCollapsed">More <i
+                            class="fa-solid fa-chevron-down mx-2"></i></span>
+                    <span class="d-inline-flex align-items-center" *ngIf="!isCollapsed">Less <i
+                            class="fa-solid fa-chevron-up cursor  mx-2"></i></span>
+                </h3>
+            </div>
+
+
+        </div>
+        <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="20px" class="border-left ps-3">
+            <button class="btn btn-newPrimary btncolor p-12 mb-xl-0 mb-3"
+                (click)="searchFilter=true;searchAppliedFlters()">Search</button>
+
+            <button class="btn btnborder p-12 mb-xl-0 mb-3" (click)="searchFilter=false;resetFilters();"
+                [disabled]="searchFilter===false">Reset</button>
+
+        </div>
+    </div>
+
+    <div class="card bg-color p-2" id="collapseExample" [ngbCollapse]="isCollapsed">
+        <div fxLayout="row" fxLayoutGap="8px" fxLayoutGap.lt-xl="10px" fxLayout.lt-lg="column" fxLayoutAlign="start"
+            class="flex-wrap">
+            <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox col-xxl-2">
+                <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                <mat-select placeholder="Customer" class="w-100 form-control p-0" style="border:none;"
+                    formControlName="customerId">
+                    <mat-option value="0">
+                        All
+                    </mat-option>
+                    <ng-container *ngFor="let data of allCustomers">
+                        <mat-option [value]="data.id">
+                            {{data.name}}
+                        </mat-option>
+                    </ng-container>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox col-xxl-2">
+                <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+                <mat-select placeholder="Part Number" class="w-100 form-control p-0" style="border:none;"
+                    formControlName="partNumberId" (selectionChange)="partNumberSelected($event.value)">
+                    <mat-option value="0">
+                        All
+                    </mat-option>
+                    <ng-container *ngFor="let item of allPartNumbers">
+                        <mat-option [value]="item.id">
+                            {{item.name}}
+                        </mat-option>
+                    </ng-container>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field [formGroup]="rangeForm" appearance="outline" class="input-pdt fs-16 searchBox col-xxl-2">
+                <mat-icon matPrefix class="sub-prefix">search</mat-icon>
+
+                <mat-select placeholder="Date Range" class="w-100 form-control p-0" style="border:none;"
+                    formControlName="rangeOpt">
+                    <mat-option *ngFor="let date of dates" [value]="date.value" (click)="dateRangee(date.value)">
+                        {{date.viewValue}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <div *ngIf="!dateRange">
+                <mat-form-field class="font-w-600 input-pdt sm-date" fxFlex>
+                    <input matInput formControlName="startDate" [value]="startDate" style="text-align: center;">
+                </mat-form-field>
+                <span class="d-flex align-items-center fs-16 pl-3"><b> to </b></span>
+                <mat-form-field class="font-w-600 input-pdt sm-date" fxFlex>
+                    <input matInput formControlName="endDate" [value]="endDate" style="text-align: center;">
+                </mat-form-field>
+            </div>
+            <div *ngIf="!dateRangeCustom">
+
+                <mat-form-field appearance="outline" class="font-w-600 input-pdt sm-date" fxFlex>
+                    <input matInput formControlName="startDate" [matDatepicker]="picker"
+                        (dateChange)="onStartingDateScheduledRange($event)">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <span class="d-flex align-items-center fs-16"><b>&nbsp; to &nbsp; </b></span>
+                <mat-form-field appearance="outline" class="font-w-600 input-pdt sm-date" fxFlex>
+                    <input matInput formControlName="endDate" [matDatepicker]="picker1"
+                        (dateChange)="onEndingDateScheduledRange($event)">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+
+
+    <div fxLayout="row" fxLayoutGap="50px" fxLayoutGap.lt-xl="10px" fxLayout.lt-lg="column" fxLayoutAlign="center"
+        class="my-3 align-items-center">
+        <div class="card sub-card">
+            <div class="mb-2 text-color">Cleaning</div>
+            <div class="font-w-600 text-color">{{usageData.cleaning}}</div>
+        </div>
+
+        <div class="card sub-card">
+            <div class="mb-2 text-color">Inspection</div>
+            <div class="font-w-600 text-color">{{usageData.inspection}}</div>
+        </div>
+
+        <div class="card sub-card">
+            <div class="mb-2 text-color">Damaged</div>
+            <div class="font-w-600 text-color">{{usageData.damaged}}</div>
+        </div>
+
+        <div class="card sub-card">
+            <div class="mb-2 text-color">Repairing</div>
+            <div class="font-w-600 text-color">{{usageData.repairing}}</div>
+        </div>
+
+        <div class="card sub-card">
+            <div class="mb-2 text-color">Retired</div>
+            <div class="font-w-600 text-color">{{usageData.retired}}</div>
+        </div>
+
+        <div class="card sub-card">
+            <div class="mb-2 text-color">Lost</div>
+            <div class="font-w-600 text-color">{{usageData.lost}}</div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr class="tablelight text-center">
+                    <th>
+                        Quilt Serial No.
+                    </th>
+                    <th>Part Number</th>
+                    <th>Current Status</th>
+                    <th>Cleaning Count</th>
+                    <th>Inspection Count</th>
+                    <th>Repairing Count</th>
+                    <th>Lost/Retired</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="items$ | async as quiltsUsageQuilt">
+                    <ng-container *ngIf="quiltsUsageQuilt && quiltsUsageQuilt.length > 0; else noData">
+                        <ng-container *ngFor="let data of quiltsUsageQuilt;let i = index">
+                            <tr class="text-center">
+                                <td class="p-relative">
+                                    <span class="cursor-pointer arrow-position"
+                                        (click)="webAppQueToggle(!webQueCollapsed,i)"
+                                        [attr.aria-expanded]="webAppQueExpand!==i" aria-controls='collapseExample1'>
+                                        <ng-template #collapsedWebQueTemplate>
+                                            <img class="cursor ht-20 w-20"
+                                                src="../../../../assets/logos/rightarrowS.svg">
+                                        </ng-template>
+                                        <ng-container *ngIf="webAppQueExpand===i ;else collapsedWebQueTemplate">
+                                            <img class="cursor ht-20 w-20"
+                                                src="../../../../assets/logos/downarrowS.svg">
+                                        </ng-container>
+                                    </span>
+
+                                    {{data['serialNumber']}}
+                                </td>
+                                <td>{{data['partNumber']}}</td>
+                                <td>{{data['currentStatus']}}</td>
+                                <td>
+                                    {{data['cleaningCount']}}
+                                </td>
+                                <td>
+                                    {{data['inspectionCount']}}
+                                </td>
+                                <td>
+                                    {{data['repairingCount']}}
+                                </td>
+                                <td>
+                                    {{data['lost'] ? 'Y' : 'N'}}
+                                </td>
+                            </tr>
+
+                            <tr id='collapseExample1' [ngbCollapse]="webAppQueExpand!==i">
+                                <td colspan="9">
+                                    <div class="px-4">
+                                        <table class="table w-90 m-a">
+                                            <thead>
+                                                <tr class="text-center">
+                                                    <th>Customer</th>
+                                                    <th>Last Receive Date</th>
+                                                    <th>Last Warehouse Location</th>
+                                                    <th>Protected Shipments</th>
+                                                    <th>Transfer Shipments</th>
+                                                    <th>Reverse Shipments</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <ng-container
+                                                    *ngIf="data['quiltsUsageCustomer'] && data['quiltsUsageCustomer']['length'] > 0 ; else noSubData">
+                                                    <tr class="text-center"
+                                                        *ngFor="let subData of data['quiltsUsageCustomer'];let index = index">
+                                                        <td>{{subData['customer']}}</td>
+                                                        <td>
+                                                            {{subData['receiveDate'] ? (subData['receiveDate'] | date:
+                                                            'MM/dd/yyyy') : '--'}}
+                                                        </td>
+                                                        <td>
+                                                            {{subData['warehouseLocation'] ?? '--'}}
+                                                        </td>
+                                                        <td>
+                                                            {{subData['protectedShipments']}}
+                                                        </td>
+                                                        <td>
+                                                            {{subData['transferShipments']}}
+                                                        </td>
+                                                        <td>
+                                                            {{subData['reverseShipments']}}
+                                                        </td>
+                                                        <td class="cursor"
+                                                            (click)="getCustomerDetails(subData.customerId, data['quiltId'],data['serialNumber'],subData['customer'])">
+                                                            <img class="mb-1" src="../../../../assets/logos/Eye.svg">
+                                                        </td>
+                                                    </tr>
+                                                </ng-container>
+                                                <ng-template #noSubData>
+                                                    <tr>
+                                                        <td colspan="5" class="bg-white">
+                                                            <div class="text-center">
+                                                                <h3>No data found</h3>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </ng-template>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                        </ng-container>
+                    </ng-container>
+                    <ng-template #noData>
+                        <tr>
+                            <td colspan="9" class="bg-white">
+                                <div class="text-center">
+                                    <h3>No data found</h3>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </ng-container>
+            </tbody>
+        </table>
+
+    </div>
+    <mat-paginator [length]="length" [pageIndex]="quiltUsageForm?.getRawValue()?.pageNumber - 1" [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions" (page)="paginator($event)" showFirstLastButtons aria-label="Select page">
+    </mat-paginator>
+</div>

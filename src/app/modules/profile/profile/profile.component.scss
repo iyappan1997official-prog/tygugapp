@@ -1,0 +1,30 @@
+.image-border{
+    border-radius: 50%;
+}
+.ht-140{
+    height: 140px;
+}
+.w-200{
+    width: 200px;
+}
+.show{
+    display:none;
+}
+
+.hide{
+    display:block;
+}
+
+p{
+    color: #AAAAAA !important;
+}
+
+@media screen and (max-width:1200px){
+   .show{
+       display: block;
+   }
+
+   .hide{
+       display: none;
+   }
+}
