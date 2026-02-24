@@ -54,6 +54,7 @@
   border-collapse: collapse;
   margin: 0;
   background-color: #f9f9f9;
+  table-layout: fixed;
 }
 
 .part-number-table th,
@@ -766,11 +767,20 @@
 }
 
 .part-wrapper {
-  margin-left: 48px;
+  margin-left: 12px;
 }
 
 .quilt-wrapper {
-  margin-left: 96px;
+  margin-left: 24px;
+}
+
+.cycle-wrapper {
+  margin-left: 0;
+}
+
+.cycle-table {
+  width: 100%;
+  table-layout: fixed;
 }
 
 td.border-0 {
@@ -813,6 +823,6 @@ td.border-0 {
 /* creates arrow space */
 .header-spacer {
   display: inline-block;
-  width: 32px;
+  width: 18px;
 }//
 

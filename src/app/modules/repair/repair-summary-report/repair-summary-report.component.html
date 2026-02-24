@@ -360,6 +360,13 @@
                 <div class="part-wrapper">
 
                   <table class="table part-number-table">
+                    <colgroup>
+                      <col style="width: 22%">
+                      <col style="width: 19%">
+                      <col style="width: 19%">
+                      <col style="width: 19%">
+                      <col style="width: 21%">
+                    </colgroup>
                     <thead>
                       <tr class="text-center">
                         <th class="hierarchy-header">
@@ -448,8 +455,8 @@
                                     </tr>
                                     <tr *ngIf="isQuiltExpanded(i,j,k) && quilt.cycles && quilt.cycles.length > 0">
                                       <td colspan="6" class="border-0 p-0">
-                                        <div class="quilt-wrapper">
-                                          <table class="table quilt-table">
+                                        <div class="cycle-wrapper">
+                                          <table class="table quilt-table cycle-table">
                                             <colgroup>
                                               <col style="width: 16%">
                                               <col style="width: 10%">
