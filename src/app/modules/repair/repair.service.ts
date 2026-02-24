@@ -50,4 +50,8 @@ export class RepairService {
     return this.http.post<any>(`${this.REPORTS_API_URL}/refreshServiceCenterICRCycleReport`, {});
   }
 
+  syncCustomerCenterIcrCycleReport(): Observable<any> {
+    return this.http.post<any>(`${this.REPORTS_API_URL}/refreshCustomerCenterICRCycleReport`, {});
+  }
+
 }

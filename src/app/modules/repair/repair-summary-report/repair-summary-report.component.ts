@@ -609,6 +609,7 @@ export class RepairSummaryReportComponent implements OnInit {
   pagedReportData: any[] = [];
   filteredReportData: any[] = [];
   dateRangeDisplay: string = '';
+  selectedExportType: 'hierarchical' | 'raw' | '' = '';
 
 
   allQuiltStatus = [
@@ -809,11 +810,11 @@ export class RepairSummaryReportComponent implements OnInit {
     const report = apiData?.data ?? apiData ?? {};
 
     this.summaryData = {
-      totalQuilts: report?.totalQuilts ?? 0,
-      cleanedCount: report?.totalCleaned ?? report?.summary?.cleaned ?? report?.grandTotals?.cleaned ?? 0,
-      repairedCount: report?.totalRepaired ?? report?.summary?.repaired ?? report?.grandTotals?.repaired ?? 0,
-      retiredCount: report?.totalRetired ?? report?.summary?.retired ?? report?.grandTotals?.retired ?? 0,
-      totalReturned: report?.totalReturned ?? report?.summary?.returned ?? report?.grandTotals?.returned ?? 0
+      totalQuilts: report?.totalQuilts ?? report?.totalquilts ?? report?.TotalQuilts ?? report?.Totalquilts ?? 0,
+      cleanedCount: report?.totalCleaned ?? report?.totalcleaned ?? report?.TotalCleaned ?? report?.summary?.cleaned ?? report?.grandTotals?.cleaned ?? 0,
+      repairedCount: report?.totalRepaired ?? report?.totalrepaired ?? report?.TotalRepaired ?? report?.summary?.repaired ?? report?.grandTotals?.repaired ?? 0,
+      retiredCount: report?.totalRetired ?? report?.totalretired ?? report?.TotalRetired ?? report?.summary?.retired ?? report?.grandTotals?.retired ?? 0,
+      totalReturned: report?.totalReturned ?? report?.totalreturned ?? report?.TotalReturned ?? report?.summary?.returned ?? report?.grandTotals?.returned ?? 0
     };
 
     const mappedData = (report.locations || []).map((location: any) => ({
@@ -952,10 +953,69 @@ export class RepairSummaryReportComponent implements OnInit {
     this.repairForm.patchValue({ locationId: '0', quiltStatusId: '0', pageNumber: 1 });
 
     this.filteredReportData = [...this.originalReportData];
-    this.summaryData = { totalQuilts: 0, cleanedCount: 0, repairedCount: 0, retiredCount: 0, totalReturned: 0 };
 
     this.length = this.filteredReportData.length;
     this.applyPagination();
+  }
+
+  syncLatestData(): void {
+    this.isLoading = true;
+    this.spinner.show();
+
+    this.repairService.syncCustomerCenterIcrCycleReport().subscribe({
+      next: (res: any) => {
+        const msg = res?.message || 'Sync completed successfully';
+        this.toastr.success(msg);
+        this.loadReportDataFromAPI();
+      },
+      error: (err: any) => {
+        this.isLoading = false;
+        this.spinner.hide();
+        this.toastr.error(err?.error?.message || 'Failed to sync latest data');
+      }
+    });
+  }
+
+  printReport(): void {
+    if (!this.validateOutputTypeSelection('print')) {
+      return;
+    }
+
+    const { headers, rows } = this.getOutputConfig();
+    if (!rows.length) {
+      this.toastr.warning('No data available to print');
+      return;
+    }
+
+    const printableRows = rows
+      .map((row: any) => `<tr>${headers.map((h) => `<td>${this.escapeHtml(String(row[h] ?? ''))}</td>`).join('')}</tr>`)
+      .join('');
+
+    const tableHtml = `
+      <html><head><title>Repair Summary Print</title>
+      <style>
+      body { font-family: Arial, sans-serif; padding: 16px; }
+      table { border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid #d1d5db; padding: 6px 8px; font-size: 12px; text-align: left; vertical-align: top; }
+      th { background: #e5eef4; }
+      </style></head><body>
+      <h2>Repair Summary Report</h2>
+      <table><thead><tr>${headers.map((h) => `<th>${this.escapeHtml(h)}</th>`).join('')}</tr></thead><tbody>${printableRows}</tbody></table>
+      </body></html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      this.toastr.error('Unable to open print window');
+      return;
+    }
+
+    printWindow.document.open();
+    printWindow.document.write(tableHtml);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
   }
 
 
@@ -1023,76 +1083,17 @@ export class RepairSummaryReportComponent implements OnInit {
   }
 
   exportReport(): void {
-    const dataToExport = this.originalReportData;
-    if (!dataToExport || !dataToExport.length) {
+    if (!this.validateOutputTypeSelection('export')) {
+      return;
+    }
+
+    const { headers, rows, sheetName } = this.getOutputConfig();
+    if (!rows.length) {
       this.toastr.warning('No data available to export');
       return;
     }
 
-    const exportRows: any[] = [];
-
-    dataToExport.forEach((loc: any) => {
-
-      /* ===== 1️⃣ LOCATION LEVEL ROW ===== */
-      exportRows.push({
-        'Location Name': loc.locationName || '',
-        'Part Number': '',
-        'Quilt Serial Number': '',
-        'Cleaned': loc.cleanedCount || 0,
-        'Repaired': loc.repairedCount || 0,
-        'Retired': loc.retiredCount || 0,
-        'Total': loc.totalReturned || 0,
-        'Repair Summary': ''
-      });
-
-      const parts = loc.partNumbers || [];
-
-      parts.forEach((p: any) => {
-
-        /* ===== 2️⃣ PART LEVEL ROW ===== */
-        exportRows.push({
-          'Location Name': '',
-          'Part Number': p.partNumber || '',
-          'Quilt Serial Number': '',
-          'Cleaned': p.cleaningCount || 0,
-          'Repaired': p.repairedCount || 0,
-          'Retired': p.retiredCount || 0,
-          'Total': p.total || 0,
-          'Repair Summary': ''
-        });
-
-        const quilts = p.quilts || [];
-
-        quilts.forEach((q: any) => {
-
-          /* ===== 3️⃣ QUILT LEVEL ROW ===== */
-          exportRows.push({
-            'Location Name': '',
-            'Part Number': '',
-            'Quilt Serial Number': q.serialNumber || '',
-            'Cleaned': q.cleaned || 0,        
-            'Repaired': q.repaired || 0,      
-            'Retired': q.retired || 0,        
-            'Total': q.returned || 0,         
-            'Repair Summary': q.repairTypes || 'None'
-          });
-
-        });
-      });
-    });
-
-    const headers = [
-      'Location Name',
-      'Part Number',
-      'Quilt Serial Number',
-      'Cleaned',
-      'Repaired',
-      'Retired',
-      'Total',
-      'Repair Summary'
-    ];
-
-    const worksheet = XLSX.utils.json_to_sheet(exportRows, { header: headers });
+    const worksheet = XLSX.utils.json_to_sheet(rows, { header: headers });
 
     headers.forEach((header, index) => {
       const cellAddress = XLSX.utils.encode_cell({ r: 0, c: index });
@@ -1102,7 +1103,7 @@ export class RepairSummaryReportComponent implements OnInit {
     });
 
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Repair Summary');
+    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
 
     const excelBuffer: any = XLSX.write(workbook, {
       bookType: 'xlsx',
@@ -1117,6 +1118,168 @@ export class RepairSummaryReportComponent implements OnInit {
     this.toastr.success('Report exported successfully');
   }
 
+  private validateOutputTypeSelection(actionName: 'print' | 'export'): boolean {
+    if (!this.selectedExportType) {
+      this.toastr.warning(`Please select print type before ${actionName}`);
+      return false;
+    }
+    return true;
+  }
+
+  private getOutputConfig(): { headers: string[]; rows: any[]; sheetName: string } {
+    if (this.selectedExportType === 'raw') {
+      return {
+        sheetName: 'Repair Summary Flat',
+        headers: [
+          'Location',
+          'Part Number',
+          'Serial Number',
+          'ICR Cycle',
+          'Returned',
+          'Cleaned',
+          'Repaired',
+          'Retired',
+          'Repair Type Aggregates'
+        ],
+        rows: this.buildFlatRows()
+      };
+    }
+
+    return {
+      sheetName: 'Repair Summary Hierarchical',
+      headers: [
+        'Level',
+        'Location',
+        'Part Number',
+        'Serial Number',
+        'ICR Cycle',
+        'Returned',
+        'Cleaned',
+        'Repaired',
+        'Retired',
+        'Repair Type Aggregates'
+      ],
+      rows: this.buildHierarchicalRows()
+    };
+  }
+
+  private buildHierarchicalRows(): any[] {
+    const rows: any[] = [];
+    const data = this.originalReportData || [];
+
+    data.forEach((loc: any) => {
+      rows.push({
+        'Level': 'Location',
+        'Location': loc.locationName || '',
+        'Part Number': '',
+        'Serial Number': '',
+        'ICR Cycle': '',
+        'Returned': loc.totalReturned || 0,
+        'Cleaned': loc.cleanedCount || 0,
+        'Repaired': loc.repairedCount || 0,
+        'Retired': loc.retiredCount || 0,
+        'Repair Type Aggregates': ''
+      });
+
+      (loc.partNumbers || []).forEach((part: any) => {
+        rows.push({
+          'Level': 'Part',
+          'Location': loc.locationName || '',
+          'Part Number': part.partNumber || '',
+          'Serial Number': '',
+          'ICR Cycle': '',
+          'Returned': part.total || 0,
+          'Cleaned': part.cleaningCount || 0,
+          'Repaired': part.repairedCount || 0,
+          'Retired': part.retiredCount || 0,
+          'Repair Type Aggregates': ''
+        });
+
+        (part.quilts || []).forEach((q: any) => {
+          rows.push({
+            'Level': 'Quilt',
+            'Location': loc.locationName || '',
+            'Part Number': part.partNumber || '',
+            'Serial Number': q.serialNumber || '',
+            'ICR Cycle': '',
+            'Returned': q.returned || 0,
+            'Cleaned': q.cleaned || 0,
+            'Repaired': q.repaired || 0,
+            'Retired': q.retired || 0,
+            'Repair Type Aggregates': q.repairTypes || 'None'
+          });
+
+          (q.cycles || []).forEach((cycle: any) => {
+            rows.push({
+              'Level': 'ICR Cycle',
+              'Location': loc.locationName || '',
+              'Part Number': part.partNumber || '',
+              'Serial Number': q.serialNumber || '',
+              'ICR Cycle': this.formatIcrCycle(cycle.icrCycle),
+              'Returned': cycle.returned || 0,
+              'Cleaned': cycle.cleaned || 0,
+              'Repaired': cycle.repaired || 0,
+              'Retired': cycle.retired || 0,
+              'Repair Type Aggregates': cycle.repairTypes || 'None'
+            });
+          });
+        });
+      });
+    });
+
+    return rows;
+  }
+
+  private buildFlatRows(): any[] {
+    const rows: any[] = [];
+    const data = this.originalReportData || [];
+
+    data.forEach((loc: any) => {
+      (loc.partNumbers || []).forEach((part: any) => {
+        (part.quilts || []).forEach((q: any) => {
+          const cycles = q.cycles || [];
+
+          if (!cycles.length) {
+            rows.push({
+              'Location': loc.locationName || '',
+              'Part Number': part.partNumber || '',
+              'Serial Number': q.serialNumber || '',
+              'ICR Cycle': '-',
+              'Returned': q.returned || 0,
+              'Cleaned': q.cleaned || 0,
+              'Repaired': q.repaired || 0,
+              'Retired': q.retired || 0,
+              'Repair Type Aggregates': q.repairTypes || 'None'
+            });
+            return;
+          }
+
+          cycles.forEach((cycle: any) => {
+            rows.push({
+              'Location': loc.locationName || '',
+              'Part Number': part.partNumber || '',
+              'Serial Number': q.serialNumber || '',
+              'ICR Cycle': this.formatIcrCycle(cycle.icrCycle),
+              'Returned': cycle.returned || 0,
+              'Cleaned': cycle.cleaned || 0,
+              'Repaired': cycle.repaired || 0,
+              'Retired': cycle.retired || 0,
+              'Repair Type Aggregates': cycle.repairTypes || 'None'
+            });
+          });
+        });
+      });
+    });
+
+    return rows;
+  }
+
+  private escapeHtml(value: string): string {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
 
   // Paginator function
   paginator(event: PageEvent): void {

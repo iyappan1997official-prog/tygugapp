@@ -729,6 +729,24 @@
   margin: 15px 0 10px 0;
 }
 
+.export-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.export-type-select {
+  min-width: 200px;
+}
+
+.btn-sync {
+  background-color: #16a34a;
+}
+
+.btn-sync:hover {
+  background-color: #15803d;
+}
+
 .part-wrapper {
   margin-left: 48px;
 }

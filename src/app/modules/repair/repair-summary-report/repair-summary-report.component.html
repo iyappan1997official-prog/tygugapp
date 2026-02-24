@@ -244,6 +244,14 @@
               (click)="resetReport()">
         Reset
       </button>
+      <button class="btn btn-newPrimary btncolor btn-sync p-12"
+              (click)="syncLatestData()">
+        Sync
+      </button>
+      <button class="btn btn-newPrimary btncolor p-12"
+              (click)="printReport()">
+        Print
+      </button>
     </div>
   </div>
 
@@ -254,10 +262,20 @@
       {{ dateRangeDisplay }}
     </div>
 
+    <div class="export-controls">
+      <mat-form-field appearance="outline" class="searchBox export-type-select">
+        <mat-label>Select print type</mat-label>
+        <mat-select [(value)]="selectedExportType">
+          <mat-option value="hierarchical">Hierarchical</mat-option>
+          <mat-option value="raw">Flat (Linear)</mat-option>
+        </mat-select>
+      </mat-form-field>
+
     <button class="btn btnborder p-12"
             (click)="exportReport()">
       Export
     </button>
+    </div>
 
   </div>
 
