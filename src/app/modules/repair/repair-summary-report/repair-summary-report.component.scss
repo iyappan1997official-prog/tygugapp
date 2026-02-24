@@ -740,11 +740,13 @@
 }
 
 .btn-sync {
-  background-color: #16a34a;
+  background-color: #16a34a !important;
+  border-color: #16a34a !important;
 }
 
 .btn-sync:hover {
-  background-color: #15803d;
+  background-color: #15803d !important;
+  border-color: #15803d !important;
 }
 
 .part-wrapper {
