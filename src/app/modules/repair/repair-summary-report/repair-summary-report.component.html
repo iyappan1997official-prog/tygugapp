@@ -386,12 +386,14 @@
                                     <tr class="text-center">
                                       <td class="hierarchy-cell">
                                         <div class="arrow-box"
+                                             *ngIf="quilt.cycles && quilt.cycles.length > 0"
                                              (click)="toggleQuiltDetails(i,j,k)">
                                           <img class="arrow-icon"
                                                [src]="isQuiltExpanded(i,j,k)
                                    ? '../../../../assets/logos/downarrowS.svg'
                                    : '../../../../assets/logos/rightarrowS.svg'">
                                         </div>
+                                        <div class="arrow-box" *ngIf="!quilt.cycles || quilt.cycles.length === 0"></div>
                                         <div class="row-label">{{ quilt.serialNumber }}</div>
                                       </td>
 
@@ -401,6 +403,38 @@
                                       <td>{{ quilt.returned }}</td>
                                       <td class="text-start">{{ quilt.repairTypes || 'None' }}</td>
                                       <td class="text-start">{{ quilt.retiredTypes || 'None' }}</td>
+                                    </tr>
+                                    <tr *ngIf="isQuiltExpanded(i,j,k) && quilt.cycles && quilt.cycles.length > 0">
+                                      <td colspan="7" class="border-0 p-0">
+                                        <div class="quilt-wrapper">
+                                          <table class="table quilt-table">
+                                            <thead>
+                                              <tr class="text-center">
+                                                <th>Report Id</th>
+                                                <th>ICR Cycle</th>
+                                                <th>Receive Date</th>
+                                                <th>Returned</th>
+                                                <th>Cleaned</th>
+                                                <th>Repaired</th>
+                                                <th>Retired</th>
+                                                <th>Repair Type Aggregates</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              <tr class="text-center" *ngFor="let cycle of quilt.cycles">
+                                                <td>{{ cycle.reportId }}</td>
+                                                <td>{{ cycle.icrCycle }}</td>
+                                                <td>{{ cycle.receiveDate | date:'MM/dd/yyyy HH:mm' }}</td>
+                                                <td>{{ cycle.returned }}</td>
+                                                <td>{{ cycle.cleaned }}</td>
+                                                <td>{{ cycle.repaired }}</td>
+                                                <td>{{ cycle.retired }}</td>
+                                                <td class="text-start">{{ cycle.repairTypes || 'None' }}</td>
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </td>
                                     </tr>
 
                                   </ng-container>

@@ -34,7 +34,7 @@ export class RepairService {
 
   //New : Get repair summary report Quilts
   repairSummaryWithQuilts(payload: any): Observable<any> {
-    return this.http.post<any>(`${this.REPORTS_API_URL}/RepairSummaryWithQuilts`, payload);
+    return this.http.post<any>(`${this.REPORTS_API_URL}/customerCenterIcrCycleHierarchy`, payload);
     }
 
   getServiceCenterLocations(): Observable<any> {

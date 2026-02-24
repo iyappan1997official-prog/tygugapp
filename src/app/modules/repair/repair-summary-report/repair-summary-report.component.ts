@@ -654,23 +654,22 @@ export class RepairSummaryReportComponent implements OnInit {
   } */
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
+      const startDateParam = params['startDate'] || params['startReceiveDate'];
+      const endDateParam = params['endDate'] || params['endReceiveDate'];
+      const customerIdParam = params['customerId'] || '';
 
-      if (params['startDate'] && params['endDate']) {
-
+      if (startDateParam && endDateParam) {
         this.repairForm.patchValue({
-          customerId: params['customerId'] || '',
-          startDate: params['startDate'],
-          endDate: params['endDate'],
+          customerId: customerIdParam,
+          startDate: startDateParam,
+          endDate: endDateParam,
           pageNumber: 1,
           pageSize: 10
         });
 
-        // ✅ FORMAT DATE RANGE 
-        const start = moment(params['startDate']).format('MM/DD/YYYY');
-        const end = moment(params['endDate']).format('MM/DD/YYYY');
-        // ✅ FINAL STRING
-        this.dateRangeDisplay = `Date Range: ${start} – ${end}`;
-
+        const start = moment(startDateParam).format('MM/DD/YYYY');
+        const end = moment(endDateParam).format('MM/DD/YYYY');
+        this.dateRangeDisplay = `Date Range: ${start} - ${end}`;
       }
 
       this.loadReportDataFromAPI();
@@ -688,20 +687,10 @@ export class RepairSummaryReportComponent implements OnInit {
     this.spinner.show();
 
     const payload = {
-      searchBy: '',
-      pageNumber: formData.pageNumber || 1,
-      pageSize: formData.pageSize || 10,
-
-      // ✅ FIXED: explicit type
-      customerGroupIds: [] as number[],
-
-      sortByColumn: '',
-      sortDescendingOrder: false,
-      customerId: formData.customerId ? Number(formData.customerId) : 0,
-      locationName: '',
-      quiltStatusId: Number(formData.quiltStatusId || 0),
-      startDate: formData.startDate,
-      endDate: formData.endDate
+      startReceiveDate: formData.startDate,
+      endReceiveDate: formData.endDate,
+      locationId: 0,
+      customerId: formData.customerId ? Number(formData.customerId) : 0
     };
 
     this.repairService.repairSummaryWithQuilts(payload).subscribe({
@@ -709,7 +698,7 @@ export class RepairSummaryReportComponent implements OnInit {
         this.isLoading = false;
         this.spinner.hide();
 
-        if (response && response.locations) {
+        if (response?.data?.locations || response?.locations) {
           this.processApiResponse(response);
         } else {
           this.toastr.error('Invalid response format');
@@ -817,86 +806,59 @@ export class RepairSummaryReportComponent implements OnInit {
   }*/
 
   processApiResponse(apiData: any): void {
+    const report = apiData?.data ?? apiData ?? {};
 
-    /* -----------------------------
-     * 1. Summary data (matches old logic)
-     * ----------------------------- */
     this.summaryData = {
-      cleanedCount: apiData?.summary?.cleaned
-        ?? apiData?.grandTotals?.cleaned
-        ?? 0,
-
-      repairedCount: apiData?.summary?.repaired
-        ?? apiData?.grandTotals?.repaired
-        ?? 0,
-
-      retiredCount: apiData?.summary?.retired
-        ?? apiData?.grandTotals?.retired
-        ?? 0,
-
-      totalReturned: apiData?.summary?.returned
-        ?? apiData?.grandTotals?.returned
-        ?? 0
+      cleanedCount: report?.totalCleaned ?? report?.summary?.cleaned ?? report?.grandTotals?.cleaned ?? 0,
+      repairedCount: report?.totalRepaired ?? report?.summary?.repaired ?? report?.grandTotals?.repaired ?? 0,
+      retiredCount: report?.totalRetired ?? report?.summary?.retired ?? report?.grandTotals?.retired ?? 0,
+      totalReturned: report?.totalReturned ?? report?.summary?.returned ?? report?.grandTotals?.returned ?? 0
     };
 
-    /* -----------------------------
-     * 2. Main mapping (Location → Part → Quilt)
-     * ----------------------------- */
-    const mappedData = (apiData.locations || []).map((location: any) => ({
+    const mappedData = (report.locations || []).map((location: any) => ({
       locationName: location.locationName,
-
-      // location-level totals
-      cleanedCount: location.cleaned || 0,
-      repairedCount: location.repaired || 0,
-      retiredCount: location.retired || 0,
-      totalReturned: location.returned || 0,
-
-      // part-level
-      partNumbers: (location.parts || []).map((part: any) => ({
+      cleanedCount: location.totalCleaned ?? location.cleaned ?? 0,
+      repairedCount: location.totalRepaired ?? location.repaired ?? 0,
+      retiredCount: location.totalRetired ?? location.retired ?? 0,
+      totalReturned: location.totalReturned ?? location.returned ?? 0,
+      partNumbers: (location.partNumbers || location.parts || []).map((part: any) => ({
         partNumber: part.partNumber,
-
-        cleaningCount: part.cleaned || 0,
-        repairedCount: part.repaired || 0,
-        retiredCount: part.retired || 0,
-        total: part.returned || 0,
-
-        // NEW: quilt-level drill down
+        cleaningCount: part.totalCleaned ?? part.cleaned ?? 0,
+        repairedCount: part.totalRepaired ?? part.repaired ?? 0,
+        retiredCount: part.totalRetired ?? part.retired ?? 0,
+        total: part.totalReturned ?? part.returned ?? 0,
         quilts: (part.quilts || []).map((q: any) => ({
           quiltId: q.quiltId,
           serialNumber: q.serialNumber,
-          receiveDate: q.receiveDate,
-
-          returned: q.returned || 0,
-          cleaned: q.cleaned || 0,
-          repaired: q.repaired || 0,
-          retired: q.retired || 0,
-
-          // NEW fields (no aggregation – true source)
+          receiveDate: q.receiveDate || null,
+          returned: q.totalReturned ?? q.returned ?? 0,
+          cleaned: q.totalCleaned ?? q.cleaned ?? 0,
+          repaired: q.totalRepaired ?? q.repaired ?? 0,
+          retired: q.totalRetired ?? q.retired ?? 0,
           repairTypes: this.toAggregateText(q.repairTypeAggregates || q.aggregatedRepairTypes || q.repairTypes),
-          retiredTypes: this.toAggregateText(q.retiredTypeAggregates || q.aggregatedDisposalReasons || q.retiredTypes)
+          retiredTypes: this.toAggregateText(q.retiredTypeAggregates || q.aggregatedDisposalReasons || q.retiredTypes),
+          cycles: (q.cycles || []).map((cycle: any) => ({
+            reportId: cycle.reportId || 0,
+            icrCycle: cycle.icrCycle || 0,
+            receiveDate: cycle.receiveDate || null,
+            returned: cycle.returned || 0,
+            cleaned: cycle.cleaned || 0,
+            repaired: cycle.repaired || 0,
+            retired: cycle.retired || 0,
+            repairTypes: this.toAggregateText(cycle.repairTypeAggregates || cycle.repairTypes)
+          }))
         }))
       }))
     }));
 
-    /* -----------------------------
-     * 3. Preserve original bindings
-     * ----------------------------- */
     this.originalReportData = [...mappedData];
-    //this.reportData = [...mappedData];
     this.filteredReportData = [...mappedData];
-
-    /* -----------------------------
-     * 4. Paginator (location-level only)
-     * ----------------------------- */
     this.length = mappedData.length;
     this.applyPagination();
 
-    /* -----------------------------
-     * 5. Location dropdown (unchanged logic)
-     * ----------------------------- */
     const uniqueLocations: string[] = Array.from(
       new Set(
-        (apiData.locations || [])
+        (report.locations || [])
           .map((x: any) => x?.locationName)
           .filter((x: any) => typeof x === 'string' && x.trim() !== '')
       )
@@ -907,7 +869,6 @@ export class RepairSummaryReportComponent implements OnInit {
       name
     }));
   }
-
   applyPagination(): void {
     const formData = this.repairForm.value;
 
