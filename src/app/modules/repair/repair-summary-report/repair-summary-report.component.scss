@@ -174,9 +174,10 @@
    SEARCH / RESET BUTTON GROUP
    ====================================== */
 .search-reset-container {
-  margin-left: 700px;
+  margin-left: 0;
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 /* ======================================
@@ -719,7 +720,7 @@
   font-size: 18px;
   font-weight: 500;
   color: #333;
-  margin-left: 25px;
+  margin-left: 0;
 }
 
 .date-export-row {
@@ -727,6 +728,21 @@
   justify-content: space-between;
   align-items: center;
   margin: 15px 0 10px 0;
+}
+
+.filter-left-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.report-generated-note {
+  color: #d32f2f;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.2;
+  margin: 0;
 }
 
 .export-controls {
