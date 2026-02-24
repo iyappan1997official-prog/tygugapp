@@ -809,6 +809,7 @@ export class RepairSummaryReportComponent implements OnInit {
     const report = apiData?.data ?? apiData ?? {};
 
     this.summaryData = {
+      totalQuilts: report?.totalQuilts ?? 0,
       cleanedCount: report?.totalCleaned ?? report?.summary?.cleaned ?? report?.grandTotals?.cleaned ?? 0,
       repairedCount: report?.totalRepaired ?? report?.summary?.repaired ?? report?.grandTotals?.repaired ?? 0,
       retiredCount: report?.totalRetired ?? report?.summary?.retired ?? report?.grandTotals?.retired ?? 0,
@@ -939,7 +940,7 @@ export class RepairSummaryReportComponent implements OnInit {
   /*resetReport(): void {
     this.repairForm.patchValue({ locationId: '0', quiltStatusId: '0' });
     this.reportData = [...this.originalReportData];
-    this.summaryData = { cleanedCount: 0, repairedCount: 0, retiredCount: 0, totalReturned: 0 };
+    this.summaryData = { totalQuilts: 0, cleanedCount: 0, repairedCount: 0, retiredCount: 0, totalReturned: 0 };
 
     // Reset paginator total count
     this.length = this.originalReportData.length;
@@ -951,7 +952,7 @@ export class RepairSummaryReportComponent implements OnInit {
     this.repairForm.patchValue({ locationId: '0', quiltStatusId: '0', pageNumber: 1 });
 
     this.filteredReportData = [...this.originalReportData];
-    this.summaryData = { cleanedCount: 0, repairedCount: 0, retiredCount: 0, totalReturned: 0 };
+    this.summaryData = { totalQuilts: 0, cleanedCount: 0, repairedCount: 0, retiredCount: 0, totalReturned: 0 };
 
     this.length = this.filteredReportData.length;
     this.applyPagination();
@@ -978,6 +979,14 @@ export class RepairSummaryReportComponent implements OnInit {
 
   isQuiltExpanded(locIdx: number, partIdx: number, quiltIdx: number): boolean {
     return this.expandedQuilts[`${locIdx}-${partIdx}-${quiltIdx}`] === true;
+  }
+
+  formatIcrCycle(value: any): string {
+    const cycleNumber = Number(value);
+    if (!Number.isFinite(cycleNumber) || cycleNumber <= 0) {
+      return '-';
+    }
+    return `ICR Cycle #${cycleNumber}`;
   }
 
   private toAggregateText(value: any): string {
@@ -1033,8 +1042,7 @@ export class RepairSummaryReportComponent implements OnInit {
         'Repaired': loc.repairedCount || 0,
         'Retired': loc.retiredCount || 0,
         'Total': loc.totalReturned || 0,
-        'Repair Summary': '',
-        'Retire Summary': ''
+        'Repair Summary': ''
       });
 
       const parts = loc.partNumbers || [];
@@ -1050,8 +1058,7 @@ export class RepairSummaryReportComponent implements OnInit {
           'Repaired': p.repairedCount || 0,
           'Retired': p.retiredCount || 0,
           'Total': p.total || 0,
-          'Repair Summary': '',
-          'Retire Summary': ''
+          'Repair Summary': ''
         });
 
         const quilts = p.quilts || [];
@@ -1067,8 +1074,7 @@ export class RepairSummaryReportComponent implements OnInit {
             'Repaired': q.repaired || 0,      
             'Retired': q.retired || 0,        
             'Total': q.returned || 0,         
-            'Repair Summary': q.repairTypes || 'None',   
-            'Retire Summary': q.retiredTypes || 'None'   
+            'Repair Summary': q.repairTypes || 'None'
           });
 
         });
@@ -1083,8 +1089,7 @@ export class RepairSummaryReportComponent implements OnInit {
       'Repaired',
       'Retired',
       'Total',
-      'Repair Summary',
-      'Retire Summary'
+      'Repair Summary'
     ];
 
     const worksheet = XLSX.utils.json_to_sheet(exportRows, { header: headers });

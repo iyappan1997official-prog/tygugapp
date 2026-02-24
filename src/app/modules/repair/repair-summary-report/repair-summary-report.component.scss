@@ -72,6 +72,20 @@
   color: #1e3a8a;
 }
 
+.quilt-table th,
+.quilt-table td {
+  vertical-align: middle;
+}
+
+.quilt-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.quilt-table th {
+  white-space: nowrap;
+}
+
 /* ======================================
    CARD STYLES
    ====================================== */
@@ -501,6 +515,14 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background: white;
+}
+
+.cards-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 8px 0 14px;
 }
 
 [ngbCollapse] {

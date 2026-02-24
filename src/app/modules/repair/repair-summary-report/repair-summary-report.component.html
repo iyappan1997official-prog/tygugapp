@@ -262,6 +262,30 @@
   </div>
 
 
+  <div class="cards-wrapper">
+    <div class="card sub-card text-center p-3">
+      <div class="text-muted fs-13">Total Quilts</div>
+      <div class="font-w-600 text-color">{{ summaryData?.totalQuilts || 0 }}</div>
+    </div>
+    <div class="card sub-card text-center p-3">
+      <div class="text-muted fs-13">Total Returned</div>
+      <div class="font-w-600 text-color">{{ summaryData?.totalReturned || 0 }}</div>
+    </div>
+    <div class="card sub-card text-center p-3">
+      <div class="text-muted fs-13">Cleaned</div>
+      <div class="font-w-600 text-color">{{ summaryData?.cleanedCount || 0 }}</div>
+    </div>
+    <div class="card sub-card text-center p-3">
+      <div class="text-muted fs-13">Repaired</div>
+      <div class="font-w-600 text-color">{{ summaryData?.repairedCount || 0 }}</div>
+    </div>
+    <div class="card sub-card text-center p-3">
+      <div class="text-muted fs-13">Retired</div>
+      <div class="font-w-600 text-color">{{ summaryData?.retiredCount || 0 }}</div>
+    </div>
+  </div>
+
+
   <!-- Main Table -->
   <div class="table-responsive mt-3">
     <table class="table repair-summary-table">
@@ -364,6 +388,14 @@
 
                             <div class="quilt-wrapper">
                               <table class="table quilt-table">
+                                <colgroup>
+                                  <col style="width: 22%">
+                                  <col style="width: 10%">
+                                  <col style="width: 10%">
+                                  <col style="width: 10%">
+                                  <col style="width: 10%">
+                                  <col style="width: 38%">
+                                </colgroup>
 
                                 <thead>
                                   <tr class="text-center">
@@ -376,7 +408,6 @@
                                     <th>Retired</th>
                                     <th>Returned</th>
                                     <th>Repair Type Aggregates</th>
-                                    <th>Retire Type Aggregates</th>
                                   </tr>
                                 </thead>
 
@@ -401,18 +432,23 @@
                                       <td>{{ quilt.repaired }}</td>
                                       <td>{{ quilt.retired }}</td>
                                       <td>{{ quilt.returned }}</td>
-                                      <td class="text-start">{{ quilt.repairTypes || 'None' }}</td>
-                                      <td class="text-start">{{ quilt.retiredTypes || 'None' }}</td>
+                                      <td>{{ quilt.repairTypes || 'None' }}</td>
                                     </tr>
                                     <tr *ngIf="isQuiltExpanded(i,j,k) && quilt.cycles && quilt.cycles.length > 0">
-                                      <td colspan="7" class="border-0 p-0">
+                                      <td colspan="6" class="border-0 p-0">
                                         <div class="quilt-wrapper">
                                           <table class="table quilt-table">
+                                            <colgroup>
+                                              <col style="width: 16%">
+                                              <col style="width: 10%">
+                                              <col style="width: 10%">
+                                              <col style="width: 10%">
+                                              <col style="width: 10%">
+                                              <col style="width: 44%">
+                                            </colgroup>
                                             <thead>
                                               <tr class="text-center">
-                                                <th>Report Id</th>
                                                 <th>ICR Cycle</th>
-                                                <th>Receive Date</th>
                                                 <th>Returned</th>
                                                 <th>Cleaned</th>
                                                 <th>Repaired</th>
@@ -422,14 +458,12 @@
                                             </thead>
                                             <tbody>
                                               <tr class="text-center" *ngFor="let cycle of quilt.cycles">
-                                                <td>{{ cycle.reportId }}</td>
-                                                <td>{{ cycle.icrCycle }}</td>
-                                                <td>{{ cycle.receiveDate | date:'MM/dd/yyyy HH:mm' }}</td>
+                                                <td>{{ formatIcrCycle(cycle.icrCycle) }}</td>
                                                 <td>{{ cycle.returned }}</td>
                                                 <td>{{ cycle.cleaned }}</td>
                                                 <td>{{ cycle.repaired }}</td>
                                                 <td>{{ cycle.retired }}</td>
-                                                <td class="text-start">{{ cycle.repairTypes || 'None' }}</td>
+                                                <td>{{ cycle.repairTypes || 'None' }}</td>
                                               </tr>
                                             </tbody>
                                           </table>
