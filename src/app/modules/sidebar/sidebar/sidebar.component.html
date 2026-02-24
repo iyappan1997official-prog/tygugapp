@@ -83,7 +83,9 @@
           <div>Reports</div>
         </a>
       </li>
-      <li class="menu-item cursor" aria-haspopup="true" routerLinkActive="menu-item-active">
+      <li class="menu-item cursor"
+          *ngIf="[this.roleEnum.masterAdmin, this.roleEnum.customerManager, this.roleEnum.customerAdmin].includes(userRole)"
+          aria-haspopup="true" routerLinkActive="menu-item-active">
         <a routerLink="/repair/repair-reports"
            routerLinkActive="active">
           <img src="../../../../assets/logos/RepairS.svg">
