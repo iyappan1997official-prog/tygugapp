@@ -670,7 +670,7 @@ export class RepairSummaryReportComponent implements OnInit {
 
         const start = moment(startDateParam).format('MM/DD/YYYY');
         const end = moment(endDateParam).format('MM/DD/YYYY');
-        this.dateRangeDisplay = `Date Range: ${start} - ${end}`;
+        this.dateRangeDisplay = `${start} – ${end}`;
       }
 
       this.loadReportDataFromAPI();
