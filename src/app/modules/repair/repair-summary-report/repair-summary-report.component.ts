@@ -1051,18 +1051,19 @@ export class RepairSummaryReportComponent implements OnInit {
 
   private toAggregateText(value: any): string {
     if (!value) {
-      return 'None';
+      return '';
     }
 
     if (Array.isArray(value)) {
       if (!value.length) {
-        return 'None';
+        return '';
       }
 
       return value
         .map((x: any) => {
           if (typeof x === 'string') {
-            return x;
+            const text = x.trim();
+            return /^(none|null|-)$/i.test(text) ? '' : text;
           }
           const type = x?.repairType || x?.retiredType || x?.name || x?.type || '';
           const count = x?.count ?? x?.totalCount ?? null;
@@ -1072,14 +1073,18 @@ export class RepairSummaryReportComponent implements OnInit {
           return count !== null && count !== undefined ? `${type} (${count})` : type;
         })
         .filter((x: string) => x && x.trim() !== '')
-        .join(', ') || 'None';
+        .join(', ') || '';
     }
 
     if (typeof value === 'string') {
-      return value.trim() ? value : 'None';
+      const text = value.trim();
+      if (!text || /^(none|null|-)$/i.test(text)) {
+        return '';
+      }
+      return text;
     }
 
-    return 'None';
+    return '';
   }
 
   exportReport(): void {

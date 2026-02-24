@@ -450,7 +450,7 @@
                                       <td>{{ quilt.repaired }}</td>
                                       <td>{{ quilt.retired }}</td>
                                       <td>{{ quilt.returned }}</td>
-                                      <td>{{ quilt.repairTypes || 'None' }}</td>
+                                      <td>{{ quilt.repairTypes || '' }}</td>
                                     </tr>
                                     <tr *ngIf="isQuiltExpanded(i,j,k) && quilt.cycles && quilt.cycles.length > 0">
                                       <td colspan="6" class="border-0 p-0">
@@ -481,7 +481,7 @@
                                                 <td>{{ cycle.cleaned }}</td>
                                                 <td>{{ cycle.repaired }}</td>
                                                 <td>{{ cycle.retired }}</td>
-                                                <td>{{ cycle.repairTypes || 'None' }}</td>
+                                                <td>{{ cycle.repairTypes || '' }}</td>
                                               </tr>
                                             </tbody>
                                           </table>

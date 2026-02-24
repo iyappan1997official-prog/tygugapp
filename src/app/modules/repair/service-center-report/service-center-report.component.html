@@ -484,7 +484,7 @@
                                         <td>{{ quilt.cleaned }}</td>
                                         <td>{{ quilt.repaired }}</td>
                                         <td>{{ quilt.retired }}</td>
-                                        <td class="text-start">{{ quilt.repairTypes || '-' }}</td>
+                                        <td class="text-start">{{ quilt.repairTypes || '' }}</td>
                                       </tr>
                                       <tr *ngIf="isQuiltExpanded(i,j,k) && hasQuiltChildren(quilt)">
                                         <td colspan="6" class="border-0 p-0">
@@ -518,7 +518,7 @@
                                                   <td>{{ cycle.cleaned }}</td>
                                                   <td>{{ cycle.repaired }}</td>
                                                   <td>{{ cycle.retired }}</td>
-                                                  <td class="repair-agg-col">{{ cycle.repairTypes || '-' }}</td>
+                                                  <td class="repair-agg-col">{{ cycle.repairTypes || '' }}</td>
                                                 </tr>
                                               </tbody>
                                             </table>
