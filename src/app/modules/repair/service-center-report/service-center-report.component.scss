@@ -780,6 +780,26 @@
   margin-left: 24px;
 }
 
+.cycle-wrapper {
+  margin-left: 0;
+}
+
+.cycle-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.cycle-table th,
+.cycle-table td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.cycle-table .repair-agg-col {
+  text-align: left;
+  padding-left: 12px;
+}
+
 td.border-0 {
   border: none !important;
 }
@@ -822,6 +842,21 @@ td.border-0 {
 .header-spacer {
   display: inline-block;
   width: 18px;
+}
+
+.sort-header-label {
+  display: inline-flex;
+  align-items: center;
+}
+
+.repair-summary-table th:not(.hierarchy-header) .sort-header-label {
+  justify-content: center;
+}
+
+.repair-summary-table th .fa-sort {
+  color: #000 !important;
+  opacity: 1 !important;
+  font-size: 14px;
 }
 
 .report-generated-wrapper {

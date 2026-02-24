@@ -58,6 +58,8 @@ export class ServiceCenterReportComponent implements OnInit {
 
   // Drill-down toggle
   expandedIndex: number | undefined;
+  sortByColumn: 'location' | 'totalReturned' | 'cleaningCount' | 'repairingCount' | 'retringCount' | '' = '';
+  sortDescendingOrder = false;
 
   constructor(
     private fb: FormBuilder,
@@ -147,7 +149,7 @@ export class ServiceCenterReportComponent implements OnInit {
 
     this.originalReportData = locations;
 
-    const mapped = this.mapApiToUi(this.originalReportData);
+    const mapped = this.applyTopLevelSort(this.mapApiToUi(this.originalReportData));
     this._items$.next(mapped);
     this.calculateCards(reportData);
     this.length = mapped.length;
@@ -266,6 +268,43 @@ export class ServiceCenterReportComponent implements OnInit {
 
   toggleRow(index: number) {
     this.expandedIndex = this.expandedIndex === index ? undefined : index;
+  }
+
+  sortTopLevel(column: 'location' | 'totalReturned' | 'cleaningCount' | 'repairingCount' | 'retringCount'): void {
+    if (this.sortByColumn === column) {
+      this.sortDescendingOrder = !this.sortDescendingOrder;
+    } else {
+      this.sortByColumn = column;
+      this.sortDescendingOrder = false;
+    }
+
+    const sorted = this.applyTopLevelSort(this._items$.value);
+    this._items$.next(sorted);
+
+    // Expanded row indexes/keys are tied to row order.
+    this.expandedIndex = undefined;
+    this.expandedParts = {};
+    this.expandedQuilts = {};
+  }
+
+  private applyTopLevelSort(rows: any[]): any[] {
+    if (!rows?.length || !this.sortByColumn) {
+      return [...(rows || [])];
+    }
+
+    const key = this.sortByColumn;
+    const direction = this.sortDescendingOrder ? -1 : 1;
+
+    return [...rows].sort((a, b) => {
+      const aValue = a?.[key];
+      const bValue = b?.[key];
+
+      if (key === 'location') {
+        return (String(aValue || '')).localeCompare(String(bValue || '')) * direction;
+      }
+
+      return ((Number(aValue) || 0) - (Number(bValue) || 0)) * direction;
+    });
   }
 
   paginator(event: PageEvent) {

@@ -329,14 +329,37 @@
         </colgroup>
         <thead>
           <tr class="tablelight text-center">
-            <th class="hierarchy-header">
+            <th class="hierarchy-header cursor" (click)="sortTopLevel('location')">
               <span class="header-spacer"></span>
-              Location
+              <span class="sort-header-label">
+                Location
+                <i class="fa fa-sort ms-2" aria-hidden="true"></i>
+              </span>
             </th>
-            <th>Total Returned</th>
-            <th>Cleaned</th>
-            <th>Repaired</th>
-            <th>Retired</th>
+            <th class="cursor" (click)="sortTopLevel('totalReturned')">
+              <span class="sort-header-label">
+                Total Returned
+                <i class="fa fa-sort ms-2" aria-hidden="true"></i>
+              </span>
+            </th>
+            <th class="cursor" (click)="sortTopLevel('cleaningCount')">
+              <span class="sort-header-label">
+                Cleaned
+                <i class="fa fa-sort ms-2" aria-hidden="true"></i>
+              </span>
+            </th>
+            <th class="cursor" (click)="sortTopLevel('repairingCount')">
+              <span class="sort-header-label">
+                Repaired
+                <i class="fa fa-sort ms-2" aria-hidden="true"></i>
+              </span>
+            </th>
+            <th class="cursor" (click)="sortTopLevel('retringCount')">
+              <span class="sort-header-label">
+                Retired
+                <i class="fa fa-sort ms-2" aria-hidden="true"></i>
+              </span>
+            </th>
           </tr>
         </thead>
 
@@ -465,16 +488,16 @@
                                       </tr>
                                       <tr *ngIf="isQuiltExpanded(i,j,k) && hasQuiltChildren(quilt)">
                                         <td colspan="6" class="border-0 p-0">
-                                          <div class="quilt-wrapper">
-                                            <table class="table quilt-table">
+                                          <div class="cycle-wrapper">
+                                            <table class="table quilt-table cycle-table">
                                               <colgroup>
+                                                <col style="width: 14%">
                                                 <col style="width: 12%">
-                                                <col style="width: 12%">
                                                 <col style="width: 10%">
                                                 <col style="width: 10%">
                                                 <col style="width: 10%">
                                                 <col style="width: 10%">
-                                                <col style="width: 36%">
+                                                <col style="width: 34%">
                                               </colgroup>
                                               <thead>
                                                 <tr class="text-center">
@@ -484,7 +507,7 @@
                                                   <th>Cleaned</th>
                                                   <th>Repaired</th>
                                                   <th>Retired</th>
-                                                  <th>Repair Type Aggregates</th>
+                                                  <th class="repair-agg-col">Repair Type Aggregates</th>
                                                 </tr>
                                               </thead>
                                               <tbody>
@@ -495,7 +518,7 @@
                                                   <td>{{ cycle.cleaned }}</td>
                                                   <td>{{ cycle.repaired }}</td>
                                                   <td>{{ cycle.retired }}</td>
-                                                  <td class="text-start">{{ cycle.repairTypes || '-' }}</td>
+                                                  <td class="repair-agg-col">{{ cycle.repairTypes || '-' }}</td>
                                                 </tr>
                                               </tbody>
                                             </table>
