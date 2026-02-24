@@ -16,7 +16,7 @@
     <div fxLayout="row"
          fxLayout.lt-md="column"
          fxLayoutAlign="space-between center"
-         class="mt-3">
+         class="mt-3 doNotPrint">
 
       <div fxLayout="row"
            fxLayoutGap="10px"
@@ -26,14 +26,14 @@
 
         <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
           <mat-icon matPrefix class="sub-prefix">search</mat-icon>
-          <mat-select placeholder="Quilt status"
+          <mat-select placeholder="Service Center Location"
                       class="w-100 form-control p-0"
                       style="border:none;"
-                      formControlName="quiltStatusId">
+                      formControlName="locationId">
             <mat-option value="0">All</mat-option>
-            <ng-container *ngFor="let status of allQuiltStatus">
-              <mat-option [value]="status.id">
-                {{status.name}}
+            <ng-container *ngFor="let location of serviceCenterLocations">
+              <mat-option [value]="location.id">
+                {{location.name}}
               </mat-option>
             </ng-container>
           </mat-select>
@@ -196,14 +196,14 @@
 
         <mat-form-field appearance="outline" class="input-pdt fs-16 searchBox">
           <mat-icon matPrefix class="sub-prefix">search</mat-icon>
-          <mat-select placeholder="Quilt status"
+          <mat-select placeholder="Service Center Location"
                       class="w-100 form-control p-0"
                       style="border:none;"
-                      formControlName="quiltStatusId">
+                      formControlName="locationId">
             <mat-option value="0">All</mat-option>
-            <ng-container *ngFor="let status of allQuiltStatus">
-              <mat-option [value]="status.id">
-                {{status.name}}
+            <ng-container *ngFor="let location of serviceCenterLocations">
+              <mat-option [value]="location.id">
+                {{location.name}}
               </mat-option>
             </ng-container>
           </mat-select>
@@ -216,26 +216,64 @@
 
       <div fxLayout="row"
            fxLayoutAlign="space-between center"
-           fxLayoutGap="20px"
+           fxLayoutGap="10px"
            class="border-left ps-3">
 
         <button class="btn btn-newPrimary btncolor p-12 mb-xl-0 mb-3"
+                style="min-width: 120px;"
+                [disabled]="isLoading"
                 (click)="searchReport()">
           Search
         </button>
 
         <button class="btn btnborder p-12 mb-xl-0 mb-3"
+                style="min-width: 120px;"
+                [disabled]="isLoading"
                 (click)="resetReport()">
           Reset
         </button>
 
-        <button class="btn btn-newPrimary p-12 text-white btncolor">
+        <button class="btn btn-success btn-color-green p-12 mb-xl-0 mb-3"
+                style="min-width: 120px;"
+                [disabled]="isLoading"
+                (click)="syncLatestData()">
+          Sync
+        </button>
+
+        <button class="btn btn-newPrimary p-12 text-white btncolor"
+                style="min-width: 120px;"
+                [disabled]="isLoading"
+                (click)="preparePrintData()"
+                [useExistingCss]="true"
+                printSectionId="serviceCenterPrintSection"
+                ngxPrint>
           Print
         </button>
 
       </div>
     </div>
 
+
+    <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="8px" class="mt-2 doNotPrint">
+      <mat-form-field appearance="outline" class="input-pdt fs-16" style="min-width: 220px; margin-bottom: 0;">
+        <mat-select placeholder="Select export type"
+                    [(value)]="selectedExportType">
+          <mat-option value="hierarchical">Hierarchical</mat-option>
+          <mat-option value="raw">Linear Flat</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button class="btn btnborder p-12"
+              style="min-width: 120px; height: 56px;"
+              [disabled]="isLoading"
+              (click)="exportSelectedReport()">
+        Export
+      </button>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="end center"
+         class="text-danger fs-12 mt-1 doNotPrint"
+         *ngIf="exportTypeTouched && !selectedExportType">
+      Please select export type before exporting.
+    </div>
 
     <div fxLayout="row" fxLayoutAlign="start center" class="my-3 w-100">
 
@@ -251,6 +289,11 @@
         <div class="card sub-card text-center p-3">
           <div class="mb-1 text-color">Total Quilts</div>
           <div class="font-w-600 text-color">{{usageData?.totalquilts || 0}}</div>
+        </div>
+
+        <div class="card sub-card text-center p-3">
+          <div class="mb-1 text-color">Total Returned</div>
+          <div class="font-w-600 text-color">{{usageData?.grandtotalreturned || 0}}</div>
         </div>
 
         <div class="card sub-card text-center p-3">
@@ -270,14 +313,11 @@
 
       </div>
 
-      <!-- RIGHT SIDE EXPORT -->
-      <div fxFlex fxLayoutAlign="end center">
-        <button class="btn btnborder p-12">
-          Export
-        </button>
-      </div>
+      <div fxFlex></div>
 
     </div>
+    <app-loader *ngIf="isLoading"></app-loader>
+
     <div class="table-responsive mt-3">
       <table class="table repair-summary-table">
         <colgroup>
@@ -378,11 +418,12 @@
                               <div class="quilt-wrapper">
                                 <table class="table quilt-table">
                                   <colgroup>
-                                    <col style="width: 15.5%">
-                                    <col style="width: 18.5%">
-                                    <col style="width: 18%">
-                                    <col style="width: 18%">
-                                    <col style="width: 18%">
+                                    <col style="width: 14%">
+                                    <col style="width: 12%">
+                                    <col style="width: 12%">
+                                    <col style="width: 12%">
+                                    <col style="width: 12%">
+                                    <col style="width: 38%">
                                   </colgroup>
                                   <thead>
                                     <tr class="text-center">
@@ -394,6 +435,7 @@
                                       <th>Cleaned</th>
                                       <th>Repaired</th>
                                       <th>Retired</th>
+                                      <th>Repair Type Aggregates</th>
                                     </tr>
                                   </thead>
 
@@ -401,17 +443,15 @@
                                     <ng-container *ngFor="let quilt of sub.quilts; let k = index">
                                       <tr class="text-center">
                                         <td class="hierarchy-cell">
-                                          <!-- SHOW ARROW ONLY IF DETAILS EXIST -->
                                           <div class="arrow-box"
-                                               *ngIf="hasDetails(quilt)"
+                                               *ngIf="hasQuiltChildren(quilt)"
                                                (click)="toggleQuiltDetails(i,j,k)">
                                             <img class="arrow-icon"
                                                  [src]="isQuiltExpanded(i,j,k)
              ? '../../../../assets/logos/downarrowS.svg'
              : '../../../../assets/logos/rightarrowS.svg'">
                                           </div>
-                                          <!-- If no details, keep alignment -->
-                                          <div class="arrow-box" *ngIf="!hasDetails(quilt)"></div>
+                                          <div class="arrow-box" *ngIf="!hasQuiltChildren(quilt)"></div>
                                           <div class="row-label">
                                             {{ quilt.serialNumber }}
                                           </div>
@@ -421,41 +461,46 @@
                                         <td>{{ quilt.cleaned }}</td>
                                         <td>{{ quilt.repaired }}</td>
                                         <td>{{ quilt.retired }}</td>
+                                        <td class="text-start">{{ quilt.repairTypes || '-' }}</td>
                                       </tr>
-                                      <tr *ngIf="isQuiltExpanded(i,j,k) && hasDetails(quilt)">
-                                        <td></td>
-                                        <td></td>
-                                        <td class="p-0 repair-details-cell">
-
-                                          <!-- Repair Details -->
-                                          <div class="repair-details-column"
-                                               *ngIf="quilt.repairTypes?.trim() && quilt.repairTypes !== 'None'">
-
-                                            <div class="repair-details-header">Repair Details</div>
-
-                                            <ul class="repair-details-list">
-                                              <li *ngFor="let r of quilt.repairTypes.split(',')">
-                                                {{ r }}
-                                              </li>
-                                            </ul>
+                                      <tr *ngIf="isQuiltExpanded(i,j,k) && hasQuiltChildren(quilt)">
+                                        <td colspan="6" class="border-0 p-0">
+                                          <div class="quilt-wrapper">
+                                            <table class="table quilt-table">
+                                              <colgroup>
+                                                <col style="width: 12%">
+                                                <col style="width: 12%">
+                                                <col style="width: 10%">
+                                                <col style="width: 10%">
+                                                <col style="width: 10%">
+                                                <col style="width: 10%">
+                                                <col style="width: 36%">
+                                              </colgroup>
+                                              <thead>
+                                                <tr class="text-center">
+                                                  <th>ICR Cycle</th>
+                                                  <th>Status</th>
+                                                  <th>Returned</th>
+                                                  <th>Cleaned</th>
+                                                  <th>Repaired</th>
+                                                  <th>Retired</th>
+                                                  <th>Repair Type Aggregates</th>
+                                                </tr>
+                                              </thead>
+                                              <tbody>
+                                                <tr class="text-center" *ngFor="let cycle of quilt.cycles">
+                                                  <td>{{ formatIcrCycle(cycle.icrCycle) }}</td>
+                                                  <td>{{ cycle.status }}</td>
+                                                  <td>{{ cycle.returned }}</td>
+                                                  <td>{{ cycle.cleaned }}</td>
+                                                  <td>{{ cycle.repaired }}</td>
+                                                  <td>{{ cycle.retired }}</td>
+                                                  <td class="text-start">{{ cycle.repairTypes || '-' }}</td>
+                                                </tr>
+                                              </tbody>
+                                            </table>
                                           </div>
                                         </td>
-
-                                        <!-- Retired Details -->
-                                        <td class="p-0 retired-details-cell">
-                                          <div class="retired-details-column"
-                                               *ngIf="quilt.retiredTypes?.trim() && quilt.retiredTypes !== 'None'">
-
-                                            <div class="retired-details-header">Retired Details</div>
-
-                                            <ul class="retired-details-list">
-                                              <li *ngFor="let r of quilt.retiredTypes.split(',')">
-                                                {{ r }}
-                                              </li>
-                                            </ul>
-                                          </div>
-                                        </td>
-                                        <td></td>
                                       </tr>
                                     </ng-container>
                                   </tbody>
@@ -491,4 +536,40 @@
                    showFirstLastButtons>
     </mat-paginator>
   </div>
+</div>
+
+<div id="serviceCenterPrintSection" class="print-only">
+  <h2 class="print-title">Service Center Report</h2>
+  <div *ngIf="dateRangeDisplay" class="print-date">{{ dateRangeDisplay }}</div>
+
+  <table class="print-table">
+    <thead>
+      <tr>
+        <th>Location</th>
+        <th>Part Number</th>
+        <th>Serial Number</th>
+        <th>ICR Cycle</th>
+        <th>Status</th>
+        <th>Returned</th>
+        <th>Cleaned</th>
+        <th>Repaired</th>
+        <th>Retired</th>
+        <th>Repair Type Aggregates</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of printRows">
+        <td>{{ row.locationName }}</td>
+        <td>{{ row.partNumber }}</td>
+        <td>{{ row.serialNumber }}</td>
+        <td>{{ formatIcrCycle(row.icrCycle) }}</td>
+        <td>{{ row.status || '-' }}</td>
+        <td>{{ row.returned }}</td>
+        <td>{{ row.cleaned }}</td>
+        <td>{{ row.repaired }}</td>
+        <td>{{ row.retired }}</td>
+        <td>{{ row.repairTypes }}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>

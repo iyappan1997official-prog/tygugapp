@@ -872,8 +872,8 @@ export class RepairSummaryReportComponent implements OnInit {
           retired: q.retired || 0,
 
           // NEW fields (no aggregation – true source)
-          repairTypes: q.repairTypes || 'None',
-          retiredTypes: q.retiredTypes || 'None'
+          repairTypes: this.toAggregateText(q.repairTypeAggregates || q.aggregatedRepairTypes || q.repairTypes),
+          retiredTypes: this.toAggregateText(q.retiredTypeAggregates || q.aggregatedDisposalReasons || q.retiredTypes)
         }))
       }))
     }));
@@ -1017,6 +1017,39 @@ export class RepairSummaryReportComponent implements OnInit {
 
   isQuiltExpanded(locIdx: number, partIdx: number, quiltIdx: number): boolean {
     return this.expandedQuilts[`${locIdx}-${partIdx}-${quiltIdx}`] === true;
+  }
+
+  private toAggregateText(value: any): string {
+    if (!value) {
+      return 'None';
+    }
+
+    if (Array.isArray(value)) {
+      if (!value.length) {
+        return 'None';
+      }
+
+      return value
+        .map((x: any) => {
+          if (typeof x === 'string') {
+            return x;
+          }
+          const type = x?.repairType || x?.retiredType || x?.name || x?.type || '';
+          const count = x?.count ?? x?.totalCount ?? null;
+          if (!type) {
+            return '';
+          }
+          return count !== null && count !== undefined ? `${type} (${count})` : type;
+        })
+        .filter((x: string) => x && x.trim() !== '')
+        .join(', ') || 'None';
+    }
+
+    if (typeof value === 'string') {
+      return value.trim() ? value : 'None';
+    }
+
+    return 'None';
   }
 
   exportReport(): void {

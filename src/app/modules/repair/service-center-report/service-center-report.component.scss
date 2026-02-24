@@ -462,22 +462,87 @@
    PRINT / FILTER / MISC
    ====================================== */
 @media print {
-  .btncolor,
-  .btnborder,
-  .btn-export,
+  .doNotPrint,
   .mat-paginator {
     display: none !important;
   }
 
-  .cardheight {
-    box-shadow: none !important;
-    border: 1px solid #ddd !important;
+  .content-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #fff !important;
   }
 
+  .cardheight {
+    background: #fff !important;
+    box-shadow: none !important;
+    border: 0 !important;
+    padding: 0 !important;
+    min-height: auto !important;
+  }
 
+  h2 {
+    color: #333 !important;
+    font-size: 40px !important;
+    font-weight: 600 !important;
+    margin: 0 0 12px 0 !important;
+  }
 
-  .repair-details-column {
-    border-right: 1px solid #ccc !important;
+  .cards-wrapper,
+  .sub-card {
+    box-shadow: none !important;
+    border: 0 !important;
+    background: #fff !important;
+    color: #333 !important;
+  }
+
+  .arrow-box,
+  .header-spacer {
+    display: none !important;
+  }
+
+  .part-wrapper,
+  .quilt-wrapper {
+    margin-left: 0 !important;
+  }
+
+  .repair-summary-table,
+  .part-number-table,
+  .quilt-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    border: 0 !important;
+    margin: 0 !important;
+  }
+
+  .repair-summary-table th,
+  .repair-summary-table td,
+  .part-number-table th,
+  .part-number-table td,
+  .quilt-table th,
+  .quilt-table td {
+    background: #fff !important;
+    color: #333 !important;
+    border: 0 !important;
+    border-bottom: 1px solid #d6dbe1 !important;
+    text-align: left !important;
+    padding: 10px 8px !important;
+    font-size: 18px !important;
+  }
+
+  .repair-summary-table th,
+  .part-number-table th,
+  .quilt-table th {
+    font-weight: 700 !important;
+    color: #333 !important;
+  }
+
+  .table-responsive {
+    overflow: visible !important;
+  }
+
+  .row-label {
+    padding-left: 0 !important;
   }
 }
 
@@ -842,6 +907,54 @@ td.retired-details-cell .retired-details-header {
   top: -6px;
 }
 
+.print-only {
+  display: none;
+}
+
+@media print {
+  .print-only {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    color: #333 !important;
+    background: #fff !important;
+  }
+
+  .print-title {
+    font-size: 34px !important;
+    font-weight: 600 !important;
+    margin: 0 0 8px 0 !important;
+    color: #333 !important;
+  }
+
+  .print-date {
+    margin-bottom: 14px !important;
+    font-size: 18px !important;
+    color: #444 !important;
+  }
+
+  .print-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    border: 0 !important;
+    table-layout: auto !important;
+  }
+
+  .print-table th,
+  .print-table td {
+    text-align: left !important;
+    padding: 10px 8px !important;
+    border: 0 !important;
+    border-bottom: 1px solid #d6dbe1 !important;
+    color: #333 !important;
+    background: #fff !important;
+    font-size: 16px !important;
+  }
+
+  .print-table th {
+    font-weight: 700 !important;
+  }
+}
 
 
 

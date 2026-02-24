@@ -2,7 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\.angular",
-    "\\src"
+    "\\src",
+    "\\src\\environments"
   ],
+  "SelectedNode": "\\src\\environments\\environment.prod.ts",
   "PreviewInSolutionExplorer": false
 }

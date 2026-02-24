@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { RepairService } from 'src/app/modules/repair/repair.service';
 import { AuthService } from 'src/app/modules/auth/auth.service';
 import { Roles } from 'src/app/shared/roles/rolesVar';
@@ -16,7 +17,18 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-repair-reports',
   templateUrl: './repair-reports.component.html',
-  styleUrls: ['./repair-reports.component.scss']
+  styleUrls: ['./repair-reports.component.scss'],
+  animations: [
+    trigger('sectionTransition', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(8px)' }),
+        animate('220ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ]),
+      transition(':leave', [
+        animate('140ms ease-in', style({ opacity: 0, transform: 'translateY(-4px)' }))
+      ])
+    ])
+  ]
 })
 
 export class RepairReportsComponent implements OnInit {
@@ -29,11 +41,14 @@ export class RepairReportsComponent implements OnInit {
   serviceCenterLocations: { id: number, name: string }[] = [];
   userDetails: any;
   loggedInUserRole: string;
+  loggedInCustGroupId: number | null = null;
   loggedInCustomerId: number | null = null;
   isMasterAdmin: boolean = false;
   showCustomerSection = false;
   showServiceCenterSection = false;
   selectedReport: 'customer' | 'service center' | null = null;
+  selectedTabIndex = 0;
+  isTabSwitching = false;
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -46,23 +61,28 @@ export class RepairReportsComponent implements OnInit {
 
     this.userDetails = this.authService?.getUserFromLocalStorage()?.data || {};
     this.loggedInUserRole = this.userDetails?.roles?.[0] || '';
-    this.loggedInCustomerId = this.userDetails?.custGroupId || null;
+    this.loggedInCustGroupId = this.userDetails?.custGroupId || null;
+    this.loggedInCustomerId = null;
     this.isMasterAdmin = this.loggedInUserRole === Roles.masterAdmin; // ✅ Check role
 
     this.initForm();
 
     // If not Master Admin → set customer ID automatically
-    if (!this.isMasterAdmin && this.loggedInCustomerId) {
-      this.repairreportForm.patchValue({ customerId: this.loggedInCustomerId });
+    if (!this.isMasterAdmin) {
+      this.repairreportForm.patchValue({ customerId: null });
       this.repairreportForm.get('customerId')?.disable(); // lock the field
+      this.resolveCustomerIdByCustGroupId();
     } else {
       this.loadCustomers(); // load all customers only for Master Admin
     }
+
+    this.selectReport('customer');
   }
   private initForm(): void {
     this.repairreportForm = this.fb.group({
       reportType: [''],
       customerId: [null],
+      serviceCenterLocationId: [0],
       startDate: [null, Validators.required],
       endDate: [null, Validators.required]
     });
@@ -106,6 +126,43 @@ export class RepairReportsComponent implements OnInit {
     });
   }
 
+  private resolveCustomerIdByCustGroupId(onResolved?: () => void): void {
+    if (this.isMasterAdmin || !this.loggedInCustGroupId) {
+      onResolved?.();
+      return;
+    }
+
+    this.isLoading = true;
+    this.repairService.getCustomersByCustGroupId(this.loggedInCustGroupId).subscribe({
+      next: (res: any) => {
+        this.isLoading = false;
+        const resolvedCustomerId = res?.data?.length ? Number(res.data[0].id) : null;
+        this.loggedInCustomerId = resolvedCustomerId;
+        this.repairreportForm.patchValue({ customerId: resolvedCustomerId });
+        onResolved?.();
+      },
+      error: (err: any) => {
+        this.isLoading = false;
+        console.error('Error resolving customerId by custGroupId', err);
+      }
+    });
+  }
+
+  private navigateToCustomerReport(customerId: number | null, startDateStr: string, endDateStr: string): void {
+    const queryParams: any = {
+      startDate: startDateStr,
+      endDate: endDateStr
+    };
+
+    if (customerId) {
+      queryParams.customerId = customerId;
+    }
+
+    this.router.navigate(['/repair/repair-summary-report'], {
+      queryParams
+    });
+  }
+
   generateRepairSummary(): void {
     if (!this.selectedReport) {
       this.repairreportForm.markAllAsTouched();
@@ -117,7 +174,7 @@ export class RepairReportsComponent implements OnInit {
       return;
     }
 
-    const { customerId, startDate, endDate } =
+    const { customerId, serviceCenterLocationId, startDate, endDate } =
       this.repairreportForm.getRawValue();
 
     const startDateStr =
@@ -127,23 +184,34 @@ export class RepairReportsComponent implements OnInit {
 
     // ✅ CASE 1: CUSTOMER REPORT → GO TO REPAIR SUMMARY REPORT
     if (this.selectedReport === 'customer') {
-      const queryParams: any = {
-        startDate: startDateStr,
-        endDate: endDateStr
-      };
-
-      if (customerId) {
-        queryParams.customerId = customerId;
+      if (this.isMasterAdmin) {
+        this.navigateToCustomerReport(customerId, startDateStr, endDateStr);
+        return;
       }
 
-      this.router.navigate(['/repair/repair-summary-report'], {
-        queryParams
+      if (this.loggedInCustomerId) {
+        this.navigateToCustomerReport(this.loggedInCustomerId, startDateStr, endDateStr);
+        return;
+      }
+
+      this.resolveCustomerIdByCustGroupId(() => {
+        if (!this.loggedInCustomerId) {
+          return;
+        }
+        this.navigateToCustomerReport(this.loggedInCustomerId, startDateStr, endDateStr);
       });
+      return;
     }
 
     // ✅ CASE 2: SERVICE CENTER REPORT → GO TO BLANK PAGE (NEW ROUTE)
     else if (this.selectedReport === 'service center') {
-      this.router.navigate(['/repair/service-center-report']);
+      this.router.navigate(['/repair/service-center-report'], {
+        queryParams: {
+          startReceiveDate: startDateStr,
+          endReceiveDate: endDateStr,
+          locationId: serviceCenterLocationId || 0
+        }
+      });
     }
   }
   // generateRepairSummary(): void {
@@ -188,15 +256,23 @@ export class RepairReportsComponent implements OnInit {
   //  }
   //}
   selectReport(type: 'customer' | 'service center') {
+    if (type === 'service center' && !this.isMasterAdmin) {
+      return;
+    }
+
     this.selectedReport = type;
 
     if (type === 'customer') {
+      this.selectedTabIndex = 0;
       this.showCustomerSection = true;
       this.showServiceCenterSection = false;
-      this.loadCustomers();
+      if (this.isMasterAdmin) {
+        this.loadCustomers();
+      }
     }
 
     else if (type === 'service center') {
+         this.selectedTabIndex = 1;
          this.showCustomerSection = false;
          this.showServiceCenterSection = true;
          this.loadServiceCenterLocations();
@@ -208,6 +284,22 @@ export class RepairReportsComponent implements OnInit {
         this.repairreportForm.reset();
        }
   }
+
+  onReportTabChange(index: number): void {
+    this.isTabSwitching = true;
+
+    // Show spinner briefly while switching sections for smoother UX.
+    setTimeout(() => {
+      this.isTabSwitching = false;
+      if (index === 0) {
+        this.selectReport('customer');
+        return;
+      }
+
+      this.selectReport('service center');
+    }, 180);
+  }
+
     get f() {
      return this.repairreportForm.controls;
   }

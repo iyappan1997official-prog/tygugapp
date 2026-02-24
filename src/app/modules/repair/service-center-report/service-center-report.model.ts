@@ -1,34 +1,46 @@
 /* ================= REQUEST ================= */
 
-export interface ServiceCenterSummaryRequest {
-  pageNumber: number;
-  pageSize: number;
-  startDate?: string | null;
-  endDate?: string | null;
-  serviceCenterLocationIds?: number[];
-  sortByColumn?: string;
-  sortDescendingOrder?: boolean;
-  searchBy?: string;
+export interface ServiceCenterIcrReportRequest {
+  startReceiveDate: string | null;
+  endReceiveDate: string | null;
+  locationId: number;
 }
 
 
 /* ================= RESPONSE ROOT ================= */
 
-export interface ServiceCenterSummaryResponse {
+export interface ServiceCenterIcrReportResponse {
+  id: number;
+  data: ServiceCenterIcrReportData | null;
+  exception: string | null;
+  errorDetails: string | null;
+  hasError: boolean;
+  message: string;
+  statusCode: number;
+  errorType: string;
+}
+
+export interface ServiceCenterIcrReportData {
+  totalQuilts: number;
+  totalReturned: number;
+  totalCleaned: number;
+  totalRepaired: number;
+  totalRetired: number;
   locations: ServiceCenterLocationVM[];
-  pagingParameters: PagingParameterValues;
 }
 
 
 /* ================= LOCATION ================= */
 
 export interface ServiceCenterLocationVM {
+  locationId: number;
   locationName: string;
-  returned: number;
-  cleaned: number;
-  repaired: number;
-  retired: number;
-  parts: ServiceCenterPartVM[];
+  totalQuilts: number;
+  totalReturned: number;
+  totalCleaned: number;
+  totalRepaired: number;
+  totalRetired: number;
+  partNumbers: ServiceCenterPartVM[];
 }
 
 
@@ -36,10 +48,11 @@ export interface ServiceCenterLocationVM {
 
 export interface ServiceCenterPartVM {
   partNumber: string;
-  returned: number;
-  cleaned: number;
-  repaired: number;
-  retired: number;
+  totalQuilts: number;
+  totalReturned: number;
+  totalCleaned: number;
+  totalRepaired: number;
+  totalRetired: number;
   quilts: ServiceCenterQuiltVM[];
 }
 
@@ -49,21 +62,29 @@ export interface ServiceCenterPartVM {
 export interface ServiceCenterQuiltVM {
   quiltId: number;
   serialNumber: string;
+  totalReturned: number;
+  totalCleaned: number;
+  totalRepaired: number;
+  totalRetired: number;
+  repairTypeAggregates: ServiceCenterRepairTypeAggregateVM[];
+  cycles: ServiceCenterCycleVM[];
+}
+
+export interface ServiceCenterCycleVM {
+  reportId: number;
+  icrCycle: number;
+  status: string;
   receiveDate: string;
+  completionDate: string;
+  lastStatusDate: string;
   returned: number;
   cleaned: number;
   repaired: number;
   retired: number;
+  repairTypeAggregates: ServiceCenterRepairTypeAggregateVM[];
 }
 
-
-/* ================= PAGINATION ================= */
-
-export interface PagingParameterValues {
-  totalCount: number;
-  pageNumber: number;
-  pageSize: number;
-  totalPages: number;
-  hasPrevious: boolean;
-  hasNext: boolean;
+export interface ServiceCenterRepairTypeAggregateVM {
+  repairType: string;
+  count: number;
 }

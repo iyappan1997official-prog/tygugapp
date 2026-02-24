@@ -375,6 +375,8 @@
                                     <th>Repaired</th>
                                     <th>Retired</th>
                                     <th>Returned</th>
+                                    <th>Repair Type Aggregates</th>
+                                    <th>Retire Type Aggregates</th>
                                   </tr>
                                 </thead>
 
@@ -397,6 +399,8 @@
                                       <td>{{ quilt.repaired }}</td>
                                       <td>{{ quilt.retired }}</td>
                                       <td>{{ quilt.returned }}</td>
+                                      <td class="text-start">{{ quilt.repairTypes || 'None' }}</td>
+                                      <td class="text-start">{{ quilt.retiredTypes || 'None' }}</td>
                                     </tr>
 
                                   </ng-container>

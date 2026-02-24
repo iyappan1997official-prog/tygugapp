@@ -12,6 +12,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTabsModule } from '@angular/material/tabs';
+import { NgxPrintModule } from 'ngx-print';
 import { RepairRoutingModule } from './repair-routing.module';
 import { RepairSummaryReportComponent } from './repair-summary-report/repair-summary-report.component';
 
@@ -40,6 +42,8 @@ import { ServiceCenterReportComponent } from '../repair/service-center-report/se
     MatNativeDateModule,
     MatButtonModule,
     MatPaginatorModule,
+    MatTabsModule,
+    NgxPrintModule,
     RepairRoutingModule,
     SharedModule   
   ]

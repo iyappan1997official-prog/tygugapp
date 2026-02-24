@@ -23,6 +23,10 @@ export class RepairService {
     return this.http.get<any>(`${environment.apiUrl}/Customers/GetAllCustomers`);
   }
 
+  getCustomersByCustGroupId(custGroupId: number): Observable<any> {
+    return this.http.get<any>(`${environment.apiUrl}/Customers/GetCustomersByCustGroupId?custGroupId=${custGroupId}`);
+  }
+
   // New: Get repair summary report
   getRepairSummaryReport(payload: any): Observable<any> {
     return this.http.post<any>(`${this.REPORTS_API_URL}/RepairSummaryReport`, payload);
@@ -36,9 +40,14 @@ export class RepairService {
   getServiceCenterLocations(): Observable<any> {
     return this.http.get<any>(`${environment.apiUrl}/Locations/GetServiceCenterLocations`);
   }
-  //New for Service Center 
-  getServiceCenterSummary(payload: any): Observable<any> {
-    return this.http.post<any>(`${environment.apiUrl}/Reports/ServiceCenterSummary`,payload);
+
+  // New: Service Center ICR report
+  getServiceCenterIcrReport(payload: any): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/Reports/serviceCenterIcrCycleHierarchy`, payload);
+  }
+
+  syncServiceCenterIcrCycleReport(): Observable<any> {
+    return this.http.post<any>(`${this.REPORTS_API_URL}/refreshServiceCenterICRCycleReport`, {});
   }
 
 }
