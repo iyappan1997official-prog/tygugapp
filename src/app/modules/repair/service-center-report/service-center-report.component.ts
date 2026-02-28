@@ -4,6 +4,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { BehaviorSubject } from 'rxjs';
 import { finalize, switchMap, tap } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { RepairService } from 'src/app/modules/repair/repair.service';
 import {
   ServiceCenterIcrReportRequest,
@@ -65,6 +66,7 @@ export class ServiceCenterReportComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private repairService: RepairService,
+    private spinner: NgxSpinnerService,
     private toastr: ToastrService
   ) { }
 
@@ -142,6 +144,7 @@ export class ServiceCenterReportComponent implements OnInit {
   }
   searchReport(): void {
 
+    this.spinner.show();
     this.isLoading = true;
 
     const payload = this.buildPayload();
@@ -151,10 +154,12 @@ export class ServiceCenterReportComponent implements OnInit {
         next: (res: ServiceCenterIcrReportResponse) => {
           this.applyReportResponse(res, payload.locationId === this.initialLocationId);
           this.isLoading = false;
+        this.spinner.hide();
         },
         error: err => {
           console.error(err);
           this.isLoading = false;
+        this.spinner.hide();
         }
       });
   }
@@ -181,7 +186,9 @@ export class ServiceCenterReportComponent implements OnInit {
   }
 
   syncLatestData(): void {
+    this .spinner.show();
     this.isLoading = true;
+    
     const payload = this.buildPayload();
     let syncMessage = 'Synced successfully';
 
@@ -195,6 +202,7 @@ export class ServiceCenterReportComponent implements OnInit {
         switchMap(() => this.repairService.getServiceCenterIcrReport(payload)),
         finalize(() => {
           this.isLoading = false;
+          this.spinner.hide();
         })
       )
       .subscribe({

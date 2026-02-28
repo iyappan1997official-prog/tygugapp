@@ -8,6 +8,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { RepairService } from 'src/app/modules/repair/repair.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { AuthService } from 'src/app/modules/auth/auth.service';
 import { Roles } from 'src/app/shared/roles/rolesVar';
 import { ActivatedRoute } from '@angular/router';
@@ -54,6 +55,7 @@ export class RepairReportsComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private repairService: RepairService,
+    private spinner: NgxSpinnerService,
     private authService: AuthService
   ) { }
 
@@ -164,6 +166,8 @@ export class RepairReportsComponent implements OnInit {
   }
 
   generateRepairSummary(): void {
+
+    this.spinner.show();
     if (!this.selectedReport) {
       this.repairreportForm.markAllAsTouched();
       return;
@@ -186,25 +190,31 @@ export class RepairReportsComponent implements OnInit {
     if (this.selectedReport === 'customer') {
       if (this.isMasterAdmin) {
         this.navigateToCustomerReport(customerId, startDateStr, endDateStr);
+        this.spinner.hide();
         return;
       }
 
       if (this.loggedInCustomerId) {
+
         this.navigateToCustomerReport(this.loggedInCustomerId, startDateStr, endDateStr);
+        this.spinner.hide();
         return;
       }
 
       this.resolveCustomerIdByCustGroupId(() => {
         if (!this.loggedInCustomerId) {
+           this.spinner.hide();
           return;
         }
         this.navigateToCustomerReport(this.loggedInCustomerId, startDateStr, endDateStr);
       });
+      this.spinner.hide();
       return;
     }
 
     // ✅ CASE 2: SERVICE CENTER REPORT → GO TO BLANK PAGE (NEW ROUTE)
     else if (this.selectedReport === 'service center') {
+
       this.router.navigate(['/repair/service-center-report'], {
         queryParams: {
           startReceiveDate: startDateStr,
@@ -212,6 +222,7 @@ export class RepairReportsComponent implements OnInit {
           locationId: serviceCenterLocationId || 0
         }
       });
+      
     }
   }
   // generateRepairSummary(): void {
@@ -258,6 +269,7 @@ export class RepairReportsComponent implements OnInit {
   selectReport(type: 'customer' | 'service center') {
     if (type === 'service center' && !this.isMasterAdmin) {
       return;
+      
     }
 
     this.selectedReport = type;

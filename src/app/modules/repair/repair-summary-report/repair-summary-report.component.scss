@@ -100,9 +100,8 @@
 }
 
 .noFilterContentScroller {
-  overflow-y: auto;
-  overflow-x: hidden;
-  max-height: calc(100vh - 180px);
+  overflow: visible;
+  max-height: none;
 }
 
 /* ======================================
@@ -515,6 +514,7 @@
   text-align: center;
   padding: 15px;
   border-radius: 8px;
+  border: 2px solid #407ec9;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background: white;
 }
