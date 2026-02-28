@@ -687,9 +687,25 @@ export class RepairSummaryReportComponent implements OnInit {
     this.isLoading = true;
     this.spinner.show();
 
+    const normalizeDate = (value: any): string | null => {
+      if (!value) {
+        return null;
+      }
+
+      // If the control holds a Date (mat-datepicker), format to a stable date-only value.
+      if (value instanceof Date) {
+        return moment(value).format('YYYY-MM-DD');
+      }
+
+      // If it's a string coming from query params, preserve the same calendar day.
+      // moment(...) without utc() prevents unintended timezone/day shifts.
+      const parsed = moment(value, [moment.ISO_8601, 'MM/DD/YYYY', 'YYYY-MM-DD'], true);
+      return parsed.isValid() ? parsed.format('YYYY-MM-DD') : String(value);
+    };
+
     const payload = {
-      startReceiveDate: formData.startDate,
-      endReceiveDate: formData.endDate,
+      startReceiveDate: normalizeDate(formData.startDate),
+      endReceiveDate: normalizeDate(formData.endDate),
       locationId: 0,
       customerId: formData.customerId ? Number(formData.customerId) : 0
     };
@@ -1046,7 +1062,7 @@ export class RepairSummaryReportComponent implements OnInit {
     if (!Number.isFinite(cycleNumber) || cycleNumber <= 0) {
       return '-';
     }
-    return `ICR Cycle #${cycleNumber}`;
+    return `Process Cycle #${cycleNumber}`;
   }
 
   private toAggregateText(value: any): string {
@@ -1214,20 +1230,7 @@ export class RepairSummaryReportComponent implements OnInit {
             'Repair Type Aggregates': q.repairTypes || 'None'
           });
 
-          (q.cycles || []).forEach((cycle: any) => {
-            rows.push({
-              'Level': 'ICR Cycle',
-              'Location': loc.locationName || '',
-              'Part Number': part.partNumber || '',
-              'Serial Number': q.serialNumber || '',
-              'ICR Cycle': this.formatIcrCycle(cycle.icrCycle),
-              'Returned': cycle.returned || 0,
-              'Cleaned': cycle.cleaned || 0,
-              'Repaired': cycle.repaired || 0,
-              'Retired': cycle.retired || 0,
-              'Repair Type Aggregates': cycle.repairTypes || 'None'
-            });
-          });
+          // Process Cycle hierarchy removed (no cycle rows)
         });
       });
     });
@@ -1239,38 +1242,20 @@ export class RepairSummaryReportComponent implements OnInit {
     const rows: any[] = [];
     const data = this.originalReportData || [];
 
+    // Process Cycle hierarchy removed: one row per quilt (no cycle expansion)
     data.forEach((loc: any) => {
       (loc.partNumbers || []).forEach((part: any) => {
         (part.quilts || []).forEach((q: any) => {
-          const cycles = q.cycles || [];
-
-          if (!cycles.length) {
-            rows.push({
-              'Location': loc.locationName || '',
-              'Part Number': part.partNumber || '',
-              'Serial Number': q.serialNumber || '',
-              'ICR Cycle': '-',
-              'Returned': q.returned || 0,
-              'Cleaned': q.cleaned || 0,
-              'Repaired': q.repaired || 0,
-              'Retired': q.retired || 0,
-              'Repair Type Aggregates': q.repairTypes || 'None'
-            });
-            return;
-          }
-
-          cycles.forEach((cycle: any) => {
-            rows.push({
-              'Location': loc.locationName || '',
-              'Part Number': part.partNumber || '',
-              'Serial Number': q.serialNumber || '',
-              'ICR Cycle': this.formatIcrCycle(cycle.icrCycle),
-              'Returned': cycle.returned || 0,
-              'Cleaned': cycle.cleaned || 0,
-              'Repaired': cycle.repaired || 0,
-              'Retired': cycle.retired || 0,
-              'Repair Type Aggregates': cycle.repairTypes || 'None'
-            });
+          rows.push({
+            'Location': loc.locationName || '',
+            'Part Number': part.partNumber || '',
+            'Serial Number': q.serialNumber || '',
+            'ICR Cycle': '-',
+            'Returned': q.returned || 0,
+            'Cleaned': q.cleaned || 0,
+            'Repaired': q.repaired || 0,
+            'Retired': q.retired || 0,
+            'Repair Type Aggregates': q.repairTypes || 'None'
           });
         });
       });

@@ -435,15 +435,7 @@
 
                                     <tr class="text-center">
                                       <td class="hierarchy-cell">
-                                        <div class="arrow-box"
-                                             *ngIf="quilt.cycles && quilt.cycles.length > 0"
-                                             (click)="toggleQuiltDetails(i,j,k)">
-                                          <img class="arrow-icon"
-                                               [src]="isQuiltExpanded(i,j,k)
-                                   ? '../../../../assets/logos/downarrowS.svg'
-                                   : '../../../../assets/logos/rightarrowS.svg'">
-                                        </div>
-                                        <div class="arrow-box" *ngIf="!quilt.cycles || quilt.cycles.length === 0"></div>
+                                        <div class="arrow-box"></div>
                                         <div class="row-label">{{ quilt.serialNumber }}</div>
                                       </td>
 
@@ -453,43 +445,7 @@
                                       <td>{{ quilt.returned }}</td>
                                       <td>{{ quilt.repairTypes || '' }}</td>
                                     </tr>
-                                    <tr *ngIf="isQuiltExpanded(i,j,k) && quilt.cycles && quilt.cycles.length > 0">
-                                      <td colspan="6" class="border-0 p-0">
-                                        <div class="cycle-wrapper">
-                                          <table class="table quilt-table cycle-table">
-                                            <colgroup>
-                                              <col style="width: 16%">
-                                              <col style="width: 10%">
-                                              <col style="width: 10%">
-                                              <col style="width: 10%">
-                                              <col style="width: 10%">
-                                              <col style="width: 44%">
-                                            </colgroup>
-                                            <thead>
-                                              <tr class="text-center">
-                                                <th>ICR Cycle</th>
-                                                <th>Returned</th>
-                                                <th>Cleaned</th>
-                                                <th>Repaired</th>
-                                                <th>Retired</th>
-                                                <th>Repair Type Aggregates</th>
-                                              </tr>
-                                            </thead>
-                                            <tbody>
-                                              <tr class="text-center" *ngFor="let cycle of quilt.cycles">
-                                                <td>{{ formatIcrCycle(cycle.icrCycle) }}</td>
-                                                <td>{{ cycle.returned }}</td>
-                                                <td>{{ cycle.cleaned }}</td>
-                                                <td>{{ cycle.repaired }}</td>
-                                                <td>{{ cycle.retired }}</td>
-                                                <td>{{ cycle.repairTypes || '' }}</td>
-                                              </tr>
-                                            </tbody>
-                                          </table>
-                                        </div>
-                                      </td>
-                                    </tr>
-
+                                    
                                   </ng-container>
                                 </tbody>
 

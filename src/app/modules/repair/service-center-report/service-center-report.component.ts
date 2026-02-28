@@ -118,9 +118,25 @@ export class ServiceCenterReportComponent implements OnInit {
   private buildPayload(): ServiceCenterIcrReportRequest {
     const form = this.serviceCenterForm.value;
 
+    const normalizeDate = (value: any): string | null => {
+      if (!value) {
+        return null;
+      }
+
+      // If the control holds a Date (mat-datepicker), format to a stable date-only value.
+      if (value instanceof Date) {
+        return moment(value).format('YYYY-MM-DD');
+      }
+
+      // If it's a string coming from query params, preserve the same calendar day.
+      // moment(...) without utc() prevents unintended timezone/day shifts.
+      const parsed = moment(value, [moment.ISO_8601, 'MM/DD/YYYY', 'YYYY-MM-DD'], true);
+      return parsed.isValid() ? parsed.format('YYYY-MM-DD') : String(value);
+    };
+
     return {
-      startReceiveDate: form.startDate || null,
-      endReceiveDate: form.endDate || null,
+      startReceiveDate: normalizeDate(form.startDate),
+      endReceiveDate: normalizeDate(form.endDate),
       locationId: Number(form.locationId || 0)
     };
   }
